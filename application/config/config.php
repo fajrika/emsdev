@@ -25,7 +25,7 @@ date_default_timezone_set('Asia/Jakarta');
 | a PHP script and you can easily do that on your own.
 |
 */
-$config['base_url'] = 'http://localhost/emsdev123';
+$config['base_url'] = 'http://localhost/emsdev';
 // $config['base_url'] = 'http://e89f121c.ngrok.io/ems';
 // $config['base_url'] = 'https://ems.ciputragroup.com:11443';
 // $config['base_url'] = 'http://192.168.30.90/ems';
