@@ -29,13 +29,21 @@ class Test extends CI_Controller
             // 'periode_awal' => '2019-07-01',
             // 'periode_akhir' => '2019-12-01'
         ];
-        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'periode');
-        echo("PeriodeTagihans<pre>");
-            print_r($tagihans);
+        // $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit');
+        // echo("PeriodeTagihans<pre>");
+        //     print_r($tagihans);
+        // echo("</pre>");
+        // echo("groupperiode<pre>");
+        //     print_r($this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'periode'));
+        // echo("</pre>");
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit');
+        // echo("groupunit<pre>");
+        //     print_r($this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit'));
+        // echo("</pre>");
+        echo("<pre>");
+            print_r($this->m_tagihan->get_lingkungan($param, date("Y-m-d")));
         echo("</pre>");
-        echo("UnitTagihans<pre>");
-            print_r($this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit'));
-        echo("</pre>");
+        die;
         $finalTagihans = [];
         foreach ($tagihans as $iterasi => $tagihan) {
             $tmp = (object)[

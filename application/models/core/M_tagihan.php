@@ -999,27 +999,46 @@ class M_tagihan extends CI_Model
 			echo("unit_ids<pre>");
 				print_r($unit_ids);
 			echo("</pre>");
-			echo("lingkungans<pre>");
-				print_r($tagihan->lingkungans);
-			echo("</pre>");
+			// echo("lingkungans<pre>");
+			// 	print_r($tagihan->lingkungans);
+			// echo("</pre>");
+			$iterasi = [0,0,0,0];
+			// echo("before<pre>");
+			// 	print_r($tagihan);
+			// echo("</pre>");
+
 			foreach ($unit_ids as $unit_id) {
 				$tmp = [];
+				
 				foreach ($tagihan->lingkungans as $lingkungan) {
-					if($lingkungan->unit_id == $unit_id)
+					if($lingkungan->unit_id == $unit_id){
 						array_push($tmp,$lingkungan);	
+						$iterasi[3]++;
+					}
+					$iterasi[1]++;
+				
 				}
 				foreach ($tagihan->airs as $air) {
 					if($air->unit_id == $unit_id)
 						array_push($tmp,$air);	
+					$iterasi[2]++;
 				}
-				if(isset($tmp) || isset($tmp)){
+				if(isset($tmp)){
 					array_push($tagihan->gabungans,$tmp);
 				}
+				$iterasi[0]++;
+
 				// $now = date("Y-m-d", strtotime("+1 month", strtotime($now)));
 			}
-			echo("tagihan->gabungans<pre>");
+			echo("after<pre>");
 				print_r($tagihan->gabungans);
 			echo("</pre>");
+			echo("iterasi<pre>");
+				print_r($iterasi);
+			echo("</pre>");
+			// echo("tagihan->gabungans<pre>");
+			// 	print_r($tagihan->gabungans);
+			// echo("</pre>");
 		}
 
 		return $tagihan->gabungans;

@@ -160,9 +160,9 @@ class m_pemutihan extends CI_Model
         $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit');
         $list = [];
         //tagihans, merupakan banyak tagihan perbanyak unit
-        echo("<pre>");
-            print_r($tagihans);
-        echo("</pre>");
+        // echo("<pre>");
+        //     print_r($tagihans);
+        // echo("</pre>");
         foreach ($tagihans as $tagihan) {
             //tagihan, merupakan banyak tagihan perunit
             $tmp = (object)[];
