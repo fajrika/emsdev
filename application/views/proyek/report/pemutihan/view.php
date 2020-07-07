@@ -121,6 +121,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 	</div>
 
 	<script>
+
 		$(document).ready(function () {
 			$("#a").html('');
 			$('.select2').select2();
@@ -136,6 +137,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 dataType: "json",
                 success: function(data) {
                     console.log(data);
+					var table2 = $('#tableModal').DataTable();
+					table2.destroy();
+					
                     $("#tbody-modal").html("");
 					$.each(data, function(key, value) {
 						var str = "<tr>";

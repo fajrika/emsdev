@@ -562,37 +562,37 @@ class M_tagihan extends CI_Model
 								"service.project_id = unit.project_id 
 								AND service.service_jenis_id = 1",
 								"LEFT");
-			if(isset($param->unit_id)){
-				$tagihans = $tagihans->WHERE_IN("dbo.unit.id", $param->unit_id);
-			}
-			if(isset($param->blok_id)){
-				$tagihans = $tagihans->WHERE_IN("dbo.blok.id", $param->blok_id);
-			}
-			if(isset($param->kawasan_id)){
-				$tagihans = $tagihans->WHERE_IN("dbo.kawasan.id", $param->kawasan_id);
-			}
-			if(isset($param->project_id)){
-				$tagihans = $tagihans->WHERE_IN("dbo.project.id", $param->project_id);
-			}
-			if(isset($param->status_tagihan)){
-				$tagihans = $tagihans->WHERE_IN("dbo.t_tagihan_lingkungan.status_tagihan", $param->status_tagihan);
-			}else{
-				$tagihans = $tagihans->WHERE_IN("dbo.t_tagihan_lingkungan.status_tagihan", [0,2,3,4]);	
-			}
-			if(isset($param->periode_awal) && isset($param->periode_akhir)){
-				
-				$tagihans = $tagihans->where("dbo.t_tagihan_lingkungan.periode >= '$param->periode_awal'");
-				$tagihans = $tagihans->where("dbo.t_tagihan_lingkungan.periode <= '$param->periode_akhir'");
-			}
+		if(isset($param->unit_id)){
+			$tagihans = $tagihans->WHERE_IN("dbo.unit.id", $param->unit_id);
+		}
+		if(isset($param->blok_id)){
+			$tagihans = $tagihans->WHERE_IN("dbo.blok.id", $param->blok_id);
+		}
+		if(isset($param->kawasan_id)){
+			$tagihans = $tagihans->WHERE_IN("dbo.kawasan.id", $param->kawasan_id);
+		}
+		if(isset($param->project_id)){
+			$tagihans = $tagihans->WHERE_IN("dbo.project.id", $param->project_id);
+		}
+		if(isset($param->status_tagihan)){
+			$tagihans = $tagihans->WHERE_IN("dbo.t_tagihan_lingkungan.status_tagihan", $param->status_tagihan);
+		}else{
+			$tagihans = $tagihans->WHERE_IN("dbo.t_tagihan_lingkungan.status_tagihan", [0,2,3,4]);	
+		}
+		if(isset($param->periode_awal) && isset($param->periode_akhir)){
 			
-			$tagihans = $tagihans->ORDER_BY("periode")->get()->result();
-			foreach ($tagihans as $iterasi => $tagihan) {
+			$tagihans = $tagihans->where("dbo.t_tagihan_lingkungan.periode >= '$param->periode_awal'");
+			$tagihans = $tagihans->where("dbo.t_tagihan_lingkungan.periode <= '$param->periode_akhir'");
+		}
+		
+		$tagihans = $tagihans->ORDER_BY("periode")->get()->result();
+		foreach ($tagihans as $iterasi => $tagihan) {
 			// total tanpa ppn
 			$tagihan->nilai_tagihan_tanpa_ppn = $tagihan->nilai_bangunan + $tagihan->nilai_kavling + $tagihan->nilai_keamanan + $tagihan->nilai_kebersihan;
 
 			// ppn (ppn adalah ppn dalam bentuk rupiah, sedangkan nilai ppn adalah ppn dalam bentuk %)
 			$tagihan->ppn = 0;
-			$tagihan->ppn = $tagihan->nilai_tagihan_tanpa_ppn * ($tagihan->ppn_flag * $tagihan->nilai_ppn)/100;
+			$tagihan->ppn = round($tagihan->nilai_tagihan_tanpa_ppn * ($tagihan->ppn_flag * $tagihan->nilai_ppn)/100);
 			
 			//nilai_tagihan (dengan ppn)
 			$tagihan->nilai_tagihan = $tagihan->nilai_tagihan_tanpa_ppn + $tagihan->ppn;
@@ -797,7 +797,7 @@ class M_tagihan extends CI_Model
 
 			// ppn (ppn adalah ppn dalam bentuk rupiah, sedangkan nilai ppn adalah ppn dalam bentuk %)
 			$tagihan->ppn = 0;
-			$tagihan->ppn = $tagihan->nilai_tagihan_tanpa_ppn * ($tagihan->ppn_flag * $tagihan->nilai_ppn)/100;
+			$tagihan->ppn = round($tagihan->nilai_tagihan_tanpa_ppn * ($tagihan->ppn_flag * $tagihan->nilai_ppn)/100);
 			
 			//nilai_tagihan (dengan ppn)
 			$tagihan->nilai_tagihan = $tagihan->nilai_tagihan_tanpa_ppn + $tagihan->ppn;
@@ -996,6 +996,12 @@ class M_tagihan extends CI_Model
 				if(!in_array($air->unit_id,$unit_ids))
 					array_push($unit_ids,$air->unit_id);
 			}
+			echo("unit_ids<pre>");
+				print_r($unit_ids);
+			echo("</pre>");
+			echo("lingkungans<pre>");
+				print_r($tagihan->lingkungans);
+			echo("</pre>");
 			foreach ($unit_ids as $unit_id) {
 				$tmp = [];
 				foreach ($tagihan->lingkungans as $lingkungan) {
@@ -1003,7 +1009,7 @@ class M_tagihan extends CI_Model
 						array_push($tmp,$lingkungan);	
 				}
 				foreach ($tagihan->airs as $air) {
-					if($air->unit_id = $unit_id)
+					if($air->unit_id == $unit_id)
 						array_push($tmp,$air);	
 				}
 				if(isset($tmp) || isset($tmp)){
@@ -1011,6 +1017,9 @@ class M_tagihan extends CI_Model
 				}
 				// $now = date("Y-m-d", strtotime("+1 month", strtotime($now)));
 			}
+			echo("tagihan->gabungans<pre>");
+				print_r($tagihan->gabungans);
+			echo("</pre>");
 		}
 
 		return $tagihan->gabungans;

@@ -26,12 +26,15 @@ class Test extends CI_Controller
         $project = $this->m_core->project();
         $param = (object)[
             'unit_id' => [$unit_id],
-            'periode_awal' => '2019-07-01',
-            'periode_akhir' => '2019-12-01'
+            // 'periode_awal' => '2019-07-01',
+            // 'periode_akhir' => '2019-12-01'
         ];
         $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'periode');
-        echo("tagihans<pre>");
+        echo("PeriodeTagihans<pre>");
             print_r($tagihans);
+        echo("</pre>");
+        echo("UnitTagihans<pre>");
+            print_r($this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit'));
         echo("</pre>");
         $finalTagihans = [];
         foreach ($tagihans as $iterasi => $tagihan) {
