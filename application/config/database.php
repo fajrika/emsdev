@@ -77,73 +77,12 @@ $query_builder = true;
 $db['default'] = array(
     'dsn' => '',
 
-    // 'hostname' => '13.76.184.138',
-    // 'username' => 'ciputraestate',
-    // 'password' => 'ciputraestate123',
-    // 'port' => '1443', 
-    // 'database' => 'emsdev',
 
-    'hostname' => 'LAPTOP-LUPPNCRP\SQLEXPRESS',
+    'hostname' => 'localhost',
     'username' => 'sa',
     'password' => 'abc123?',
     'port' => '1443', 
     'database' => 'emsdevtest',
-
-    
-    'dbdriver' => 'sqlsrv',
-    'dbprefix' => '',
-    'pconnect' => true,
-    'db_debug' => (ENVIRONMENT !== 'production'),
-    'cache_on' => false,
-    'cachedir' => '',
-    'char_set' => 'utf8',
-    'dbcollat' => 'utf8_general_ci',
-    'swap_pre' => '',
-    'encrypt'  => false,
-    'compress' => false,
-    'stricton' => false,
-    'failover' => array(),
-    'save_queries' => true,
-);
-$db['test'] = array(
-    'dsn' => '',
-    'port' => '1443', 
-    'password' => 'ciputraestate123',
-    'username' => 'ciputraestate',
-    
-    'hostname' => '.',
-                   
-    'database' => 'ems_temp',
-    // 'hostname' => '80.211.11.164',
-    // 'database' => 'ciputraEmsFajrika',
-    
-    'dbdriver' => 'sqlsrv',
-    'dbprefix' => '',
-    'pconnect' => true,
-    'db_debug' => (ENVIRONMENT !== 'production'),
-    'cache_on' => false,
-    'cachedir' => '',
-    'char_set' => 'utf8',
-    'dbcollat' => 'utf8_general_ci',
-    'swap_pre' => '',
-    'encrypt'  => false,
-    'compress' => false,
-    'stricton' => false,
-    'failover' => array(),
-    'save_queries' => true,
-);
-$db['erems'] = array(
-    'dsn' => '',
-    'port' => '1433', 
-    'password' => 'abc123?',
-    'username' => 'sa',
-    
-    'hostname' => 'localhost',
-    'database' => 'erems',
-    
-    // 'hostname' => '80.211.11.164',
-    // 'database' => 'ciputraEmsFajrika',
-    
     'dbdriver' => 'sqlsrv',
     'dbprefix' => '',
     'pconnect' => true,
