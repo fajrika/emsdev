@@ -90,8 +90,8 @@ class Water_meter extends REST_Controller
             $result = $this->db->select("   user.id,
                                             user.name,
                                             user.email,
-                                            jabatan.id as role_id,
-                                            jabatan.name as role,
+                                            level.id as role_id,
+                                            level.name as role,
                                             project.id as project_id
                                         ")
                 ->from("user")
@@ -100,8 +100,12 @@ class Water_meter extends REST_Controller
                     "group_user.user_id = user.id"
                 )
                 ->join(
-                    "jabatan",
-                    "jabatan.id = group_user.jabatan_id"
+                    "group_user_level",
+                    "group_user_level.group_user_id = group_user.id"
+                )
+                ->join(
+                    "level",
+                    "level.id = group_user_level.level_id"
                 )
                 ->join('project',
                         'project.id = group_user.project_id');
@@ -184,9 +188,9 @@ class Water_meter extends REST_Controller
         if(isset($parameter->pegawai_id))
             $result = $result->where("user.id", $parameter->pegawai_id);
         if(isset($parameter->role_id))
-            $result = $result->where("jabatan.id", $parameter->role_id);
+            $result = $result->where("level.id", $parameter->role_id);
         if(isset($parameter->role))
-            $result = $result->where("jabatan.name", $parameter->role);
+            $result = $result->where("level.name", $parameter->role);
         if(isset($parameter->blok_id))
             $result = $result->where("blok.id", $parameter->blok_id);   
         if(isset($parameter->kawasan_id))
