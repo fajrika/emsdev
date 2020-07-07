@@ -263,21 +263,55 @@ class m_pemutihan extends CI_Model
         if(!$data->unit_id)
             return "Tidak ada unit yang terpilih";
 
-        $tagihan = $this->db->select("
-                                        unit_id,
-                                        tagihan_lingkungan_tanpa_ppn as lingkungan_nilai_pokok,
-                                        tagihan_lingkungan as lingkungan_nilai_pokok_ppn,
-                                        denda_lingkungan as lingkungan_nilai_denda,
-                                        tagihan_air_tanpa_ppn as air_nilai_pokok,
-                                        denda_air as air_nilai_denda,
-                                        periode
-                                    ")
-                        ->from("v_sales_force_bill")
-                        ->where_in("unit_id", $data->unit_id)
-                        ->where("periode >=", $pemutihan->periode_awal)
-                        ->where("periode <=", $pemutihan->periode_akhir)
-                        ->order_by("unit_id,periode")
-                        ->get()->result();
+        // $tagihan = $this->db->select("
+        //                                 unit_id,
+        //                                 tagihan_lingkungan_tanpa_ppn as lingkungan_nilai_pokok,
+        //                                 tagihan_lingkungan as lingkungan_nilai_pokok_ppn,
+        //                                 denda_lingkungan as lingkungan_nilai_denda,
+        //                                 tagihan_air_tanpa_ppn as air_nilai_pokok,
+        //                                 denda_air as air_nilai_denda,
+        //                                 periode
+        //                             ")
+        //                 ->from("v_sales_force_bill")
+        //                 ->where_in("unit_id", $data->unit_id)
+        //                 ->where("periode >=", $pemutihan->periode_awal)
+        //                 ->where("periode <=", $pemutihan->periode_akhir)
+        //                 ->order_by("unit_id,periode")
+        //                 ->get()->result();
+
+
+        $this->load->model("core/m_tagihan");
+        $param = (object)[
+            'unit_id' => $data->unit_id,
+            'periode_awal' => $pemutihan->periode_awal,
+            'periode_akhir' => $pemutihan->periode_akhir
+        ];
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'periode');
+        $tagihan = [];
+        foreach ($tagihans as $iterasi => $tagihanTmp) {
+            $tmp = (object)[
+                "unit_id" => 0,
+                "lingkungan_nilai_pokok" => 0,
+                "lingkungan_nilai_pokok_ppn" => 0,
+                "lingkungan_nilai_denda" => 0,
+                "air_nilai_pokok" => 0,
+                "air_nilai_denda" => 0,
+                "periode" => null
+            ];
+            if(isset($tagihanTmp->lingkungan->id)){
+                $tmp->unit_id = $tagihanTmp->lingkungan->unit_id;
+                $tmp->lingkungan_nilai_pokok = $tagihanTmp->lingkungan->nilai_tagihan_tanpa_ppn;
+                $tmp->lingkungan_nilai_pokok_ppn = $tagihanTmp->lingkungan->nilai_tagihan;
+                $tmp->lingkungan_nilai_denda = $tagihanTmp->lingkungan->nilai_denda;
+                $tmp->periode = $tagihanTmp->lingkungan->periode;
+            }elseif(isset($tagihanTmp->air->id)){
+                $tmp->unit_id = $tagihanTmp->air->unit_id;
+                $tmp->air_nilai_pokok = $tagihanTmp->air->nilai_tagihan;
+                $tmp->air_nilai_denda = $tagihanTmp->air->nilai_denda;
+                $tmp->periode = $tagihanTmp->air->periode;
+            }
+            array_push($tagihan,$tmp);
+        } 
         $pemutihan_tagihan_type = $pemutihan_nilai->nilai_tagihan_type;
         $pemutihan_tagihan      = $pemutihan_nilai->nilai_tagihan;
         $pemutihan_denda_type   = $pemutihan_nilai->nilai_denda_type; 
