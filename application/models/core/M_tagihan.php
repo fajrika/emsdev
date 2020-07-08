@@ -944,7 +944,9 @@ class M_tagihan extends CI_Model
 		$periode_air = (object)[];
 		$periode_air->min = isset($tagihan->airs[0])?$tagihan->airs[0]->periode:'9999-99-99';
 		$periode_air->max = isset($tagihan->airs[0])?end($tagihan->airs)->periode:'0';
-		
+		// echo("before<pre>");
+		// 		print_r($tagihan);
+		// 	echo("</pre>");
 		// echo("<pre>");
 		// 	print_r($periode_lingkungan);
 		// echo("</pre>");
@@ -996,9 +998,9 @@ class M_tagihan extends CI_Model
 				if(!in_array($air->unit_id,$unit_ids))
 					array_push($unit_ids,$air->unit_id);
 			}
-			echo("unit_ids<pre>");
-				print_r($unit_ids);
-			echo("</pre>");
+			// echo("unit_ids<pre>");
+			// 	print_r($unit_ids);
+			// echo("</pre>");
 			// echo("lingkungans<pre>");
 			// 	print_r($tagihan->lingkungans);
 			// echo("</pre>");
@@ -1030,12 +1032,12 @@ class M_tagihan extends CI_Model
 
 				// $now = date("Y-m-d", strtotime("+1 month", strtotime($now)));
 			}
-			echo("after<pre>");
-				print_r($tagihan->gabungans);
-			echo("</pre>");
-			echo("iterasi<pre>");
-				print_r($iterasi);
-			echo("</pre>");
+			// echo("after<pre>");
+			// 	print_r($tagihan->gabungans);
+			// echo("</pre>");
+			// echo("iterasi<pre>");
+			// 	print_r($iterasi);
+			// echo("</pre>");
 			// echo("tagihan->gabungans<pre>");
 			// 	print_r($tagihan->gabungans);
 			// echo("</pre>");

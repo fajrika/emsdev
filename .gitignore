@@ -15,5 +15,6 @@ application/logs/*
 !application/logs/index.html
 !application/logs/.htaccess
 /vendor/
+db/ems_backup_2020_07_07_120008_7798038.bak
 application/config/*
 db/ems_backup_2020_07_07_120008_7798038.bak
