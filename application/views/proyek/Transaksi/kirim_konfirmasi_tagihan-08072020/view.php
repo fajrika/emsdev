@@ -28,10 +28,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 <div class="clearfix"></div>
 
 
-<div class="x_content" style="padding: 10px;">
+<div class="x_content">
 	<form>
 		<table id="tableDTServerSite" class="table table-striped jambo_table bulk_action">
-			<!-- <tfoot id="tfoot" style="display: table-header-group">
+			<tfoot id="tfoot" style="display: table-header-group">
 				<tr>
 					<th>Check</th>
 					<th>Kawasan</th>
@@ -45,7 +45,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					<th>Dokumen Live</th>
 					<th>Dokumen Downloaded</th>
 				</tr>
-			</tfoot> -->
+			</tfoot>
 			<thead>
 				<tr>
 					<th class="col-md-1 col-sm-1 col-lg-1 col-xs-1" id="di_bayar_dengan_table">
@@ -63,7 +63,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					<th>Dokumen Downloaded</th>
 				</tr>
 			</thead>
-			<tbody></tbody>
+			<tbody>
+			</tbody>
+
 		</table>
 	</form>
 
@@ -82,6 +84,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					<br>
 					<a class="btn btn-danger" id="delete_link_m_n" href="">Delete</a>
 					<button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Cancel</button>
+
 				</div>
 			</div>
 		</div>
@@ -90,70 +93,34 @@ defined('BASEPATH') or exit('No direct script access allowed');
 		$(document).ready(function() {
 			$("#a").html('');
 			$('.select2').select2();
-		});
 
-		$(document).ready(function(){
+		});
+		$(document).ready(function() {
 			$('#tableDTServerSite tfoot th').each( function () {
 				var title = $(this).text();
 				$(this).html( '<input type="text" placeholder="Filter '+title+'" />' );
-			});
+			} );
+			var table = 
+				$('#tableDTServerSite').DataTable( {
+					"processing": true,
+					"serverSide": true,
+					"ajax": "<?=site_url("Transaksi/P_kirim_konfirmasi_tagihan/ajax_get_view")?>",
+					"order": [[ 1, "asc" ]]
 
-            var dataTable = $('#tableDTServerSite').DataTable({ 
-                "serverSide": true,
-                "stateSave" : false,
-                "bAutoWidth": true,
-                "oLanguage": {
-                    "sSearch": "<i class='fa fa-fw fa-search'></i> ",
-                    "sSearchPlaceholder": "Search here ..",
-                    "sLengthMenu": "_MENU_ &nbsp;&nbsp; <a href='#' id='print-doc' class='btn btn-danger' style='margin-left: 10%;'><img src='<?=base_url('images/extension/icon_pdf.png');?>' /> Print Document</a>",
-                    "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
-                    "sInfoFiltered": "(filtered from _MAX_ total entries)", 
-                    "sZeroRecords": "No matching records found", 
-                    "sEmptyTable": "No data available in table", 
-                    "sLoadingRecords": "Please wait - loading...", 
-                    "oPaginate": {
-                        "sPrevious": "Prev",
-                        "sNext": "Next"
-                    }
-                },
-                "aaSorting": [[ 1, "asc" ]],
-                "columnDefs": [ 
-                    {
-                        "targets": 'no-sort',
-                        "orderable": false,
-                    }
-                ],
-                "sPaginationType": "simple_numbers", 
-                "iDisplayLength": 10,
-                "aLengthMenu": [[10, 20, 50, 100, 150], [10, 20, 50, 100, 150]],
-                "ajax":{
-                    url : "<?= site_url('Transaksi/P_kirim_konfirmasi_tagihan/request_tagihan_json'); ?>",
-                    type: "post",
-                    error: function(){ 
-                        $(".my-grid-error").html("");
-                        $("#tableDTServerSite").append('<tbody class="my-grid-error"><tr><th colspan="11"><center>No data found in the server</center></th></tr></tbody>');
-                        $("#my-grid_processing").css("display","none");
-                    }
-                }
-            });
-            $("#print-doc").hide();
+				});
 
-			/*var table = $('#tableDTServerSite').DataTable( {
-				"processing": true,
-				"serverSide": true,
-				"ajax": "<?=site_url("Transaksi/P_kirim_konfirmasi_tagihan/ajax_get_view")?>",
-				"order": [[ 1, "asc" ]]
-			});
 			table.columns().every( function () {
 				var that = this;
 				$( 'input', this.footer() ).on( 'keyup change', function () {
 					if ( that.search() !== this.value ) {
-						that.search( this.value ).draw();
+						that
+							.search( this.value )
+							.draw();
 					}
-				});
-			});*/
+				} );
+			} );
 
-			/*$("table").on("ifChanged", "#check-all", function() {
+			$("table").on("ifChanged", "#check-all", function() {
 				if ($("#check-all").is(":checked")) {
 					$(".table-check").iCheck("check");
 				}else{
@@ -165,17 +132,24 @@ defined('BASEPATH') or exit('No direct script access allowed');
 				var title = $(this).text();
 				$(this).html('<input type="text" placeholder="Search ' + title + '" />');
 			});
+
+			// DataTable
+			// var table = $('#tableDT2').DataTable({
+			// 	"iDisplayLength": 100
+			// });
+
 			// Apply the search
-			table.columns().every(function(){
+			table.columns().every(function() {
 				var that = this;
 				$('input', this.footer()).on('keyup change', function() {
 					if (that.search() !== this.value) {
-						that.search(this.value).draw();
+						that
+							.search(this.value)
+							.draw();
 					}
 				});
-			});*/
+			});
 		});
-
 		$("#btn-kirim-email").click(function() {
 			var unit_id = $("input[name='unit_id[]']").map(function() {
 				if ($(this).is(":checked")) {

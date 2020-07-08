@@ -176,12 +176,6 @@ class P_surat_peringatan  extends CI_Controller
                     'crlf'      => "\r\n",
                     'newline'   => "\r\n"
                 ];
-                if($this->m_parameter_project->get($project->id,"smtp_secure")){
-                    $config['smtp_crypto'] = $this->m_parameter_project->get($project->id,"smtp_secure");
-                }else{
-                    $config['smtp_crypto'] = 'ssl';
-                }
-
                 echo("<pre>");
                     print_r($config);
                 echo("</pre>");

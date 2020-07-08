@@ -85,7 +85,7 @@ class P_pembayaran extends CI_Controller
 							->where("cara_pembayaran.project_id",$project->id)
 							->where("isnull(bank.id,0) != 0")
 							->distinct()
-							->get()->result();
+							->get()->result();					
 		
 		if($jenis_unit == 1){
 			if ($unit_id != 0) {

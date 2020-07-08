@@ -312,7 +312,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 								"<td class='meter-pakai'>" + data[i].meter_pakai + "</td>" +
 								"</input></td>" +
 								"<td class='col-md-1'><a class='save-row btn btn-success' unit_id='" + data[i].id + "' periode='" + $("#periode").val() + "'>Save</a></td>" +
-								"<td class='col-md-1'><a class='btn-success'>View Foto</a></td>" +
+								"<td class='col-md-1'><a class='btn btn-success' href='"+data[i].foto_url+"'>View Foto</a></td>" +
 								"</tr>");
 						}
 						tableICheck();

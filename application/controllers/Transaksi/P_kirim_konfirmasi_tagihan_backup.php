@@ -6,6 +6,8 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
 {
     public function __construct()
     {
+        die('Under Construction'); //=== die by Arif
+        
         parent::__construct();
         $this->load->database();
         $this->load->model('m_core');
