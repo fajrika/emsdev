@@ -33,7 +33,8 @@ class m_user extends CI_Model
                             END as status,
                             ces_id,
                             description,
-                            email")
+                            email,
+                            nik")
                     ->from("user")
                     ->where("id",$id)
                     ->get()->row();
@@ -62,7 +63,7 @@ class m_user extends CI_Model
             $return->message = "Nama sudah di gunakan";
             return $return;
         }
-        
+        $data->nik = $data->nik;
         $data->failed_login = 0;
         $data->active = 1;
         $data->password = md5($data->password);
@@ -92,6 +93,7 @@ class m_user extends CI_Model
             $this->db->set('ces_id',$data->ces_id);
             $this->db->set('description',$data->description);
             $this->db->set('email',$data->email);
+            $this->db->set('nik',$data->nik);
             $this->db->where('id',$data->id);
             $this->db->update('user');
             $return->status = true;        

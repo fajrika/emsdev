@@ -92,7 +92,8 @@ class Water_meter extends REST_Controller
                                             user.email,
                                             level.id as role_id,
                                             level.name as role,
-                                            project.id as project_id
+                                            project.id as project_id,
+                                            user.nik
                                         ")
                 ->from("user")
                 ->join(
