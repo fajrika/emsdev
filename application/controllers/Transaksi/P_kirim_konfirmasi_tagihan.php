@@ -98,8 +98,8 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
         $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
         $this->load->view('core/body_header', ['title' => 'Transaksi Service > Kirim Konfirmasi Tagihan', 'subTitle' => 'List']);
-        // $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan/view', ['data' => $data]);
-        $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan-08072020/view', ['data' => $data]);
+        $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan/view', ['data' => $data]);
+        // $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan-08072020/view', ['data' => $data]);
         $this->load->view('core/body_footer');
         $this->load->view('core/footer');
     }
@@ -155,9 +155,6 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     }
     public function test()
     {
-
-
-
         // response post
         // 90026993                      = Harus Cek Report
         // Invalid MSISDN                = Failed / Nomor Salah
@@ -474,7 +471,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            $nestedData[] = $row['unit_id'];
+            $nestedData[] = "<center><input name='unit_id[]' type='checkbox' class='flat table-check' value='".$row['unit_id']."' style='cursor: pointer;'></center>";
             $nestedData[] = $row['kawasan'];
             $nestedData[] = $row['blok'];
             $nestedData[] = $row['no_unit'];
@@ -483,21 +480,21 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             $nestedData[] = $row['send_email'];
             $nestedData[] = $row['send_sms'];
             $nestedData[] = $row['send_surat'];
+            // $nestedData[] = "
+            //     <a href='".site_url('transaksi/p_kirim_konfirmasi_tagihan/print_pdf/'.$row['unit_id'])."' 
+            //         class='btn btn-sm btn-danger'
+            //         data-toggle='tooltip' data-offset='0,10' data-original-title='Print'
+            //         target='_blank'
+            //         >
+            //         <i class='fa fa-print'></i>
+            //     </a>
+            // ";
             $nestedData[] = "
-                <a href='".site_url('transaksi/p_kirim_konfirmasi_tagihan/print_pdf/'.$row['unit_id'])."' 
-                    class='btn btn-sm btn-danger'
-                    data-toggle='tooltip' data-offset='0,10' data-original-title='Print'
-                    target='_blank'
-                    >
-                    <i class='fa fa-print'></i>
-                </a>
-            ";
-            $nestedData[] = "
-            <script>
-            $(function() {
-                $('[data-toggle=\"tooltip\"]').tooltip();
-            })
-            </script>
+                <script>
+                $(function() {
+                    $('[data-toggle=\"tooltip\"]').tooltip();
+                })
+                </script>
             ";
             $data[] = $nestedData;
             $urut1++;
@@ -519,193 +516,243 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     | Jakarta, 2020-07-08
     |
     */
-    public function print_pdf($unit_id=NULL)
+    public function print_pdf()
     {
-        $this->load->model('Cetakan/m_konfirmasi_tagihan');
-        $project              = $this->m_core->project();
-        $unit                 = $this->m_konfirmasi_tagihan->get_unit($unit_id);
-        $status_saldo_deposit = $this->m_konfirmasi_tagihan->get_status_saldo_deposit($unit_id);
-        $saldo_deposit        = $this->m_konfirmasi_tagihan->get_saldo_deposit($unit_id);
-        $ttd                  = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
-
-        $catatan = $unit->catatan;
-        $catatan = str_replace("{{va_unit}}", $unit->virtual_account, $catatan);
-        $uid = $this->db
-            ->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
-            ->from("unit")
-            ->join("project", "project.id = unit.project_id")
-            ->join("blok", "blok.id = unit.blok_id")
-            ->join("kawasan", "kawasan.id = blok.kawasan_id")
-            ->where("unit.id", $unit_id)
-            ->get()
-            ->row();
-        $uid = $uid ? $uid->uid : 0;    
-        $catatan = str_replace("{{no_iplk}}", $uid, $catatan);
-
-        //Data Tagihan Without Sorting
-        $dataTagihanWoS = $this->ajax_get_tagihan($unit_id);
-
-        //After sort
-        $dataTagihanWS = [];
-        
-        $min_tagihan_air        = isset($dataTagihanWoS->tagihan_air[0]) ? $dataTagihanWoS->tagihan_air[0]->periode : null;
-        $max_tagihan_air        = isset($dataTagihanWoS->tagihan_air[0]) ? end($dataTagihanWoS->tagihan_air)->periode : null;
-        $min_tagihan_lingkungan = isset($dataTagihanWoS->tagihan_lingkungan[0]) ? $dataTagihanWoS->tagihan_lingkungan[0]->periode : null;
-        $max_tagihan_lingkungan = isset($dataTagihanWoS->tagihan_lingkungan[0]) ? end($dataTagihanWoS->tagihan_lingkungan)->periode : null;
-
-        if ($min_tagihan_air == null) {
-            $min_tagihan_air = $min_tagihan_lingkungan;
-        } if ($min_tagihan_lingkungan == null) {
-            $min_tagihan_lingkungan = $min_tagihan_air;
-        } if ($max_tagihan_air == null) {
-            $max_tagihan_air = $max_tagihan_lingkungan;
-        } if ($max_tagihan_lingkungan == null) {
-            $max_tagihan_lingkungan = $max_tagihan_air;
-        }
-        $min_tagihan = new DateTime($min_tagihan_air > $min_tagihan_lingkungan ? $min_tagihan_lingkungan : $min_tagihan_air);
-        $max_tagihan = new DateTime($max_tagihan_air > $max_tagihan_lingkungan ? $max_tagihan_air : $max_tagihan_lingkungan);
-
-        $iterasi = 0;
-        $total_tagihan = (object)[];
-        $total_tagihan->pakai   = null;
-        $total_tagihan->air     = null;
-        $total_tagihan->ipl     = null;
-        $total_tagihan->ppn     = null;
-        $total_tagihan->denda   = null;
-        $total_tagihan->tunggakan = null;
-        $total_tagihan->total   = null;
-        $total_tagihan->lain    = null;
-        $periode_first = $this->bln_indo(substr($min_tagihan->format("Y-m-01"),5,2))." ".substr($min_tagihan->format("Y-m-01"),0,4);
-        $periode_last  = $this->bln_indo(substr($max_tagihan->format("Y-m-01"),5,2))." ".substr($max_tagihan->format("Y-m-01"),0,4);
-
-        $service_air = $this->db->select("jarak_periode_penggunaan")
-            ->from("service")
-            ->where("project_id",$project->id)
-            ->where("service_jenis_id",2)
-            ->get()
-            ->row();
-        $service_air = $service_air ? $service_air->jarak_periode_penggunaan : 0;
-        $service_lingkungan = $this->db->select("jarak_periode_penggunaan")
-            ->from("service")
-            ->where("project_id",$project->id)
-            ->where("service_jenis_id",1)
-            ->get()
-            ->row();
-        $service_lingkungan = $service_lingkungan ? $service_lingkungan->jarak_periode_penggunaan : 0;
-        if ($service_air == $service_lingkungan) {
-            $jarak_periode_penggunaan = $service_air;
-        } else {
-            $jarak_periode_penggunaan = -1;
-        }
-        for($i = $min_tagihan; $i <= $max_tagihan; $i->modify('+1 month'))
-        {
-            $periode = $i->format("Y-m-01");
-            $periode_1 = $periode;
-            if($jarak_periode_penggunaan != -1) {
-                $tmp = $periode;
-                $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -$jarak_periode_penggunaan month");
-                $tmp = date("Y-m-d",$tmp);
-                $periode_1 = $tmp;
-            }
-            $dataTagihanWS[$iterasi] =(object)[];
-            $dataTagihanWS[$iterasi]->periode = substr($this->bln_indo(substr($periode,5,2)),0,3)."<br>".substr($periode,0,4);
-            $dataTagihanWS[$iterasi]->periode_penggunaan = substr($this->bln_indo(substr($periode_1,5,2)),0,3)."<br>".substr($periode_1,0,4);
-            $dataTagihanWS[$iterasi]->meter_awal    = null;
-            $dataTagihanWS[$iterasi]->meter_akhir   = null;
-            $dataTagihanWS[$iterasi]->pakai         = null;
-            $dataTagihanWS[$iterasi]->air           = 0;
-            $dataTagihanWS[$iterasi]->ipl           = null;
-            $dataTagihanWS[$iterasi]->ppn           = null;
-            $dataTagihanWS[$iterasi]->denda         = 0;
-            $dataTagihanWS[$iterasi]->tunggakan     = 0;
-            $dataTagihanWS[$iterasi]->total         = null;
-            
-            foreach ($dataTagihanWoS->tagihan_air as $k => $v) {
-                if($v->periode == $periode){
-                    $tmp_tagihan_air = $v;
-                    $dataTagihanWS[$iterasi]->meter_awal    = $v->meter_awal;
-                    $dataTagihanWS[$iterasi]->meter_akhir   = $v->meter_akhir;
-                    $dataTagihanWS[$iterasi]->pakai         = $v->meter_akhir-$v->meter_awal;
-                    if($v->belum_bayar > 0){
-                        $dataTagihanWS[$iterasi]->tunggakan     = $v->belum_bayar;
-                        $dataTagihanWS[$iterasi]->total         += $v->belum_bayar;
-                            
-                    }else{
-                        $dataTagihanWS[$iterasi]->air           = $v->nilai_tagihan;
-                        $dataTagihanWS[$iterasi]->denda         += $v->nilai_denda;
-                        $dataTagihanWS[$iterasi]->total         += $v->total;
-                    }
-                    break;
+        require_once 'vendor/MPDF/vendor/autoload.php';
+        $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4']);
+        // $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4', 'orientation' => 'L']);
+        ob_start();
+        ?>
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <title>Kirim Konfirmasi Tagihan</title>
+            <style type="text/css">
+                html {
+                    margin-top: 200px;
+                    padding: 0px;
                 }
-            }
-            // var_dump($tmp_tagihan_air);
-            foreach ($dataTagihanWoS->tagihan_lingkungan as $k => $v) {
-                if ($v->periode == $periode) {
-                    if ($v->belum_bayar > 0) {
-                        $dataTagihanWS[$iterasi]->tunggakan += $v->belum_bayar;
-                        $dataTagihanWS[$iterasi]->total  += $v->belum_bayar;
-                            
+                body {
+                    font-size: 13.5px;
+                }
+                table {
+                    width: 100%;
+                }
+                .casabanti {
+                    font-family: 'casbanti';
+                }
+                .f-20 {
+                    font-size: 20px;
+                    font-weight: 700;
+                    line-height: 15px;
+                }
+
+                .f-14, .f-15 { font-size: 14px; }
+                .lh-15 { line-height: 15px; }
+                .align-center, .text-center { text-align: center; }
+                .text-right { text-align: right; }
+                .font-normal { font-weight: 500; }
+                .table-striped tr:nth-child(even) { background-color: #f2f2f2; }
+                .table-striped th { font-size: 12px; }
+            </style>
+        </head>
+        <body>
+            <?php
+            if (! empty($_GET['unit_id']))
+            {
+                $explode = $this->input->get('unit_id');
+                $explode = explode(",", $explode);
+                $nomor   = 1;
+                $jml_data= count($explode) - 1;
+                foreach ($explode as $unit_id)
+                {
+                    $this->load->model('Cetakan/m_konfirmasi_tagihan');
+                    $project              = $this->m_core->project();
+                    $unit                 = $this->m_konfirmasi_tagihan->get_unit($unit_id);
+                    $status_saldo_deposit = $this->m_konfirmasi_tagihan->get_status_saldo_deposit($unit_id);
+                    $saldo_deposit        = $this->m_konfirmasi_tagihan->get_saldo_deposit($unit_id);
+                    $ttd                  = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
+
+                    $catatan = $unit->catatan;
+                    $catatan = str_replace("{{va_unit}}", $unit->virtual_account, $catatan);
+                    $uid = $this->db
+                        ->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
+                        ->from("unit")
+                        ->join("project", "project.id = unit.project_id")
+                        ->join("blok", "blok.id = unit.blok_id")
+                        ->join("kawasan", "kawasan.id = blok.kawasan_id")
+                        ->where("unit.id", $unit_id)
+                        ->get()
+                        ->row();
+                    $uid = $uid ? $uid->uid : 0;    
+                    $catatan = str_replace("{{no_iplk}}", $uid, $catatan);
+
+                    //Data Tagihan Without Sorting
+                    $dataTagihanWoS = $this->ajax_get_tagihan($unit_id);
+
+                    //After sort
+                    $dataTagihanWS = [];
+                    
+                    $min_tagihan_air        = isset($dataTagihanWoS->tagihan_air[0]) ? $dataTagihanWoS->tagihan_air[0]->periode : null;
+                    $max_tagihan_air        = isset($dataTagihanWoS->tagihan_air[0]) ? end($dataTagihanWoS->tagihan_air)->periode : null;
+                    $min_tagihan_lingkungan = isset($dataTagihanWoS->tagihan_lingkungan[0]) ? $dataTagihanWoS->tagihan_lingkungan[0]->periode : null;
+                    $max_tagihan_lingkungan = isset($dataTagihanWoS->tagihan_lingkungan[0]) ? end($dataTagihanWoS->tagihan_lingkungan)->periode : null;
+
+                    if ($min_tagihan_air == null) {
+                        $min_tagihan_air = $min_tagihan_lingkungan;
+                    } if ($min_tagihan_lingkungan == null) {
+                        $min_tagihan_lingkungan = $min_tagihan_air;
+                    } if ($max_tagihan_air == null) {
+                        $max_tagihan_air = $max_tagihan_lingkungan;
+                    } if ($max_tagihan_lingkungan == null) {
+                        $max_tagihan_lingkungan = $max_tagihan_air;
+                    }
+                    $min_tagihan = new DateTime($min_tagihan_air > $min_tagihan_lingkungan ? $min_tagihan_lingkungan : $min_tagihan_air);
+                    $max_tagihan = new DateTime($max_tagihan_air > $max_tagihan_lingkungan ? $max_tagihan_air : $max_tagihan_lingkungan);
+
+                    $iterasi = 0;
+                    $total_tagihan = (object)[];
+                    $total_tagihan->pakai   = null;
+                    $total_tagihan->air     = null;
+                    $total_tagihan->ipl     = null;
+                    $total_tagihan->ppn     = null;
+                    $total_tagihan->denda   = null;
+                    $total_tagihan->tunggakan = null;
+                    $total_tagihan->total   = null;
+                    $total_tagihan->lain    = null;
+                    $periode_first = $this->bln_indo(substr($min_tagihan->format("Y-m-01"),5,2))." ".substr($min_tagihan->format("Y-m-01"),0,4);
+                    $periode_last  = $this->bln_indo(substr($max_tagihan->format("Y-m-01"),5,2))." ".substr($max_tagihan->format("Y-m-01"),0,4);
+
+                    $service_air = $this->db->select("jarak_periode_penggunaan")
+                        ->from("service")
+                        ->where("project_id",$project->id)
+                        ->where("service_jenis_id",2)
+                        ->get()
+                        ->row();
+                    $service_air = $service_air ? $service_air->jarak_periode_penggunaan : 0;
+                    $service_lingkungan = $this->db->select("jarak_periode_penggunaan")
+                        ->from("service")
+                        ->where("project_id",$project->id)
+                        ->where("service_jenis_id",1)
+                        ->get()
+                        ->row();
+                    $service_lingkungan = $service_lingkungan ? $service_lingkungan->jarak_periode_penggunaan : 0;
+                    if ($service_air == $service_lingkungan) {
+                        $jarak_periode_penggunaan = $service_air;
                     } else {
-                        $dataTagihanWS[$iterasi]->ipl    = $v->total_tanpa_ppn;
-                        $dataTagihanWS[$iterasi]->ppn    = $v->nilai_tagihan-$v->total_tanpa_ppn;
-                        $dataTagihanWS[$iterasi]->denda += $v->nilai_denda;
-                        $dataTagihanWS[$iterasi]->total += $v->total;
+                        $jarak_periode_penggunaan = -1;
                     }
-                    break;                
+                    for($i = $min_tagihan; $i <= $max_tagihan; $i->modify('+1 month'))
+                    {
+                        $periode = $i->format("Y-m-01");
+                        $periode_1 = $periode;
+                        if($jarak_periode_penggunaan != -1) {
+                            $tmp = $periode;
+                            $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -$jarak_periode_penggunaan month");
+                            $tmp = date("Y-m-d",$tmp);
+                            $periode_1 = $tmp;
+                        }
+                        $dataTagihanWS[$iterasi] =(object)[];
+                        $dataTagihanWS[$iterasi]->periode = substr($this->bln_indo(substr($periode,5,2)),0,3)." ".substr($periode,0,4);
+                        $dataTagihanWS[$iterasi]->periode_penggunaan = substr($this->bln_indo(substr($periode_1,5,2)),0,3)."<br>".substr($periode_1,0,4);
+                        $dataTagihanWS[$iterasi]->meter_awal    = null;
+                        $dataTagihanWS[$iterasi]->meter_akhir   = null;
+                        $dataTagihanWS[$iterasi]->pakai         = null;
+                        $dataTagihanWS[$iterasi]->air           = 0;
+                        $dataTagihanWS[$iterasi]->ipl           = null;
+                        $dataTagihanWS[$iterasi]->ppn           = null;
+                        $dataTagihanWS[$iterasi]->denda         = 0;
+                        $dataTagihanWS[$iterasi]->tunggakan     = 0;
+                        $dataTagihanWS[$iterasi]->total         = null;
+                        
+                        foreach ($dataTagihanWoS->tagihan_air as $k => $v) {
+                            if($v->periode == $periode) {
+                                $tmp_tagihan_air = $v;
+                                $dataTagihanWS[$iterasi]->meter_awal    = $v->meter_awal;
+                                $dataTagihanWS[$iterasi]->meter_akhir   = $v->meter_akhir;
+                                $dataTagihanWS[$iterasi]->pakai         = $v->meter_akhir-$v->meter_awal;
+                                if ($v->belum_bayar > 0) {
+                                    $dataTagihanWS[$iterasi]->tunggakan = $v->belum_bayar;
+                                    $dataTagihanWS[$iterasi]->total    += $v->belum_bayar;
+                                        
+                                } else {
+                                    $dataTagihanWS[$iterasi]->air       = $v->nilai_tagihan;
+                                    $dataTagihanWS[$iterasi]->denda    += $v->nilai_denda;
+                                    $dataTagihanWS[$iterasi]->total    += $v->total;
+                                }
+                                break;
+                            }
+                        }
+                        // var_dump($tmp_tagihan_air);
+                        foreach ($dataTagihanWoS->tagihan_lingkungan as $k => $v) {
+                            if ($v->periode == $periode) {
+                                if ($v->belum_bayar > 0) {
+                                    $dataTagihanWS[$iterasi]->tunggakan += $v->belum_bayar;
+                                    $dataTagihanWS[$iterasi]->total  += $v->belum_bayar;
+                                        
+                                } else {
+                                    $dataTagihanWS[$iterasi]->ipl    = $v->total_tanpa_ppn;
+                                    $dataTagihanWS[$iterasi]->ppn    = $v->nilai_tagihan-$v->total_tanpa_ppn;
+                                    $dataTagihanWS[$iterasi]->denda += $v->nilai_denda;
+                                    $dataTagihanWS[$iterasi]->total += $v->total;
+                                }
+                                break;                
+                            }
+                        }
+                        $total_tagihan->pakai   += $dataTagihanWS[$iterasi]->pakai;
+                        $total_tagihan->air     += $dataTagihanWS[$iterasi]->air;
+                        $total_tagihan->ipl     += $dataTagihanWS[$iterasi]->ipl;
+                        $total_tagihan->ppn     += $dataTagihanWS[$iterasi]->ppn;
+                        $total_tagihan->denda   += $dataTagihanWS[$iterasi]->denda;
+                        $total_tagihan->total   += $dataTagihanWS[$iterasi]->total;
+                        $total_tagihan->tunggakan += $dataTagihanWS[$iterasi]->tunggakan;
+                        $iterasi++;
+                    }
+
+                    if($jarak_periode_penggunaan != -1) 
+                    {
+                        $data = [
+                            "unit" => $unit,
+                            "catatan" => $catatan,
+                            "tagihan" => $dataTagihanWS,
+                            "total_tagihan" => $total_tagihan,
+                            "periode_first" => $periode_first,
+                            "periode_last" => $periode_last,
+                            "saldo_deposit" => $saldo_deposit,
+                            "status_saldo_deposit" => $status_saldo_deposit,
+                            "ttd" => $ttd,
+                            "nomor" => $nomor++,
+                            "jml_data" => $jml_data
+                        ];
+                        $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan/print_pdf_second', $data);
+                    } else {
+                        $data =[
+                            "unit" => $unit,
+                            "catatan" => $catatan,
+                            "tagihan" => $dataTagihanWS,
+                            "total_tagihan" => $total_tagihan,
+                            "periode_first" => $periode_first,
+                            "periode_last" => $periode_last,
+                            "saldo_deposit" => $saldo_deposit,
+                            "status_saldo_deposit" => $status_saldo_deposit,
+                            "ttd" => $ttd,
+                            "nomor" => $nomor++,
+                            "jml_data" => $jml_data
+                        ];
+                        $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan/print_pdf', $data);
+                    }
                 }
             }
-            $total_tagihan->pakai   += $dataTagihanWS[$iterasi]->pakai;
-            $total_tagihan->air     += $dataTagihanWS[$iterasi]->air;
-            $total_tagihan->ipl     += $dataTagihanWS[$iterasi]->ipl;
-            $total_tagihan->ppn     += $dataTagihanWS[$iterasi]->ppn;
-            $total_tagihan->denda   += $dataTagihanWS[$iterasi]->denda;
-            $total_tagihan->total   += $dataTagihanWS[$iterasi]->total;
-            $total_tagihan->tunggakan += $dataTagihanWS[$iterasi]->tunggakan;
-            $iterasi++;
-        }        
-
-        // if($jarak_periode_penggunaan != -1)
-        //     $this->pdf->load_view("proyek/cetakan/konfirmasi_tagihan2",[
-        //         "unit"              => $unit,
-        //         "catatan"           => $catatan,
-        //         "tagihan"           => $dataTagihanWS,
-        //         "total_tagihan"     => $total_tagihan,
-        //         // "tagihan"           => $tagihan,
-        //         // "total_air"         => number_format($total_air),
-        //         // "total_lingkungan"  => number_format($total_lingkungan),
-        //         // "total_lain"        => number_format($total_lain),
-        //         // "total_pakai"       => number_format($total_pakai),
-        //         // "total_ppn"         => number_format($total_ppn),
-        //         // "total_denda"       => number_format($total_denda),
-        //         // "total"             => number_format($total),
-        //         "periode_first"     => $periode_first,
-        //         "periode_last"      => $periode_last,
-        //         "saldo_deposit"     => $saldo_deposit,
-        //         "status_saldo_deposit" => $status_saldo_deposit,
-        //         "ttd"               => $ttd,                                    
-        //     ]);
-        // else
-        //     $this->pdf->load_view("proyek/cetakan/konfirmasi_tagihan",[
-        //         "unit"              => $unit,
-        //         "catatan"           => $catatan,
-        //         "tagihan"           => $dataTagihanWS,
-        //         "total_tagihan"     => $total_tagihan,
-        //         // "tagihan"           => $tagihan,
-        //         // "total_air"         => number_format($total_air),
-        //         // "total_lingkungan"  => number_format($total_lingkungan),
-        //         // "total_lain"        => number_format($total_lain),
-        //         // "total_pakai"       => number_format($total_pakai),
-        //         // "total_ppn"         => number_format($total_ppn),
-        //         // "total_denda"       => number_format($total_denda),
-        //         // "total"             => number_format($total),
-        //         "periode_first"     => $periode_first,
-        //         "periode_last"      => $periode_last,
-        //         "saldo_deposit"     => $saldo_deposit,
-        //         "status_saldo_deposit" => $status_saldo_deposit,
-        //         "ttd"               => $ttd,
-        //     ]);
-
-        $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan/print_pdf');
+            ?>
+        </body>
+        </html>
+        <?php
+        $nama_file = "Konfirmasi_tagihan";
+        $html = ob_get_contents(); //Proses untuk mengambil data
+        ob_end_clean();
+        $mpdf->WriteHTML(utf8_encode($html));
+        $mpdf->WriteHTML($html,1);
+        $mpdf->Output($nama_file."-".date("Y/m/d His").".pdf" ,'I');
     }
 
     function bln_indo($tmp)
