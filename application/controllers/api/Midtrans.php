@@ -157,23 +157,16 @@ class Midtrans extends REST_Controller {
 
         $from = "ems.dbo.";
         $this->load->model('transaksi/m_pembayaran_xendit');
-        // $dataPost = json_decode($this->post()[0]);
-        // $external_id    = $dataPost->external_id;
-        $external_id    = $this->post("order_id")?$this->post("order_id"):null;
+        $external_id    = $this->post("order_id")?$this->post("order_id"):null; //a022u0000017gPoAAI
         $external_id = $this->db->select("external_id")
                                 ->from($from."checkout_salesforce")
                                 ->where("salesforce_id",$external_id)
-                                ->get()->row();
+                                ->get()->row(); // 7942744
         $external_id = $external_id?$external_id->external_id:0;
         $external_id_full = $external_id;
-        $bank_code    = $this->post("va_numbers")[0]['bank'];
-        // $midtrans_id    = $this->post("order_id")?$this->post("order_id"):null;
-
-        // var_dump($this->post());
+        $bank_code    = $this->post("va_numbers")[0]['bank']; //bca
         
         $external_id    = explode(";", $external_id);
-        // echo("test");
-        // var_dump($external_id);
         $cara_pembayaran    = $this->db
                                     ->select("cara_pembayaran.id,cara_pembayaran.project_id")
                                     ->from($from."t_tagihan")
@@ -185,13 +178,14 @@ class Midtrans extends REST_Controller {
                                             "bank.id = cara_pembayaran.bank_id",
                                             "LEFT")
                                     ->join("bank_jenis",
-                                            "bank_jenis.id = bank.bank_jenis_id
-                                            AND bank_jenis.code = '$bank_code'",
+                                            "bank_jenis.id = bank.bank_jenis_id", //bca
                                             "LEFT")
-                                    ->where_in("t_tagihan.id",$external_id)
+                                    ->where("bank_jenis.code", $bank_code)
+                                    ->where_in("t_tagihan.id",$external_id) //6927692
                                     ->order_by("bank_jenis.id","DESC")
                                     ->get()->row();
-        // var_dump($cara_pembayaran);
+                                    //sebelumnya where bank_jenis.code ada di join bank, sehingga menimbulkan bug 
+
         if(isset($cara_pembayaran->project_id)){
             $project_id = $cara_pembayaran->project_id;
             $cara_pembayaran = $cara_pembayaran->id;
@@ -222,7 +216,6 @@ class Midtrans extends REST_Controller {
                                 0,'|',
 								0) as tagihan")
 			->from($from."v_tagihan_air")
-			// ->where("v_tagihan_air.periode <= '$periode_now'")
 			->join(
 				$from."service",
 				"service.project_id = $project_id
@@ -230,19 +223,9 @@ class Midtrans extends REST_Controller {
 				AND service.active = 1
 				AND service.delete = 0"
 			)
-			// ->join($from."v_pemutihan",
-			// 		"v_pemutihan.masa_akhir >= GETDATE()
-			// 		AND v_pemutihan.masa_awal <= GETDATE()
-			// 		AND v_pemutihan.periode_akhir >= v_tagihan_air.periode 
-			// 		AND v_pemutihan.periode_awal <= v_tagihan_air.periode 
-			// 		AND v_pemutihan.service_jenis_id = 2
-			// 		AND v_pemutihan.unit_id  = v_tagihan_air.unit_id",
-			// 		"LEFT")
 			->where("v_tagihan_air.status_tagihan = 3")
             ->where_in("v_tagihan_air.t_tagihan_id",$external_id)
-			// ->order_by("v_pemutihan.tgl_tambah,periode")
             ->get()->result();
-            // var_dump($this->db->last_query());
             $tagihan_lingkungan = $this->db->select("
                                 CONCAT(service.id,'|',service.service_jenis_id,'|',v_tagihan_lingkungan.tagihan_id,'|',isnull(v_tagihan_lingkungan.total,0),'|',
 								isnull(CASE
@@ -285,7 +268,6 @@ class Midtrans extends REST_Controller {
                                 0,'|',
 								0) as tagihan")	
 			->from($from."v_tagihan_lingkungan")
-			// ->where("v_tagihan_lingkungan.periode <= '$periode_now'")
 			->join(
 				$from."service",
 				"service.project_id = $project_id
@@ -293,27 +275,12 @@ class Midtrans extends REST_Controller {
 				AND service.active = 1
 				AND service.delete = 0"
 			)
-			// ->join($from."v_pemutihan",
-			// 		"v_pemutihan.masa_akhir >= GETDATE()
-			// 		AND v_pemutihan.masa_awal <= GETDATE()
-			// 		AND v_pemutihan.periode_akhir >= v_tagihan_lingkungan.periode 
-			// 		AND v_pemutihan.periode_awal <= v_tagihan_lingkungan.periode 
-			// 		AND v_pemutihan.service_jenis_id = 1
-			// 		AND v_pemutihan.unit_id  = v_tagihan_lingkungan.unit_id",
-			// 		"LEFT")
 			->join($from."unit_lingkungan",
 				"unit_lingkungan.unit_id = v_tagihan_lingkungan.unit_id")
 			->where("v_tagihan_lingkungan.status_tagihan = 3")
 			->where_in("v_tagihan_lingkungan.t_tagihan_id",$external_id)
-			// ->order_by("v_pemutihan.tgl_tambah,periode")
 
             ->get()->result();
-            // echo("tagihan_lingkungan<pre>");
-            //     print_r($tagihan_lingkungan);
-            // echo("</pre>");
-            // echo("tagihan_air<pre>");
-            //     print_r($tagihan_air);
-            // echo("</pre>");
             $tagihan = [];
             foreach ($tagihan_air as $k=> $v) {
                 array_push($tagihan,$v->tagihan);
@@ -334,12 +301,6 @@ class Midtrans extends REST_Controller {
                     ->from($from."t_tagihan")
                     ->where_in("id",$external_id)
                     ->get()->row()->unit_id;
-            // echo("unit_id<pre>");
-            //     print_r($unit_id);
-            // echo("</pre>");
-    
-            // var_dump($tagihan);
-            // var_dump($cara_pembayaran);
             
             if($this->m_pembayaran_xendit->save($tagihan,null,$unit_id,$cara_pembayaran,$project_id,0,0,date("d/m/Y")))
                 $success++;
@@ -349,29 +310,7 @@ class Midtrans extends REST_Controller {
                 if($api_key != 'midtrans_permission')
                     $this->response(null,401);
             }
-
-            // $this->some_model->update_user( ... );
             $this->load->library('curl');
-            // client_id 3MVG9G9pzCUSkzZvdA4eKm_jdVZVXQ5U2c0L6gyvdnC.WqwoLIqfj2j8vfExyjTTvNQBdogzzrCLuPpkdmgbt
-            // client_secret C823D7F2BFC8688FF1ADF9A0B8873EFECD9D2F22E85C2538127458A2FCB16F88
-            // username ciputrapropertyy-cisv@force.com
-            // password Salesforce12e2wQmbTThC7qXrr20Jm3cvmK
-            // url https://ciputra-sh1.my.salesforce.com/services/data/v46.0/sobjects/Checkout_Invoice__c/a036D000002P9yAQAS?_HttpMethod=PATCH
-
-            // client_id 3MVG9G9pzCUSkzZvdA4eKm_jdVZVXQ5U2c0L6gyvdnC.WqwoLIqfj2j8vfExyjTTvNQBdogzzrCLuPpkdmgbt
-            // client_secret C823D7F2BFC8688FF1ADF9A0B8873EFECD9D2F22E85C2538127458A2FCB16F88
-            // username ciputrapropertyy-cisv@force.com
-            // password Salesforce12e2wQmbTThC7qXrr20Jm3cvmK
-            // url https://ciputra-sh1.my.salesforce.com/services/data/v46.0/sobjects/Checkout_Invoice__c/a036D000002P9yAQAS?_HttpMethod=PATCH
-            
-            // $dataApi = [
-            //     "grant_type"    => "password",
-            //     "client_id"     => "3MVG9G9pzCUSkzZvdA4eKm_jdVZVXQ5U2c0L6gyvdnC.WqwoLIqfj2j8vfExyjTTvNQBdogzzrCLuPpkdmgbt",
-            //     "client_secret" => "C823D7F2BFC8688FF1ADF9A0B8873EFECD9D2F22E85C2538127458A2FCB16F88",
-            //     "username"      => "ciputrapropertyy-cisv@force.com",
-            //     "password"      => "Salesforce12IIrpCWdsKQAjOQq4VUqpyGTp"
-            // ];
-
             $dataApi = [
                 "grant_type"    => "password",
                 "client_id"     => "3MVG9G9pzCUSkzZvdA4eKm_jdVZVXQ5U2c0L6gyvdnC.WqwoLIqfj2j8vfExyjTTvNQBdogzzrCLuPpkdmgbt",
@@ -382,13 +321,6 @@ class Midtrans extends REST_Controller {
             $this->load->helper('file');
             write_file("./log/".date("y-m-d").'_log_xendit_to_salesforce.txt',"\n".date("y-m-d h:i:s")." = POST (Get Key) !".json_encode($dataApi)." !", 'a+');
             $keySF = json_decode($this->curl->simple_post("https://login.salesforce.com/services/oauth2/token",$dataApi));
-            // echo("key");
-            // var_dump($keySF);
-              
-            // $external_id    = $this->post("external_id");
-            // $bank_code    = $this->post("bank_code");
-            // $midtrans_id    = $this->post("callback_virtual_account_id");
-
             $checkout_data = $this->db->select("*")
                 ->from($from."checkout_salesforce")
                 ->where("external_id",$external_id_full)
@@ -403,15 +335,8 @@ class Midtrans extends REST_Controller {
                 $data = [
                     "Status__c"     => "Paid",
                     "Paid_Date__c"  => $WaktuZulu
-                ];  
-                // "2019-09-18T14:02:40.123Z"
-
-                // string(30) "2019-10-07CEST09:25:38.0007200"
-
-                // var_dump($data);
-                // $data = array("name" => "Hagrid", "age" => "36");                                                                    
+                ];                                                                    
                 $data_string = json_encode($data);                                                                                   
-                // var_dump($data_string);
                 $this->load->helper('file');
                 write_file("./log/".date("y-m-d").'_log_midtrans_to_salesforce.txt',"\n".date("y-m-d h:i:s")." = POST !".json_encode($data_string)." !", 'a+');
                 $ch = curl_init("https://ciputra-sh1.my.salesforce.com/services/data/v46.0/sobjects/Checkout_Invoice__c/$checkout_data->salesforce_id?_HttpMethod=PATCH");                                                                      
@@ -426,30 +351,6 @@ class Midtrans extends REST_Controller {
                     )                                                                       
                 );                                                                                           
                 $result = curl_exec($ch);
-                // echo("notif");
-                // var_dump($result);
-                // $this->curl->option([]); 
-                // $this->curl->create("https://ciputra-sh1--appsdev.my.salesforce.com/services/data/v46.0/sobjects/Checkout_Invoice__c/$checkout_data->salesforce_id?_HttpMethod=PATCH");
-
-                // $this->curl->http_header("Authorization","Bearer abc$keySF->access_token");
-                // $this->curl->options(array(CURLOPT_HTTPHEADER => "Authorization : Bearer abc$keySF->access_token"));
-
-                // $this->curl->post($dataApi);
-                // var_dump($this->curl);
-                // var_dump($this->curl->execute());
-                // var_dump($this->curl->error_code); // int
-                // var_dump($this->curl->error_string);
-                
-                // // Information
-                // var_dump($this->curl->info); // array
-
-
-                // $result = $this->curl
-                //                     // ->http_header("Authorization","Bearer abc".$keySF->access_token)
-                //                     ->simple_post(,$dataApi);
-                // var_dump($dataApi);
-                // var_dump($result);
-            
 
                 if($success > 0)
                     $message = [

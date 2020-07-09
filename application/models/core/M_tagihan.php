@@ -530,7 +530,8 @@ class M_tagihan extends CI_Model
 									service.penalti_selisih_bulan,
 									DATEADD(MONTH,service.penalti_selisih_bulan,t_tagihan_lingkungan.periode) as duedatepenalti,
 									service.penalti_nilai,
-									service.id as service_id
+									service.id as service_id,
+									t_tagihan_lingkungan.t_tagihan_id as external_id
 								",false)
 							->from("dbo.t_tagihan_lingkungan")
 			 
@@ -735,7 +736,8 @@ class M_tagihan extends CI_Model
 									t_tagihan_air_detail.nilai_administrasi,
 									t_tagihan_air_detail.nilai,
 									t_tagihan_air_info.denda_nilai_service,
-									t_tagihan_air_info.denda_jenis_service
+									t_tagihan_air_info.denda_jenis_service,
+									t_tagihan_air.t_tagihan_id as external_id
 								",false)
 							->from("dbo.t_tagihan_air")
 			 
