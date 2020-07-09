@@ -35,26 +35,43 @@ class Desktop_Unit extends CI_Controller
             $data[0] = $dataTmp;
             foreach ($data[0] as $key => $value)    $data[0][$key] = '';
         }
+        $schemas = $this->db->select(
+                                        "name"
+                                    )
+                            ->from("ems_temp.sys.schemas")
+                            ->get()->result();
+        echo("schemas<pre>");
+        print_r($schemas);
+        echo("</pre>");
+        
+
         $this->load->view('core/header');
         $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
         $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
         $this->load->view('core/body_header', ['title' => 'Sync > Desktop_Unit ', 'subTitle' => 'List']);
         $this->load->view('core/list', [
-            'table' => $data
+            'table' => $data,
+            'schemas' => $schemas
             ]);
         $this->load->view('core/body_footer');
         $this->load->view('core/footer');
     }
     public function index()
     {
+    //     echo("<pre>");
+    //         print_r($this->db->select("name")->from("ems_temp.sys.schemas")->get()->result());
+    //     echo("</pre>");
+        
         $this->load->model('alert');
         $this->alert->css();
-
         $this->load->view('core/header');
         $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
         $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
         $this->load->view('core/body_header', ['title' => 'Sync > Purpose Desktop_Unit', 'subTitle' => 'Add']);
-        $this->load->view('sync/desktop_unit',['project'=>$this->db->from("project")->get()->result()]);
+        $this->load->view('sync/desktop_unit',[
+            'project'=>$this->db->from("project")->get()->result(),
+            'schemas' => $this->db->select("name")->from("ems_temp.sys.schemas")->get()->result()
+        ]);
         $this->load->view('core/body_footer');
         $this->load->view('core/footer');
 

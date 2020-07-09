@@ -178,12 +178,13 @@ class Xendit extends REST_Controller {
                                             "bank.id = cara_pembayaran.bank_id",
                                             "LEFT")
                                     ->join("bank_jenis",
-                                            "bank_jenis.id = bank.bank_jenis_id
-                                            AND bank_jenis.code = '$bank_code'",
+                                            "bank_jenis.id = bank.bank_jenis_id",
                                             "LEFT")
+                                    ->where("bank_jenis.code", $bank_code)
                                     ->where_in("t_tagihan.id",$external_id)
                                     ->order_by("bank_jenis.id","DESC")
                                     ->get()->row();
+                                    //sebelumnya where bank_jenis.code ada di join bank, sehingga menimbulkan bug 
         // var_dump($cara_pembayaran);
         if(isset($cara_pembayaran->project_id)){
             $project_id = $cara_pembayaran->project_id;

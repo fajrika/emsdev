@@ -38,7 +38,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
             <div class="form-group">
                 <label class="control-label col-lg-1 col-md-1 col-sm-12 col-md-offset-3">Source</label>
                 <div class="col-lg-5 col-md-5 col-sm-12">
-                    <input id="source" type="text" class="form-control" name="source" placeholder="Masukkan Nama Database Source">
+                    <select id="source" type="text" class="select2 form-control" name="source">
+                        <?php foreach ($schemas as $schema):?>
+                        <option value="<?=$schema->name?>"><?=$schema->name?></option>
+                        <?php endforeach;?>
+                    </select>
                 </div>
             </div>
         </div>
