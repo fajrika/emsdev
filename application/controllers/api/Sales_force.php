@@ -310,40 +310,58 @@ class Sales_force extends REST_Controller {
 
         }
         else if($type == "history"){
+            $param = [
+                'unit_id' => $resultUnit->unit_id,
+                'status_tagihan' => 1
+            ];
+            $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"));
+
             $total->tagihan_air = 0;
             $total->tagihan_lingkungan = 0;
             $total->tagihan_lain = 0;
             $total->total_denda = 0;
             $total->total = 0;
-            $resultTMP = $this->db
-                        ->select("
-                            uid,
-                            bill_id as tagihan_id,
-                            periode,
-                            tagihan_air,
-                            tagihan_lingkungan,
-                            tagihan_lain,
-                            total_denda, 
-                            isnull(tagihan_air,0)+
-                            isnull(tagihan_lingkungan,0)+
-                            isnull(tagihan_lain,0)+
-                            isnull(total_denda,0)
-                            as total,
-                            status_tagihan
-                        ")
-                        ->from("v_sales_force_history")
-                        // ->where("uid","$uid")
-                        ->where("unit_id",$resultUnit->unit_id)
-                        ->limit(12)
-                        ->order_by("periode")
-                        ->get()->result();
-            foreach ($resultTMP as $key => $v) {
-                $total->tagihan_air          += $v->tagihan_air;
-                $total->tagihan_lingkungan   += $v->tagihan_lingkungan;
-                $total->tagihan_lain         += $v->tagihan_lain;
-                $total->total_denda          += $v->total_denda;
-                $total->total                += $v->total;
+
+            $result->va = $this->m_tagihan->get_va($resultUnit->unit_id);
+            $result->tagihan = [];
+            foreach ($tagihans as $key => $tagihan) {
+                if(isset($tagihan->air->final_total))
+                    $total->tagihan_air += $tagihan->air->final_total;
+                if(isset($tagihan->lingkungan->final_total))
+                    $total->tagihan_lingkungan += $tagihan->lingkungan->final_total;
+                
+                $total->tagihan_lain         += 0;
+
+                if(isset($tagihan->air->nilai_denda))
+                    $total->total_denda += $tagihan->air->nilai_denda;
+                if(isset($tagihan->lingkungan->nilai_denda))
+                    $total->total_denda += $tagihan->lingkungan->nilai_denda;
+
+                if(isset($tagihan->lingkungan->id)){
+                    $tagihan_id = $tagihan->lingkungan->external_id;
+                    $periode = $tagihan->lingkungan->periode;
+                }elseif(isset($tagihan->air->id)){
+                    $tagihan_id = $tagihan->air->external_id;
+                    $periode = $tagihan->air->periode;
+                }
+                $tagihan_air = isset($tagihan->air->final_total)?$tagihan->air->final_total:0;
+                $tagihan_lingkungan = isset($tagihan->lingkungan->final_total)?$tagihan->lingkungan->final_total:0;
+                $total_denda = isset($tagihan->air->final_nilai_denda)?$tagihan->air->final_nilai_denda:0
+                                    +isset($tagihan->lingkungan->final_nilai_denda)?$tagihan->lingkungan->final_nilai_denda:0;
+                    
+                array_push($result->tagihan,(object)[
+                    "uid" => $uid,
+                    "tagihan_id" => $tagihan_id,
+                    "periode" => $periode,
+                    "tagihan_air" => $tagihan_air,
+                    "tagihan_lingkungan" => $tagihan_lingkungan,
+                    "tagihan_lain" => 0,
+                    "total_denda" => $total_denda,
+                    "total" => $tagihan_air + $tagihan_lingkungan + $total_denda
+                ]);
             }
+            $result->tagihan = array_reverse($result->tagihan);
+            $total->total = $total->tagihan_air + $total->tagihan_lingkungan + $total->tagihan_lain + $total->total_denda;
             // $result = $this->db->select("*")->from("v_xendit_history")->where("uid = $uid")->get()->result();
         }else
             $this->response(null,400);

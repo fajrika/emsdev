@@ -62,7 +62,10 @@ class Desktop_Tagihan_Lingkungan extends CI_Controller
         $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
         $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
         $this->load->view('core/body_header', ['title' => 'Sync > Desktop Tagihan Lingkungan', 'subTitle' => 'Add']);
-        $this->load->view('sync/desktop_tagihan_lingkungan',['project'=>$this->db->from("project")->get()->result()]);
+        $this->load->view('sync/desktop_tagihan_lingkungan',[
+            'project'=>$this->db->from("project")->get()->result(),
+            'schemas' => $this->db->select("name")->from("ems_temp.sys.schemas")->get()->result()
+            ]);
         $this->load->view('core/body_footer');
         $this->load->view('core/footer');
     }

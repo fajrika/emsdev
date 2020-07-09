@@ -64,7 +64,8 @@ class Desktop_Tagihan_Air extends CI_Controller
         $this->load->view('sync/desktop_tagihan_air',
             [
                 'project'       => $this->db->from("project")->get()->result(),
-                'project_id'    => $project->id
+                'project_id'    => $project->id,
+                'schemas' => $this->db->select("name")->from("ems_temp.sys.schemas")->get()->result()
             ]);
         $this->load->view('core/body_footer');
         $this->load->view('core/footer');
