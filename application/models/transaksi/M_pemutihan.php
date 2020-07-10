@@ -158,6 +158,10 @@ class m_pemutihan extends CI_Model
         //     print_r($param);
         // echo('</pre>');
         $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit');
+        // echo("<pre>");
+        // print_r($this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit'));
+        // echo("</pre>");
+        // die;
         $list = [];
         //tagihans, merupakan banyak tagihan perbanyak unit
         // echo("<pre>");
@@ -177,11 +181,7 @@ class m_pemutihan extends CI_Model
             foreach ($tagihan as $subtagihan) {
                 $tmp->nilai_pokok += $subtagihan->final_nilai_tagihan_tanpa_ppn;
                 $tmp->denda += $subtagihan->final_nilai_denda;
-                $tmp->total += ($subtagihan->final_nilai_tagihan_tanpa_ppn+$subtagihan->final_nilai_denda);
-                echo("<pre>");
-                print_r($tmp);
-                echo("</pre>");
-                
+                $tmp->total += ($subtagihan->final_nilai_tagihan_tanpa_ppn+$subtagihan->final_nilai_denda);                
             } 
             array_push($list,$tmp);
             

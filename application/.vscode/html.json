@@ -1,0 +1,22 @@
+{
+	"Simple PHP": {
+		"prefix": "php",
+		"body": [
+			"<?php $1 ?>"
+		]
+	},
+	"Simple Echo": {
+		"prefix": "phpp",
+		"body": [
+			"<?= $1 ?>"
+		]
+	},
+	"Advance Echo": {
+		"prefix": "phppp",
+		"body": [
+			"echo('<pre>')",
+			"print_r($1)",
+			"echo('</pre>')"
+		]
+	}
+}
