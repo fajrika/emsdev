@@ -217,7 +217,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							<th class='col-lg-1 col-lg-1 table-blok'>Blok</th>
 							<th class="col-lg-1 col-lg-1">Unit</th>
 							<th class="col-lg-2 col-lg-2">Pemilik</th>
-							<th class="col-lg-2 col-lg-2">Nilai Pokok</th>
+							<th class="col-lg-2 col-lg-2">Nilai Pokok (ex PPN)</th>
 							<th class="col-lg-1 col-lg-1">Denda</th>
 							<th class="col-lg-2 col-lg-2">Total</th>
 						</tr>
