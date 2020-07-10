@@ -59,9 +59,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					<th>No. Unit</th>
 					<th>Tujuan</th>
 					<th>Pemilik</th>
-					<th class="no-sort">Email</th>
-					<th class="no-sort">SMS</th>
-					<th class="no-sort">Surat</th>
+					<th>Email</th>
+					<th>SMS</th>
+					<th>Surat</th>
 					<!-- <th class="no-sort">Dokumen Live</th> -->
 					<th class="no-sort">Dokumen Downloaded</th>
 				</tr>
