@@ -182,35 +182,45 @@
             Demikian Informasi yang dapat kami sampaikan, Atas kerjasamanya yang baik kami ucapkan terima
             kasih.
             <br>
-        <table border="0" style="margin-top: 10px;">
-            <tbody>
-                <tr>
-                    <td colspan="2"><p class="lh-5 f-15">Hormat Kami,</p></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><p class="lh-5 f-15"><?= $unit->pt ?></p></td>
-                </tr>
-                <tr>
-                    <td>
-                        <?php if ($ttd) : ?>
-                            <img src="files/ttd/konfirmasi_tagihan/<?= $ttd ?>" width="120px" height="120px" style="margin-top:10px" />
-                        <?php else : ?>
-                            <div style="height:150px;margin-top:10px"></div>
-                        <?php endif; ?>
-                    </td>
-                    <td style="border: 1px solid #000; width: 300px; padding: 10px;"><?= $catatan ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <p class="lh-5 f-15"><u><?= $unit->pp_value ?></u></p>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <p class="lh-5 f-15"><?= $unit->pp_name ?></p>
-                    </td>
-                </tr>
-            </tbody>
+        <table style="margin-top: 10px;">
+            <tr>
+                <td>
+                    <table border="0">
+                        <tr>
+                            <td><p class="lh-5 f-15">Hormat Kami,</p></td>
+                        </tr>
+                        <tr>
+                            <td><p class="lh-5 f-15"><?= $unit->pt ?></p></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <?php if ($ttd) : ?>
+                                    <img src="files/ttd/konfirmasi_tagihan/<?= $ttd ?>" width="120px" height="120px" style="margin-top:10px" />
+                                <?php else : ?>
+                                    <div style="height:150px;margin-top:10px"></div>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="lh-5 f-15"><u><?= $unit->pp_value ?></u></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <p class="lh-5 f-15"><?= $unit->pp_name ?></p>
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table border="0">
+                        <tr>
+                            <td style="border: 1px solid #000; width: 180px; padding: 10px;"><?= $catatan ?></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
         </table>
     </div>
 </span>
