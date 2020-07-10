@@ -85,7 +85,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         )->result();
         // var_dump($this->db->last_query());
         // die;
-        $this->load->helper('directory');
+        /*$this->load->helper('directory');
         $map = directory_map('./application/pdf');
         foreach ($data as $k => $v) {
             $unit_id_periode = $v->unit_id . "_" . date("Y-m-");
@@ -93,7 +93,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             
             $data[$k]->name_file = end($result);
             $data[$k]->email = end($result) ? 1 : 0;
-        }
+        }*/
 
         $this->load->view('core/header');
         $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
@@ -152,7 +152,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             $table["data"][$k][0] = 
                 "<input name='unit_id[]' type='checkbox' class='flat table-check' val='$v[0]'>";
         }
-        echo(json_encode($table));	
+        echo(json_encode($table));  
     }
     public function test()
     {
@@ -206,7 +206,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             $message = str_replace("{{Blok}}", $blok . "/" . $data_unit->no_unit, $message);
             $message = str_replace("{{Kawasan}}", $kawasan, $message);
             $message = str_replace("{{Total_tagihan}}", number_format($total_tagihan, 0, ",", "."), $message);
-            $uid =	$this->db->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
+            $uid =  $this->db->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
                         ->from("unit")
                     ->join("project",
                             "project.id = unit.project_id")
@@ -216,7 +216,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                             "kawasan.id = blok.kawasan_id")
                     ->where("unit.id",$unit_id)
                     ->get()->row();
-            $uid = $uid?$uid->uid:0;	
+            $uid = $uid?$uid->uid:0;    
             $message = str_replace("{{no_iplk}}",$uid,$message);
             $data_customer = $this->m_customer->getSelect($data_unit->pemilik);
             $data_customer->mobilephone1 = preg_replace("/[^0-9]/", "", $data_customer->mobilephone1);
@@ -327,7 +327,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     // 'smtp_crypto' => 'tls',
                     'crlf'      => "\r\n",
                     'newline'   => "\r\n",
-                    'smtp_crypto'	=> "ssl"
+                    'smtp_crypto'   => "ssl"
                 ];
                 echo ("config<pre>");
                 print_r($config);
@@ -360,7 +360,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     ->where("unit.id", $unit_id)->get()->row()->email;
                 $email = explode(";", $email);
                 $parameter_delay = explode(";", $this->m_parameter_project->get($project->id, "delay_email"));
-                $uid =	$this->db->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
+                $uid =  $this->db->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
                                         ->from("unit")
                                         ->join("project",
                                                 "project.id = unit.project_id")
@@ -370,7 +370,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                                                 "kawasan.id = blok.kawasan_id")
                                         ->where("unit.id",$unit_id)
                                         ->get()->row();
-                $uid = $uid?$uid->uid:0;	
+                $uid = $uid?$uid->uid:0;    
                 $result->isi = str_replace("{{no_iplk}}",$uid,$result->isi);
                 foreach ($email as $k => $v) {
                     if ($k != 0 && ($k + 1) % $parameter_delay[0] == 0) {
@@ -420,19 +420,55 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
 
         $sql = " 
             SELECT
-                * 
+                unit.project_id,
+                customer.name as pemilik,
+                unit.id AS unit_id,
+                kawasan.name AS kawasan,
+                blok.name AS blok,
+                unit.no_unit AS no_unit,
+                CASE unit.kirim_tagihan 
+                    WHEN 1 THEN 'Pemilik' 
+                    WHEN 2 THEN 'Penghuni' 
+                    WHEN 3 THEN 'Keduanya' 
+                    ELSE '' 
+                END AS tujuan,
+                'Belum di kirim' AS send_email,
+                CASE COUNT ( send_sms.id ) 
+                    WHEN 0 THEN 'Belum di Kirim' ELSE 'Sudah di kirim' 
+                END AS send_sms,
+                'Belum di kirim' AS send_surat 
             FROM 
-                v_kirim_konfirmasi_tagihan 
+                unit
+                JOIN customer ON customer.id = unit.pemilik_customer_id
+                JOIN blok ON blok.id = unit.blok_id
+                JOIN kawasan ON kawasan.id = blok.kawasan_id
+                LEFT JOIN t_tagihan_lingkungan ON t_tagihan_lingkungan.unit_id = unit.id AND t_tagihan_lingkungan.status_tagihan != 1
+                LEFT JOIN t_tagihan_air ON t_tagihan_air.unit_id = unit.id AND t_tagihan_air.status_tagihan != 1
+                LEFT JOIN send_sms ON send_sms.unit_id = unit.id AND FORMAT( send_sms.create_date, 'yyyy-MM' ) = FORMAT( GETDATE(), 'yyyy-MM' )
             WHERE 1=1
-                AND project_id = '".$project->id."'
+                AND unit.project_id = '".$project->id."'
                 AND (
-                    pemilik LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR unit_id LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR kawasan LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR blok LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    customer.name LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    OR unit.id LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    OR kawasan.name LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    OR blok.name LIKE '%".$this->db->escape_like_str($like_value)."%'
                 )
+            GROUP BY
+                unit.project_id,
+                customer.name,
+                unit.id,
+                kawasan.name,
+                blok.name,
+                unit.no_unit,
+                CASE unit.kirim_tagihan 
+                    WHEN 1 THEN 'Pemilik' 
+                    WHEN 2 THEN 'Penghuni' 
+                    WHEN 3 THEN 'Keduanya' 
+                    ELSE '' 
+                END 
+            HAVING
+                SUM( IIF ( t_tagihan_lingkungan.status_tagihan IS NOT NULL, 1, 0 ) + IIF ( t_tagihan_air.status_tagihan IS NOT NULL, 1, 0 ) ) > 0
             ";
-        // print_r($sql);
         $data_sql['totalFiltered']  = $this->db->query($sql)->num_rows();
         $data_sql['totalData']      = $this->db->query($sql)->num_rows();
         $columns_order_by = array(

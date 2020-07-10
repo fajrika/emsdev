@@ -179,11 +179,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 	});
 
 	$("#btn-kirim-email").click(function() {
-		var unit_id = $("input[name='unit_id[]']").map(function() {
-			if ($(this).is(":checked")) {
-				return $(this).attr("val");
-			}
-		}).get();
+		// var unit_id = $("input[name='unit_id[]']").map(function() {
+		// 	if ($(this).is(":checked")) {
+		// 		return $(this).attr("val");
+		// 	}
+		// }).get();
+        var unit_id = $('#tableDTServerSite tbody input:checkbox:checked').map(function(){
+            return this.value;
+        }).get();
 		$.ajax({
 			type: "POST",
 			data: {
@@ -201,11 +204,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 		});
 	})
 	$("#btn-kirim-sms").click(function() {
-		var unit_id = $("input[name='unit_id[]']").map(function() {
-			if ($(this).is(":checked")) {
-				return $(this).attr("val");
-			}
-		}).get();
+		// var unit_id = $("input[name='unit_id[]']").map(function() {
+		// 	if ($(this).is(":checked")) {
+		// 		return $(this).attr("val");
+		// 	}
+		// }).get();
+        var unit_id = $('#tableDTServerSite tbody input:checkbox:checked').map(function(){
+            return this.value;
+        }).get();
 		$.ajax({
 			type: "POST",
 			data: {
