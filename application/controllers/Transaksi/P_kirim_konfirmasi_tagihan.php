@@ -90,6 +90,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         foreach ($data as $k => $v) {
             $unit_id_periode = $v->unit_id . "_" . date("Y-m-");
             $result = preg_grep("/^$unit_id_periode/i", $map);
+            
             $data[$k]->name_file = end($result);
             $data[$k]->email = end($result) ? 1 : 0;
         }
@@ -560,18 +561,33 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             <?php
             if (! empty($_GET['unit_id']))
             {
-                $explode = $this->input->get('unit_id');
-                $explode = explode(",", $explode);
+                $unit_ids = $this->input->get('unit_id');
+                $unit_ids = explode(",", $unit_ids);
                 $nomor   = 1;
-                $jml_data= count($explode) - 1;
-                foreach ($explode as $unit_id)
+                $jml_data= count($unit_ids) - 1;
+                $project              = $this->m_core->project();
+                $ttd                  = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
+                $service_air = $this->db->select("jarak_periode_penggunaan")
+                    ->from("service")
+                    ->where("project_id",$project->id)
+                    ->where("service_jenis_id",2)
+                    ->get()
+                    ->row();
+                $service_air = $service_air ? $service_air->jarak_periode_penggunaan : 0;
+                $service_lingkungan = $this->db->select("jarak_periode_penggunaan")
+                    ->from("service")
+                    ->where("project_id",$project->id)
+                    ->where("service_jenis_id",1)
+                    ->get()
+                    ->row();
+                $service_lingkungan = $service_lingkungan ? $service_lingkungan->jarak_periode_penggunaan : 0;
+
+                foreach ($unit_ids as $unit_id)
                 {
                     $this->load->model('Cetakan/m_konfirmasi_tagihan');
-                    $project              = $this->m_core->project();
                     $unit                 = $this->m_konfirmasi_tagihan->get_unit($unit_id);
                     $status_saldo_deposit = $this->m_konfirmasi_tagihan->get_status_saldo_deposit($unit_id);
                     $saldo_deposit        = $this->m_konfirmasi_tagihan->get_saldo_deposit($unit_id);
-                    $ttd                  = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
 
                     $catatan = $unit->catatan;
                     $catatan = str_replace("{{va_unit}}", $unit->virtual_account, $catatan);
@@ -623,20 +639,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     $periode_first = $this->bln_indo(substr($min_tagihan->format("Y-m-01"),5,2))." ".substr($min_tagihan->format("Y-m-01"),0,4);
                     $periode_last  = $this->bln_indo(substr($max_tagihan->format("Y-m-01"),5,2))." ".substr($max_tagihan->format("Y-m-01"),0,4);
 
-                    $service_air = $this->db->select("jarak_periode_penggunaan")
-                        ->from("service")
-                        ->where("project_id",$project->id)
-                        ->where("service_jenis_id",2)
-                        ->get()
-                        ->row();
-                    $service_air = $service_air ? $service_air->jarak_periode_penggunaan : 0;
-                    $service_lingkungan = $this->db->select("jarak_periode_penggunaan")
-                        ->from("service")
-                        ->where("project_id",$project->id)
-                        ->where("service_jenis_id",1)
-                        ->get()
-                        ->row();
-                    $service_lingkungan = $service_lingkungan ? $service_lingkungan->jarak_periode_penggunaan : 0;
+                    
                     if ($service_air == $service_lingkungan) {
                         $jarak_periode_penggunaan = $service_air;
                     } else {
