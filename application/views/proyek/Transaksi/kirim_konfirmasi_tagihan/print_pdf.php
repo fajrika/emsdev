@@ -61,26 +61,26 @@
     <table class="table table-striped" cellspacing="0" style="margin-bottom:0;">
         <thead>
             <tr>
-                <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">No</th>
-                <th class="text-center" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">Periode</th>
+                <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc; padding: 10px;">No</th>
+                <th class="text-center" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">Periode</th>
                 <?php if ($total_tagihan->air) : ?>
                     <th class="text-center" colspan="3" style="padding-bottom:0px; border: 1px solid #ccc;">Meter</th>
                 <?php endif; ?>
                 <?php if ($total_tagihan->lain) : ?>
-                    <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">LAIN(Rp.)</th>
+                    <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">LAIN(Rp.)</th>
                 <?php endif; ?>
                 <?php if ($total_tagihan->air) : ?>
-                    <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">AIR(Rp.)</th>
+                    <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">AIR(Rp.)</th>
                 <?php endif; ?>
                 <?php if ($total_tagihan->ipl) : ?>
-                    <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">IPL(Rp.)</th>
-                    <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">PPN(Rp.)</th>
+                    <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">IPL(Rp.)</th>
+                    <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">PPN(Rp.)</th>
                 <?php endif; ?>
-                <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">Denda(Rp.)</th>
+                <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">Denda(Rp.)</th>
                 <?php if ($total_tagihan->tunggakan) : ?>
-                    <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">Tunggakan(Rp.)</th>
+                    <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">Tunggakan(Rp.)</th>
                 <?php endif; ?>
-                <th class="text-right" rowspan="2" style="vertical-align: middle; border: 1px solid #ccc;">Total(Rp.)</th>
+                <th class="text-right" <?php if ($total_tagihan->air){ echo "rowspan='2'";}else{ ""; } ?> style="vertical-align: middle; border: 1px solid #ccc;">Total(Rp.)</th>
             </tr>
             <tr>
                 <?php if ($total_tagihan->air) : ?>
@@ -193,7 +193,7 @@
                                 <?php if ($ttd) : ?>
                                     <img src="files/ttd/konfirmasi_tagihan/<?= $ttd ?>" width="120px" height="120px" style="margin-top:10px" />
                                 <?php else : ?>
-                                    <div style="height:150px;margin-top:10px"></div>
+                                    <br><br><br><br>
                                 <?php endif; ?>
                             </td>
                         </tr>
