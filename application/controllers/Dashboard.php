@@ -6,18 +6,18 @@ class Dashboard extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-        $this->load->database();
-        $this->load->model('m_login');
-        if (!$this->m_login->status_login())
-            redirect(site_url());
-        $this->load->model('Setting/Akun/m_group');
-        $this->load->model('m_core');
-        global $jabatan;
-        $jabatan = $this->m_core->jabatan();
-        global $project;
-        $project = $this->m_core->project();
-        global $menu;
-        $menu = $this->m_core->menu();
+		$this->load->database();
+		$this->load->model('m_login');
+		if (!$this->m_login->status_login())
+			redirect(site_url());
+		$this->load->model('Setting/Akun/m_group');
+		$this->load->model('m_core');
+		global $jabatan;
+		$jabatan = $this->m_core->jabatan();
+		global $project;
+		$project = $this->m_core->project();
+		global $menu;
+		$menu = $this->m_core->menu();
 	}
 	public function index()
 	{
