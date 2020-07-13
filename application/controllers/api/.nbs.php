@@ -1,6 +1,8 @@
 <?php
+
 use Restserver\Libraries\REST_Controller;
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 // This can be removed if you use __autoload() in config.php OR use Modular Extensions
 /** @noinspection PhpIncludeInspection */
@@ -19,7 +21,8 @@ require APPPATH . 'libraries/Format.php';
  * @license         MIT
  * @link            https://github.com/chriskacerguis/codeigniter-restserver
  */
-class Nbs extends REST_Controller {
+class Nbs extends REST_Controller
+{
 
     function __construct()
     {
@@ -31,41 +34,45 @@ class Nbs extends REST_Controller {
         // Ensure you have created the 'limits' table and enabled 'limits' within application/config/rest.php
         $this->load->database();
         $this->db->database = "ems_temp";
-
     }
-    public function index_post($api_key=null,$type=null){
+    public function index_post($api_key = null, $type = null)
+    {
         $from = "ems_temp.dbo";
-        if(!$api_key){
-            $this->response(null,401);
-        }else{
-            if($api_key != 'sales_force_permission')
-                $this->response(null,401);
+        if (!$api_key) {
+            $this->response(null, 401);
+        } else {
+            if ($api_key != 'sales_force_permission')
+                $this->response(null, 401);
         }
         $external_id    = $this->post("external_id");
         $external_id    = explode(";", $external_id);
         $tagihan = $this->db
-                ->select("
+            ->select("
                     isnull(t_tagihan_lingkungan.id,0) as lingkungan_id,
                     isnull(t_tagihan_air.id,0) as air_id")
-                ->from("$from.v_sales_force_bill")
-                ->join("t_tagihan_lingkungan",
-                        "t_tagihan_lingkungan.t_tagihan_id = v_sales_force_bill.bill_id
+            ->from("$from.v_sales_force_bill")
+            ->join(
+                "t_tagihan_lingkungan",
+                "t_tagihan_lingkungan.t_tagihan_id = v_sales_force_bill.bill_id
                         AND t_tagihan_lingkungan.status_tagihan != 1",
-                        "LEFT")
-                ->join("t_tagihan_air",
-                        "t_tagihan_air.t_tagihan_id = v_sales_force_bill.bill_id
+                "LEFT"
+            )
+            ->join(
+                "t_tagihan_air",
+                "t_tagihan_air.t_tagihan_id = v_sales_force_bill.bill_id
                         AND t_tagihan_air.status_tagihan != 1",
-                        "LEFT")
-                ->where_in("bill_id",$external_id)
-                ->get()->result();
+                "LEFT"
+            )
+            ->where_in("bill_id", $external_id)
+            ->get()->result();
 
         foreach ($tagihan as $v) {
-            if($v->lingkungan_id != 0){
+            if ($v->lingkungan_id != 0) {
                 $this->db->set('status_tagihan', 3);
                 $this->db->where('id', $v->lingkungan_id);
                 $this->db->update("$from.t_tagihan_lingkungan");
             }
-            if($v->air_id != 0){
+            if ($v->air_id != 0) {
                 $this->db->set('status_tagihan', 3);
                 $this->db->where('id', $v->air_id);
                 $this->db->update("$from.t_tagihan_air");
@@ -77,37 +84,43 @@ class Nbs extends REST_Controller {
         ];
         $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
-    public function index_get($api_key=null)
+    public function index_get($api_key = null)
     {
         $from = "ems_temp.dbo";
 
         $result = (object)[];
 
         $uid = $this->input->get("uid");
-        if(!$api_key){
-            $this->response(null,401);
-        }else{
-            if($api_key != 'sales_force_permission')
-                $this->response(null,401);
+        if (!$api_key) {
+            $this->response(null, 401);
+        } else {
+            if ($api_key != 'sales_force_permission')
+                $this->response(null, 401);
         }
-        if(!$uid || !$type){
-            $this->response(null,400); // OK (200) being the HTTP response code
+        if (!$uid || !$type) {
+            $this->response(null, 400); // OK (200) being the HTTP response code
         }
 
         $resultUnit = $this->db->select("*")
-                                ->from("unit")
-                                ->join("project",
-                                        "project.id = unit.project_id")
-                                ->join("blok",
-                                        "blok.id = unit.blok_id")
-                                ->join("kawasan",
-                                        "kawasan.id = blok.kawasan_id")
-                                ->where("CONCAT(project.source_id,kawasan.code,blok.code,'/',unit.no_unit)","$uid")
-                                ->get()->row();
-        
+            ->from("unit")
+            ->join(
+                "project",
+                "project.id = unit.project_id"
+            )
+            ->join(
+                "blok",
+                "blok.id = unit.blok_id"
+            )
+            ->join(
+                "kawasan",
+                "kawasan.id = blok.kawasan_id"
+            )
+            ->where("CONCAT(project.source_id,kawasan.code,blok.code,'/',unit.no_unit)", "$uid")
+            ->get()->row();
+
         $total = (object)[];
 
-        if($type == "bill"){
+        if ($type == "bill") {
 
             $total->tagihan_air = 0;
             $total->tagihan_lingkungan = 0;
@@ -128,10 +141,10 @@ class Nbs extends REST_Controller {
                                                 isnull(total_denda,0)
                                                 as total
                         ")
-                        ->from("$from.v_sales_force_bill")
-                        ->where("uid","$uid")
-                        ->order_by("periode")
-                        ->get()->result();
+                ->from("$from.v_sales_force_bill")
+                ->where("uid", "$uid")
+                ->order_by("periode")
+                ->get()->result();
             $resultVA = $this->db->select("
                                             MANDIRI,
                                             BNI,
@@ -140,10 +153,10 @@ class Nbs extends REST_Controller {
                                             PERMATA,
                                             CIMB
                         ")
-                        ->from("$from.v_sales_force_bill")
-                        ->where("uid","$uid")
-                        ->order_by("periode")
-                        ->get()->row();
+                ->from("$from.v_sales_force_bill")
+                ->where("uid", "$uid")
+                ->order_by("periode")
+                ->get()->row();
             $result->va    = $resultVA;
             foreach ($resultTMP as $key => $v) {
                 $total->tagihan_air          += $v->tagihan_air;
@@ -152,15 +165,14 @@ class Nbs extends REST_Controller {
                 $total->total_denda          += $v->total_denda;
                 $total->total                += $v->total;
             }
-        }
-        else if($type == "history"){
+        } else if ($type == "history") {
             $total->tagihan_air = 0;
             $total->tagihan_lingkungan = 0;
             $total->tagihan_lain = 0;
             $total->total_denda = 0;
             $total->total = 0;
             $resultTMP = $this->db
-                        ->select("
+                ->select("
                             uid,
                             bill_id as tagihan_id,
                             periode,
@@ -175,11 +187,11 @@ class Nbs extends REST_Controller {
                             as total,
                             status_tagihan
                         ")
-                        ->from("v_sales_force_history")
-                        ->where("uid","$uid")
-                        ->limit(12)
-                        ->order_by("periode")
-                        ->get()->result();
+                ->from("v_sales_force_history")
+                ->where("uid", "$uid")
+                ->limit(12)
+                ->order_by("periode")
+                ->get()->result();
             foreach ($resultTMP as $key => $v) {
                 $total->tagihan_air          += $v->tagihan_air;
                 $total->tagihan_lingkungan   += $v->tagihan_lingkungan;
@@ -188,8 +200,8 @@ class Nbs extends REST_Controller {
                 $total->total                += $v->total;
             }
             // $result = $this->db->select("*")->from("v_xendit_history")->where("uid = $uid")->get()->result();
-        }else
-            $this->response(null,400);
+        } else
+            $this->response(null, 400);
 
         // echo("<pre>");   
         //     print_r($project);
@@ -199,14 +211,14 @@ class Nbs extends REST_Controller {
         $result->info->kawasan = $resultUnit->kawasan;
         $result->info->blok = $resultUnit->blok;
         $result->info->no_unit = $resultUnit->no_unit;
-        
+
         $result->total = $total;
         $result->tagihan = $resultTMP;
         // $result->info = $resultTMP;
         $this->response($result, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
 
     }
-    public function users_get($id=null)
+    public function users_get($id = null)
     {
         // Users from a data store e.g. database
         $users = [
@@ -219,16 +231,12 @@ class Nbs extends REST_Controller {
 
         // If the id parameter doesn't exist return all the users
 
-        if ($id === NULL)
-        {
+        if ($id === NULL) {
             // Check if the users data store contains users (in case the database result returns NULL)
-            if ($users)
-            {
+            if ($users) {
                 // Set the response and exit
                 $this->response($users, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
-            }
-            else
-            {
+            } else {
                 // Set the response and exit
                 $this->response([
                     'status' => FALSE,
@@ -242,8 +250,7 @@ class Nbs extends REST_Controller {
         $id = (int) $id;
 
         // Validate the id.
-        if ($id <= 0)
-        {
+        if ($id <= 0) {
             // Invalid id, set the response and exit.
             $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         }
@@ -253,23 +260,17 @@ class Nbs extends REST_Controller {
 
         $user = NULL;
 
-        if (!empty($users))
-        {
-            foreach ($users as $key => $value)
-            {
-                if (isset($value['id']) && $value['id'] === $id)
-                {
+        if (!empty($users)) {
+            foreach ($users as $key => $value) {
+                if (isset($value['id']) && $value['id'] === $id) {
                     $user = $value;
                 }
             }
         }
 
-        if (!empty($user))
-        {
+        if (!empty($user)) {
             $this->set_response($user, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
-        }
-        else
-        {
+        } else {
             $this->set_response([
                 'status' => FALSE,
                 'message' => 'User could not be found'
@@ -295,8 +296,7 @@ class Nbs extends REST_Controller {
         $id = (int) $this->get('id');
 
         // Validate the id.
-        if ($id <= 0)
-        {
+        if ($id <= 0) {
             // Set the response and exit
             $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         }
@@ -309,5 +309,4 @@ class Nbs extends REST_Controller {
 
         $this->set_response($message, REST_Controller::HTTP_NO_CONTENT); // NO_CONTENT (204) being the HTTP response code
     }
-
 }
