@@ -401,6 +401,145 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         }
     }
 
+    /**
+    | function for send whatsapp blast to customer
+    | --------------------------------------------------------------------
+    | july 16, 2020
+    */
+    public function send_whatsapp()
+    {
+        $json_data['status'] = 1;
+        $json_data['pesan']  = "WhatsApp Successfully Send";
+        $json_data['redirect_page'] = "YES";
+        $json_data['redirect_page_URL'] = site_url('transaksi/p_kirim_konfirmasi_tagihan');
+
+        //Start OB & put json output-------------------------//
+        ob_end_clean();
+        ignore_user_abort();
+        ob_start();
+        header("Connection: close");
+        echo json_encode($json_data);
+        header("Content-Length: " . ob_get_length());
+        ob_end_flush();
+        flush();
+        //Run Process Here----------------------------------//
+        set_time_limit(0);
+
+        $project   = $this->m_core->project();
+        $unit_id   = $this->input->post('unit_id');
+        $join_unit = '';
+        $join_unit_comma = '';
+        foreach ($unit_id as $value) 
+        {
+            $join_unit .= "'".$value."',";
+            $join_unit_comma .= $value.",";
+        }
+        $join_unit = rtrim($join_unit, ',');
+        $join_unit_comma = rtrim($join_unit_comma, ',');
+        $sql = "
+            SELECT
+                unit.id,
+                unit.no_unit,
+                pemilik.name AS pemilik_name,
+                penghuni.name AS penghuni_name,
+                CASE 
+                    unit.kirim_tagihan
+                WHEN 2 THEN '0'
+                ELSE 
+                    pemilik.mobilephone1 
+                END AS pemilik_no,
+                penghuni.name AS penghuni_name,
+                CASE 
+                    WHEN unit.kirim_tagihan = 3 AND unit.pemilik_customer_id = unit.penghuni_customer_id THEN '0'
+                    WHEN (unit.kirim_tagihan = 3 AND unit.pemilik_customer_id != unit.penghuni_customer_id) OR unit.kirim_tagihan = 2 THEN penghuni.mobilephone1
+                ELSE '0'
+                END AS penghuni_no
+            FROM 
+                unit
+                LEFT JOIN customer AS pemilik ON pemilik.id = unit.pemilik_customer_id
+                LEFT JOIN customer AS penghuni ON penghuni.id = unit.penghuni_customer_id
+            WHERE 1=1
+                AND unit.project_id = '".$project->id."'
+                AND unit.id IN (".$join_unit.")
+        ";
+        $sql = $this->db->query($sql);
+
+        $api_key = '';
+        $get_apikey = $this->db->where('project_id', $project->id)->where('code', 'whatsapp_api_key')->limit(1)->get('parameter_project');
+        if ($get_apikey->num_rows() > 0) {
+            $api_key = $get_apikey->row()->value;
+        }
+
+        // $dummy_no_hp = array('08567159231', '081585810669');
+        $dummy_no_hp = array('08567159231');
+        $key_tsel_me = "170821cc33b400304660a940afeb51463e9958e699544189";
+        if ($sql->num_rows() > 0) 
+        {
+            foreach ($sql->result() as $d) 
+            {
+                // if ($d->pemilik_no > 7) 
+                // {
+                    $no_pemilik  = preg_replace('/[^A-Za-z0-9\-]/', '', trim($d->pemilik_no));
+                    $no_penghuni = preg_replace('/[^A-Za-z0-9\-]/', '', trim($d->penghuni_no));
+                    // print_r($no.' '.$no_pemilik.' '.$no_penghuni);echo "<br>";
+                    foreach ($dummy_no_hp as $phone_no) 
+                    {
+                        $call     = $this->print_pdf('send_wa', $d->id);
+                        // $file_url = "https://ces-ems.ciputragroup.com:11443/pdf/".$call['nama_file'];
+                        $file_url = "https://ces-ems.ciputragroup.com:11443/pdf/".$call;
+                        $message  = "*Informasi Tagihan Retribusi Estate*\n\n";
+                        $message .= "Kepada Yth,\n" . $d->pemilik_name . "\n\n";
+                        $message .= "Dengan ini kami sampaikan informasi total tagihan dari bulan september 2018 sampai maret 2020, dengan perincian sebagai berikut :";
+                        // $message .= "Dengan ini kami sampaikan informasi total tagihan";
+                        // if($call['periode_first'] == $call['periode_last']){
+                        //     $message .= (" bulan " . strtolower($call['periode_first']));
+                        // }else{
+                        //     $message .= (" dari bulan ".strtolower($call['periode_first'])." sampai ".strtolower($call['periode_last']));
+                        // }
+                        // $message .= ", dengan perincian sebagai berikut :";
+
+                        // print_r($call);exit();
+
+                        // Send WA Text
+                        $data = array("key"=>$key_tsel_me, "phone_no"=>$phone_no, "message"=>$message);
+                        $data_string = json_encode($data);
+                        $ch = curl_init('http://116.203.92.59/api/send_message');
+                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_VERBOSE, 0);
+                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+                        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data_string)));
+                        curl_exec($ch);
+
+                        // Send WA Attachment
+                        $data = array("phone_no"=>$phone_no, "key"=>$key_tsel_me, "url"=>$file_url);
+                        $data_string = json_encode($data);
+                        $ch = curl_init('http://116.203.92.59/api/send_file_url');
+                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                        curl_setopt($ch, CURLOPT_VERBOSE, 0);
+                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+                        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data_string)));
+                        curl_exec($ch);
+
+                        // $log = $this->db->insert('send_sms', [
+                        //     'unit_id' => $d->id,
+                        //     'no' => $phone_no,
+                        //     'status_full' => $res,
+                        //     'create_date' => date('Y-m-d'),
+                        //     'message' => $message,
+                        //     'send_by' => 1
+                        // ]);
+                    }
+                // }
+            }
+        }
+    }
+
 
     /**
     | -----------------------------------------------------------------------
@@ -553,11 +692,12 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     | Jakarta, 2020-07-08
     |
     */
-    public function print_pdf()
+    public function print_pdf($type=NULL, $params=NULL)
     {
         require_once 'vendor/MPDF/vendor/autoload.php';
         $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4']);
         // $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4', 'orientation' => 'L']);
+        ini_set("pcre.backtrack_limit", "1000000");
         ob_start();
         ?>
         <!DOCTYPE html>
@@ -583,7 +723,6 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     font-weight: 700;
                     line-height: 15px;
                 }
-
                 .f-14, .f-15 { font-size: 14px; }
                 .lh-15 { line-height: 15px; }
                 .align-center, .text-center { text-align: center; }
@@ -595,14 +734,20 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         </head>
         <body>
             <?php
-            if (! empty($_GET['unit_id']))
+            if (! empty($_GET['unit_id']) OR !empty($params))
             {
-                $unit_ids = $this->input->get('unit_id');
+                ### jika type send whatsapp
+                if (!empty($type) AND $type=='send_wa') {
+                    $unit_ids = $params;
+                } else {
+                    $unit_ids = $this->input->get('unit_id');
+                }
+
                 $unit_ids = explode(",", $unit_ids);
-                $nomor   = 1;
-                $jml_data= count($unit_ids) - 1;
-                $project              = $this->m_core->project();
-                $ttd                  = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
+                $nomor    = 1;
+                $jml_data = count($unit_ids) - 1;
+                $project  = $this->m_core->project();
+                $ttd      = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
                 $service_air = $this->db->select("jarak_periode_penggunaan")
                     ->from("service")
                     ->where("project_id",$project->id)
@@ -786,12 +931,20 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         </body>
         </html>
         <?php
-        $nama_file = "Konfirmasi_tagihan";
+        $nama_file = "konf_tagihan_".$project->id."_".date("Ymd").".pdf";
         $html = ob_get_contents(); //Proses untuk mengambil data
         ob_end_clean();
         $mpdf->WriteHTML(utf8_encode($html));
         $mpdf->WriteHTML($html,1);
-        $mpdf->Output($nama_file."-".date("Y/m/d His").".pdf" ,'I');
+
+        ### jika type send whatsapp
+        if (!empty($type) AND $type=='send_wa') {
+            $mpdf->Output("pdf/".$nama_file, \Mpdf\Output\Destination::FILE);
+            // return array('nama_file'=>$nama_file, 'periode_first'=>$periode_first, 'periode_last'=>$periode_last);
+            return $nama_file;
+        } else {
+            $mpdf->Output($nama_file."_".date("YmdHis").".pdf" ,'I');
+        }
     }
 
     function bln_indo($tmp)

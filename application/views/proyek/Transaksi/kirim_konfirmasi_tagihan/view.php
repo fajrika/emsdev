@@ -9,6 +9,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <button id='print-doc' class='btn btn-danger'>
             <img src='<?=base_url('images/extension/icon_pdf.png');?>' style='margin-top: -3px;'/> Print Document
         </button>
+        <a href="<?=site_url('transaksi/p_kirim_konfirmasi_tagihan/send_whatsapp');?>" id="btn-kirim-wa" class="btn btn-success">
+            <i class="fa fa-send"></i> Kirim WhatsApp
+        </a>
 		<button id="btn-kirim-email" class="btn btn-primary">
 			<i class="fa fa-plus"></i>
 			Kirim Email
@@ -18,14 +21,14 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			Kirim SMS
 		</button>
 
-		<button class="btn btn-warning" onClick="window.history.back()" disabled>
+		<!-- <button class="btn btn-warning" onClick="window.history.back()" disabled>
 			<i class="fa fa-arrow-left"></i>
 			Back
 		</button>
 		<button class="btn btn-success" onClick="window.location.reload()">
 			<i class="fa fa-repeat"></i>
 			Refresh
-		</button>
+		</button> -->
 	</h2>
 </div>
 <div class="clearfix"></div>
@@ -302,18 +305,33 @@ defined('BASEPATH') or exit('No direct script access allowed');
             alert('Mohon checklist salah satu data.');
         } else {
             window.open(Links+"?unit_id="+checkedValues);
-            /*$.ajax({
-                url: Links,
+        }
+    });
+
+    $(document).on('click', '#btn-kirim-wa', function(e){
+        e.preventDefault();
+        const jml_row = $("#tableDTServerSite tbody input:checked").length;
+        const checkedValues = $('#tableDTServerSite tbody input:checkbox:checked').map(function(){
+            return this.value;
+        }).get();
+        if (jml_row < 1) {
+            alert('Mohon checklist salah satu data.');
+        } else {
+            $.ajax({
+                url: $(this).attr('href'),
                 cache: false,
                 type: "POST",
                 dataType: "json",
                 data: {unit_id:checkedValues},
                 success: function(data) {
                     if (data.status == 1) {
-                        window.open(data.LinkURL);
+                        alert(data.pesan);
+                        if (data.redirect_page == 'YES') {
+                            window.location.href=data.redirect_page_URL;
+                        }
                     }
                 }
-            });*/
+            });
         }
     });
 </script>
