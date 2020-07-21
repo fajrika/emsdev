@@ -31,6 +31,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     public function index()
     {
         // die;
+        
         $project = $this->m_core->project();
         $periode = date('Y-m');
         $data = $this->db->query(
