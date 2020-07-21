@@ -31,7 +31,6 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     public function index()
     {
         // die;
-        
         $project = $this->m_core->project();
         $periode = date('Y-m');
         $data = $this->db->query(
@@ -414,9 +413,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         $json_data['redirect_page'] = "YES";
         $json_data['redirect_page_URL'] = site_url('transaksi/p_kirim_konfirmasi_tagihan');
 
-        
         //Start OB & put json output-------------------------//
-
         ob_end_clean();
         ignore_user_abort();
         ob_start();
