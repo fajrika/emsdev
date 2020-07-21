@@ -1,6 +1,8 @@
 <?php
+
 use Restserver\Libraries\REST_Controller;
-defined('BASEPATH') OR exit('No direct script access allowed');
+
+defined('BASEPATH') or exit('No direct script access allowed');
 
 // This can be removed if you use __autoload() in config.php OR use Modular Extensions
 /** @noinspection PhpIncludeInspection */
@@ -19,7 +21,8 @@ require APPPATH . 'libraries/Format.php';
  * @license         MIT
  * @link            https://github.com/chriskacerguis/codeigniter-restserver
  */
-class Sales_force extends REST_Controller {
+class Sales_force extends REST_Controller
+{
 
     function __construct()
     {
@@ -30,18 +33,18 @@ class Sales_force extends REST_Controller {
         // Ensure you have created the 'limits' table and enabled 'limits' within application/config/rest.php
         $this->load->database();
         $this->db->database = "ems";
-
     }
-    public function index_post($api_key=null,$type=null){
+    public function index_post($api_key = null, $type = null)
+    {
         $this->load->helper('file');
-        write_file("./log/".date("y-m-d").'_log_salesforce.txt',"\n".date("y-m-d h:i:s")." = POST !".json_encode($this->post())." !", 'a+');
+        write_file("./log/" . date("y-m-d") . '_log_salesforce.txt', "\n" . date("y-m-d h:i:s") . " = POST !" . json_encode($this->post()) . " !", 'a+');
 
         $from = "ems.dbo";
-        if(!$api_key){
-            $this->response(null,401);
-        }else{
-            if($api_key != 'sales_force_permission')
-                $this->response(null,401);
+        if (!$api_key) {
+            $this->response(null, 401);
+        } else {
+            if ($api_key != 'sales_force_permission')
+                $this->response(null, 401);
         }
         $external_id    = $this->post("external_id");
         $data_checkout_sf = [
@@ -53,7 +56,7 @@ class Sales_force extends REST_Controller {
             "create_date"   => date("Y-m-d H:i:s.000")
 
         ];
-        $this->db->insert("$from.checkout_salesforce",$data_checkout_sf);
+        $this->db->insert("$from.checkout_salesforce", $data_checkout_sf);
         $external_id    = explode(";", $external_id);
 
         // $tagihan = $this->db
@@ -72,11 +75,11 @@ class Sales_force extends REST_Controller {
         //                     ->where_in("bill_id",$external_id)
         //                     ->get()->result();
         $t_tagihans = $this->db
-                        ->select("periode,
+            ->select("periode,
                                 unit_id")
-                        ->from("t_tagihan")
-                        ->where_in("id",$external_id)
-                        ->get()->result();
+            ->from("t_tagihan")
+            ->where_in("id", $external_id)
+            ->get()->result();
         foreach ($t_tagihans as $key => $t_tagihan) {
             $this->db->set('status_tagihan', 3);
             $this->db->where('periode', $t_tagihan->periode);
@@ -86,9 +89,8 @@ class Sales_force extends REST_Controller {
             $this->db->where('periode', $t_tagihan->periode);
             $this->db->where('unit_id', $t_tagihan->unit_id);
             $this->db->update("t_tagihan_air");
-    
         }
-                                
+
         // foreach ($tagihan as $v) {
         //     if($v->lingkungan_id != 0){
         //         $this->db->set('status_tagihan', 3);
@@ -107,16 +109,17 @@ class Sales_force extends REST_Controller {
         ];
         $this->set_response($message, REST_Controller::HTTP_CREATED);
     }
-    public function exp_post($api_key=null,$type=null){
+    public function exp_post($api_key = null, $type = null)
+    {
         $this->load->helper('file');
-        write_file("./log/".date("y-m-d").'_log_salesforce.txt',"\n".date("y-m-d h:i:s")." = Expired POST !".json_encode($this->post())." !", 'a+');
+        write_file("./log/" . date("y-m-d") . '_log_salesforce.txt', "\n" . date("y-m-d h:i:s") . " = Expired POST !" . json_encode($this->post()) . " !", 'a+');
 
         $from = "ems.dbo";
-        if(!$api_key){
-            $this->response(null,401);
-        }else{
-            if($api_key != '8hfjnfbj31nibHIasBUFB12125nvdonfbi')
-                $this->response(null,401);
+        if (!$api_key) {
+            $this->response(null, 401);
+        } else {
+            if ($api_key != '8hfjnfbj31nibHIasBUFB12125nvdonfbi')
+                $this->response(null, 401);
         }
         $external_id    = $this->post("external_id");
         $data_checkout_sf = [
@@ -128,7 +131,7 @@ class Sales_force extends REST_Controller {
             "create_date"   => date("Y-m-d H:i:s.000")
 
         ];
-        $this->db->insert("$from.checkout_salesforce",$data_checkout_sf);
+        $this->db->insert("$from.checkout_salesforce", $data_checkout_sf);
         $external_id    = explode(";", $external_id);
         // $tagihan = $this->db
         //                     ->select("
@@ -145,15 +148,15 @@ class Sales_force extends REST_Controller {
         //                             "LEFT")
         //                     ->where_in("bill_id",$external_id)
         //                     ->get()->result();
-        
+
         $this->db->set('status_tagihan', 0);
-        $this->db->where_in("t_tagihan_lingkungan.t_tagihan_id",$external_id);
-        $this->db->where("t_tagihan_lingkungan.status_tagihan",3);
+        $this->db->where_in("t_tagihan_lingkungan.t_tagihan_id", $external_id);
+        $this->db->where("t_tagihan_lingkungan.status_tagihan", 3);
         $this->db->update("$from.t_tagihan_lingkungan");
 
         $this->db->set('status_tagihan', 0);
-        $this->db->where_in("t_tagihan_air.t_tagihan_id",$external_id);
-        $this->db->where("t_tagihan_air.status_tagihan",3);
+        $this->db->where_in("t_tagihan_air.t_tagihan_id", $external_id);
+        $this->db->where("t_tagihan_air.status_tagihan", 3);
         $this->db->update("$from.t_tagihan_air");
 
         // foreach ($tagihan as $v) {
@@ -174,23 +177,24 @@ class Sales_force extends REST_Controller {
         ];
         $this->set_response($message, REST_Controller::HTTP_OK);
     }
-    public function expall_post($api_key=null,$type=null){
+    public function expall_post($api_key = null, $type = null)
+    {
         $this->load->helper('file');
-        write_file("./log/".date("y-m-d").'_log_salesforce.txt',"\n".date("y-m-d h:i:s")." = Expired All POST !".json_encode($this->post())." !", 'a+');
+        write_file("./log/" . date("y-m-d") . '_log_salesforce.txt', "\n" . date("y-m-d h:i:s") . " = Expired All POST !" . json_encode($this->post()) . " !", 'a+');
 
         $from = "ems.dbo";
-        if(!$api_key){
-            $this->response(null,401);
-        }else{
-            if($api_key != '98275hi93hd77e73h3h8fjehHJBAF8h88')
-                $this->response(null,401);
+        if (!$api_key) {
+            $this->response(null, 401);
+        } else {
+            if ($api_key != '98275hi93hd77e73h3h8fjehHJBAF8h88')
+                $this->response(null, 401);
         }
-        $this->db->set('status_tagihan',0);
-        $this->db->where('status_tagihan',3);
+        $this->db->set('status_tagihan', 0);
+        $this->db->where('status_tagihan', 3);
         $this->db->update("$from.t_tagihan_air");
 
-        $this->db->set('status_tagihan',0);
-        $this->db->where('status_tagihan',3);
+        $this->db->set('status_tagihan', 0);
+        $this->db->where('status_tagihan', 3);
         $this->db->update("$from.t_tagihan_lingkungan");
 
         $message = [
@@ -198,10 +202,10 @@ class Sales_force extends REST_Controller {
         ];
         $this->set_response($message, REST_Controller::HTTP_OK);
     }
-    public function index_get($api_key=null,$type=null)
+    public function index_get($api_key = null, $type = null)
     {
         $this->load->helper('file');
-        write_file("./log/".date("y-m-d").'_log_salesforce.txt',"\n".date("y-m-d h:i:s")." = GET !".json_encode($this->input->get("uid"))." !", 'a+');
+        write_file("./log/" . date("y-m-d") . '_log_salesforce.txt', "\n" . date("y-m-d h:i:s") . " = GET !" . json_encode($this->input->get("uid")) . " !", 'a+');
 
         $this->load->database();
 
@@ -214,16 +218,16 @@ class Sales_force extends REST_Controller {
         $result = (object)[];
 
         $uid = $this->input->get("uid");
-        if(!$api_key){
-            $this->response(null,401);
-        }else{
-            if($api_key != 'sales_force_permission')
-                $this->response(null,401);
+        if (!$api_key) {
+            $this->response(null, 401);
+        } else {
+            if ($api_key != 'sales_force_permission')
+                $this->response(null, 401);
         }
-        if(!$uid || !$type){
-            $this->response(null,400); // OK (200) being the HTTP response code
+        if (!$uid || !$type) {
+            $this->response(null, 400); // OK (200) being the HTTP response code
         }
-        
+
         $resultUnit = $this->db->select("
                                         unit.id as unit_id,
                                         kawasan.name as kawasan,
@@ -233,33 +237,45 @@ class Sales_force extends REST_Controller {
                                         xendit_sub_account.sub_account as xendit,
                                         pt_apikey.apikey as midtrans
                                         ")
-                                ->from("unit")
-                                ->join('pt_apikey',
-                                        'pt_apikey.pt_id = unit.pt_id',
-                                        "LEFT")
-                                ->join("project",
-                                        "project.id = unit.project_id")
-                                ->join("blok",
-                                        "blok.id = unit.blok_id")
-                                ->join("kawasan",
-                                        "kawasan.id = blok.kawasan_id")
-                                ->join("xendit_sub_account",
-                                        "xendit_sub_account.project_id = unit.project_id
+            ->from("unit")
+            ->join(
+                'pt_apikey',
+                'pt_apikey.pt_id = unit.pt_id',
+                "LEFT"
+            )
+            ->join(
+                "project",
+                "project.id = unit.project_id"
+            )
+            ->join(
+                "blok",
+                "blok.id = unit.blok_id"
+            )
+            ->join(
+                "kawasan",
+                "kawasan.id = blok.kawasan_id"
+            )
+            ->join(
+                "xendit_sub_account",
+                "xendit_sub_account.project_id = unit.project_id
                                         AND xendit_sub_account.pt_id = unit.pt_id",
-                                        "LEFT")
-                                ->where("CONCAT(project.source_id,kawasan.code,blok.code,'/',unit.no_unit)","$uid")
-                                // ->order_by("")
-                                ->get()->row();
+                "LEFT"
+            )
+            ->where("CONCAT(project.source_id,kawasan.code,blok.code,'/',unit.no_unit)", "$uid")
+            // ->order_by("")
+            ->get()->row();
 
-        
+
         $total = (object)[];
 
-        if($type == "bill"){
+        if ($type == "bill") {
             $param = [
                 'unit_id' => $resultUnit->unit_id,
-                'status_tagihan' => 0
+                'status_tagihan' => 0,
+                'date' => date("Y-m-d")
             ];
-            $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"));
+            // echo json_encode($param)
+            $tagihans = $this->m_tagihan->get_tagihan_gabungan($param);
 
             $total->tagihan_air = 0;
             $total->tagihan_lingkungan = 0;
@@ -270,31 +286,31 @@ class Sales_force extends REST_Controller {
             $result->va = $this->m_tagihan->get_va($resultUnit->unit_id);
             $result->tagihan = [];
             foreach ($tagihans as $key => $tagihan) {
-                if(isset($tagihan->air->final_total))
-                    $total->tagihan_air += $tagihan->air->final_total;
-                if(isset($tagihan->lingkungan->final_total))
-                    $total->tagihan_lingkungan += $tagihan->lingkungan->final_total;
-                
+                if (isset($tagihan->air->final_nilai_tagihan))
+                    $total->tagihan_air += $tagihan->air->final_nilai_tagihan;
+                if (isset($tagihan->lingkungan->final_nilai_tagihan))
+                    $total->tagihan_lingkungan += $tagihan->lingkungan->final_nilai_tagihan;
+
                 $total->tagihan_lain         += 0;
 
-                if(isset($tagihan->air->nilai_denda))
+                if (isset($tagihan->air->nilai_denda))
                     $total->total_denda += $tagihan->air->nilai_denda;
-                if(isset($tagihan->lingkungan->nilai_denda))
+                if (isset($tagihan->lingkungan->nilai_denda))
                     $total->total_denda += $tagihan->lingkungan->nilai_denda;
 
-                if(isset($tagihan->lingkungan->id)){
+                if (isset($tagihan->lingkungan->id)) {
                     $tagihan_id = $tagihan->lingkungan->external_id;
                     $periode = $tagihan->lingkungan->periode;
-                }elseif(isset($tagihan->air->id)){
+                } elseif (isset($tagihan->air->id)) {
                     $tagihan_id = $tagihan->air->external_id;
                     $periode = $tagihan->air->periode;
                 }
-                $tagihan_air = isset($tagihan->air->final_total)?$tagihan->air->final_total:0;
-                $tagihan_lingkungan = isset($tagihan->lingkungan->final_total)?$tagihan->lingkungan->final_total:0;
-                $total_denda = isset($tagihan->air->final_nilai_denda)?$tagihan->air->final_nilai_denda:0
-                                    +isset($tagihan->lingkungan->final_nilai_denda)?$tagihan->lingkungan->final_nilai_denda:0;
-                    
-                array_push($result->tagihan,(object)[
+                $tagihan_air = isset($tagihan->air->final_nilai_tagihan) ? $tagihan->air->final_nilai_tagihan : 0;
+                $tagihan_lingkungan = isset($tagihan->lingkungan->final_nilai_tagihan) ? $tagihan->lingkungan->final_nilai_tagihan : 0;
+                $total_denda = isset($tagihan->air->final_nilai_denda) ? $tagihan->air->final_nilai_denda : 0
+                    + isset($tagihan->lingkungan->final_nilai_denda) ? $tagihan->lingkungan->final_nilai_denda : 0;
+
+                array_push($result->tagihan, (object)[
                     "uid" => $uid,
                     "tagihan_id" => $tagihan_id,
                     "periode" => $periode,
@@ -307,14 +323,13 @@ class Sales_force extends REST_Controller {
             }
             $result->tagihan = array_reverse($result->tagihan);
             $total->total = $total->tagihan_air + $total->tagihan_lingkungan + $total->tagihan_lain + $total->total_denda;
-
-        }
-        else if($type == "history"){
+        } else if ($type == "history") {
             $param = [
                 'unit_id' => $resultUnit->unit_id,
-                'status_tagihan' => 1
+                'status_tagihan' => 1,
+                'date'  => date("Y-m-d")
             ];
-            $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"));
+            $tagihans = $this->m_tagihan->get_tagihan_gabungan($param);
 
             $total->tagihan_air = 0;
             $total->tagihan_lingkungan = 0;
@@ -324,32 +339,43 @@ class Sales_force extends REST_Controller {
 
             $result->va = $this->m_tagihan->get_va($resultUnit->unit_id);
             $result->tagihan = [];
+            $iterasi = 0;
             foreach ($tagihans as $key => $tagihan) {
-                if(isset($tagihan->air->final_total))
-                    $total->tagihan_air += $tagihan->air->final_total;
-                if(isset($tagihan->lingkungan->final_total))
-                    $total->tagihan_lingkungan += $tagihan->lingkungan->final_total;
-                
+                if (isset($tagihan->air->final_nilai_tagihan))
+                    $total->tagihan_air += $tagihan->air->final_nilai_tagihan;
+                if (isset($tagihan->lingkungan->final_nilai_tagihan))
+                    $total->tagihan_lingkungan += $tagihan->lingkungan->final_nilai_tagihan;
+
                 $total->tagihan_lain         += 0;
 
-                if(isset($tagihan->air->nilai_denda))
+                if (isset($tagihan->air->nilai_denda))
                     $total->total_denda += $tagihan->air->nilai_denda;
-                if(isset($tagihan->lingkungan->nilai_denda))
+                if (isset($tagihan->lingkungan->nilai_denda))
                     $total->total_denda += $tagihan->lingkungan->nilai_denda;
 
-                if(isset($tagihan->lingkungan->id)){
+                if (isset($tagihan->lingkungan->id)) {
                     $tagihan_id = $tagihan->lingkungan->external_id;
                     $periode = $tagihan->lingkungan->periode;
-                }elseif(isset($tagihan->air->id)){
+                } elseif (isset($tagihan->air->id)) {
                     $tagihan_id = $tagihan->air->external_id;
                     $periode = $tagihan->air->periode;
                 }
-                $tagihan_air = isset($tagihan->air->final_total)?$tagihan->air->final_total:0;
-                $tagihan_lingkungan = isset($tagihan->lingkungan->final_total)?$tagihan->lingkungan->final_total:0;
-                $total_denda = isset($tagihan->air->final_nilai_denda)?$tagihan->air->final_nilai_denda:0
-                                    +isset($tagihan->lingkungan->final_nilai_denda)?$tagihan->lingkungan->final_nilai_denda:0;
-                    
-                array_push($result->tagihan,(object)[
+                $tagihan_air = isset($tagihan->air->final_nilai_tagihan) ? $tagihan->air->final_nilai_tagihan : 0;
+                $tagihan_lingkungan = isset($tagihan->lingkungan->final_nilai_tagihan) ? $tagihan->lingkungan->final_nilai_tagihan : 0;
+                $total_denda = isset($tagihan->air->final_nilai_denda) ? $tagihan->air->final_nilai_denda : 0
+                    + isset($tagihan->lingkungan->final_nilai_denda) ? $tagihan->lingkungan->final_nilai_denda : 0;
+
+                $status_tagihan = "Telah Lunas di Bayar";
+                if (isset($tagihan->air))
+                    if (isset($tagihan->air->status_tagihan))
+                        if ($tagihan->air->status_tagihan == 4)
+                            $status_tagihan = "Telah di Bayar Sebagian";
+                if (isset($tagihan->lingkungan))
+                    if (isset($tagihan->lingkungan->status_tagihan))
+                        if ($tagihan->lingkungan->status_tagihan == 4)
+                            $status_tagihan = "Telah di Bayar Sebagian";
+
+                array_push($result->tagihan, (object)[
                     "uid" => $uid,
                     "tagihan_id" => $tagihan_id,
                     "periode" => $periode,
@@ -357,14 +383,18 @@ class Sales_force extends REST_Controller {
                     "tagihan_lingkungan" => $tagihan_lingkungan,
                     "tagihan_lain" => 0,
                     "total_denda" => $total_denda,
-                    "total" => $tagihan_air + $tagihan_lingkungan + $total_denda
+                    "total" => $tagihan_air + $tagihan_lingkungan + $total_denda,
+                    "status_tagihan" => $status_tagihan
                 ]);
+                $iterasi++;
+                if ($iterasi == 12)
+                    break;
             }
             $result->tagihan = array_reverse($result->tagihan);
             $total->total = $total->tagihan_air + $total->tagihan_lingkungan + $total->tagihan_lain + $total->total_denda;
             // $result = $this->db->select("*")->from("v_xendit_history")->where("uid = $uid")->get()->result();
-        }else
-            $this->response(null,400);
+        } else
+            $this->response(null, 400);
 
         // echo("<pre>");   
         //     print_r($project);
@@ -376,14 +406,14 @@ class Sales_force extends REST_Controller {
         $result->info->no_unit  = $resultUnit->no_unit;
         $result->info->xendit = $resultUnit->xendit;
         $result->info->midtrans = $resultUnit->midtrans;
-        
-        
-        $result->total = $total;
+
+
+        $result->summary = $total;
         // $result->tagihan = $resultTMP;
         $this->response($result, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
 
     }
-    public function users_get($id=null)
+    public function users_get($id = null)
     {
 
         // Users from a data store e.g. database
@@ -397,16 +427,12 @@ class Sales_force extends REST_Controller {
 
         // If the id parameter doesn't exist return all the users
 
-        if ($id === NULL)
-        {
+        if ($id === NULL) {
             // Check if the users data store contains users (in case the database result returns NULL)
-            if ($users)
-            {
+            if ($users) {
                 // Set the response and exit
                 $this->response($users, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
-            }
-            else
-            {
+            } else {
                 // Set the response and exit
                 $this->response([
                     'status' => FALSE,
@@ -420,8 +446,7 @@ class Sales_force extends REST_Controller {
         $id = (int) $id;
 
         // Validate the id.
-        if ($id <= 0)
-        {
+        if ($id <= 0) {
             // Invalid id, set the response and exit.
             $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         }
@@ -431,23 +456,17 @@ class Sales_force extends REST_Controller {
 
         $user = NULL;
 
-        if (!empty($users))
-        {
-            foreach ($users as $key => $value)
-            {
-                if (isset($value['id']) && $value['id'] === $id)
-                {
+        if (!empty($users)) {
+            foreach ($users as $key => $value) {
+                if (isset($value['id']) && $value['id'] === $id) {
                     $user = $value;
                 }
             }
         }
 
-        if (!empty($user))
-        {
+        if (!empty($user)) {
             $this->set_response($user, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
-        }
-        else
-        {
+        } else {
             $this->set_response([
                 'status' => FALSE,
                 'message' => 'User could not be found'
@@ -473,8 +492,7 @@ class Sales_force extends REST_Controller {
         $id = (int) $this->get('id');
 
         // Validate the id.
-        if ($id <= 0)
-        {
+        if ($id <= 0) {
             // Set the response and exit
             $this->response(NULL, REST_Controller::HTTP_BAD_REQUEST); // BAD_REQUEST (400) being the HTTP response code
         }
@@ -487,5 +505,4 @@ class Sales_force extends REST_Controller {
 
         $this->set_response($message, REST_Controller::HTTP_NO_CONTENT); // NO_CONTENT (204) being the HTTP response code
     }
-
 }
