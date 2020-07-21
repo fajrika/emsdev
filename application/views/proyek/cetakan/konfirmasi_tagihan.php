@@ -138,9 +138,9 @@
                     </tr>
                     <tr>
                         <?php if ($total_tagihan->air) : ?>
-                        <th class="text-right">Awal</th>
-                        <th class="text-right">Akhir</th>
-                        <th class="text-right">Pakai</th>
+                            <th class="text-right">Awal</th>
+                            <th class="text-right">Akhir</th>
+                            <th class="text-right">Pakai</th>
                         <?php endif; ?>
 
                     </tr>
@@ -225,9 +225,9 @@
                 <?php endif; ?>
 
                 <p class="lh-18 f-15">
-                    Jika Pembayaran dilakukan setelah tanggal 20 bulan berjalan akan dikenakan denda
+                    Jika Pembayaran dilakukan setelah tanggal <?= $tgl_jatuh_tempo ?> bulan berjalan akan dikenakan denda
                     kumulatif/penalti. Untuk Informasi lebih lanjut dapat menghubungi Customer Service di
-                    kantor Estate Office
+                    <?= $nama_pusat_informasi ?>
                     <?php
                     if ($unit->contactperson || $unit->phone) {
                         echo (" di ");
