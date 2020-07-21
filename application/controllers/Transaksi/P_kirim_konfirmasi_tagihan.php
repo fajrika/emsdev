@@ -416,6 +416,13 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
 
         
         //Start OB & put json output-------------------------//
+        udasdgas
+        adsad
+        asd
+        sad
+        ascdasdas
+
+        asdas
         ob_end_clean();
         ignore_user_abort();
         ob_start();
