@@ -21,6 +21,11 @@ class P_master_cara_pembayaran extends CI_Controller
         $project = $this->m_core->project();
         global $menu;
         $menu = $this->m_core->menu();
+
+
+        ini_set('memory_limit', '256M'); // This also needs to be increased in some cases. Can be changed to a higher value as per need)
+        ini_set('sqlsrv.ClientBufferMaxKBSize', '524288'); // Setting to 512M
+        ini_set('pdo_sqlsrv.client_buffer_max_kb_size', '524288');
     }
 
     public function index()
@@ -41,7 +46,7 @@ class P_master_cara_pembayaran extends CI_Controller
         $pt = $this->m_pt->get();
         $bank = $this->m_bank->get_order_name();
         $dataJenisCaraPembayaran = $this->m_cara_pembayaran->get_jenis_cara_pembayaran();
-        
+
         $this->load->model('m_coa');
         $dataCaraPembayaran = $this->m_coa->get_isjournal();
         $this->load->model('alert');
@@ -61,12 +66,14 @@ class P_master_cara_pembayaran extends CI_Controller
         $this->load->view('core/footer');
     }
 
-    public function save(){
-        echo(json_encode($this->m_cara_pembayaran->save($this->input->post())));
+    public function save()
+    {
+        echo (json_encode($this->m_cara_pembayaran->save($this->input->post())));
     }
 
-    public function ajax_edit(){
-        echo(json_encode($this->m_cara_pembayaran->ajax_edit($this->input->get("id"),$this->input->post())));
+    public function ajax_edit()
+    {
+        echo (json_encode($this->m_cara_pembayaran->ajax_edit($this->input->get("id"), $this->input->post())));
     }
     public function edit()
     {
@@ -78,12 +85,12 @@ class P_master_cara_pembayaran extends CI_Controller
 
         $status = 0;
         $dataSelected = $this->m_cara_pembayaran->getSelect($this->input->get('id'));
-        if ($dataSelected->project_id ==$project->id) {
+        if ($dataSelected->project_id == $project->id) {
             $dataCaraPembayaran = $this->m_cara_pembayaran->get();
             $dataPTCOA = $this->m_cara_pembayaran->get_all_pt_coa();
             $this->load->model('m_coa');
             $dataCaraPembayaran = $this->m_coa->get_isjournal();
-            
+
             $this->load->model('m_log');
             $data = $this->m_log->get('cara_pembayaran', $this->input->get('id'));
             $this->load->model('alert');
@@ -92,24 +99,25 @@ class P_master_cara_pembayaran extends CI_Controller
             $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
             $this->load->view('core/top_bar');
             $this->load->view('core/body_header', ['title' => 'Master > Accounting > Cara Pembayaran', 'subTitle' => 'Edit']);
-            $this->load->view('proyek/master/cara_pembayaran/edit', 
+            $this->load->view(
+                'proyek/master/cara_pembayaran/edit',
                 [
-                    'dataCaraPembayaran' => $dataCaraPembayaran, 
-                    'dataSelected' => $dataSelected, 
-                    'dataPTCOA' => $dataPTCOA, 
+                    'dataCaraPembayaran' => $dataCaraPembayaran,
+                    'dataSelected' => $dataSelected,
+                    'dataPTCOA' => $dataPTCOA,
                     'data' => $data,
                     'bank' => $bank,
                     'dataJenisCaraPembayaran'   => $dataJenisCaraPembayaran,
 
                     'pt'                        => $pt
 
-                    ]);
+                ]
+            );
             $this->load->view('core/body_footer');
             $this->load->view('core/footer');
         } else {
             redirect(site_url() . '/P_master_cara_pembayaran');
         }
-
     }
 
     public function delete()
