@@ -21,17 +21,16 @@ class Test extends CI_Controller
 		$this->load->model('m_core');
 
 		$this->load->model('core/m_tagihan');
-		$blok = 29542;
-		$periode_awal = "01/2020";
-		$periode_akhir = "12/2020";
+		// $periode_awal = "01/2020";
+		// $periode_akhir = "12/2020";
 		$metode_tagihan = [1, 2];
 		$param = (object)[];
 
-		$periode_awal = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
-		$periode_akhir = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
-		$param->status_tagihan = [1, 4];
+		// $periode_awal = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
+		// $periode_akhir = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
+		$param->status_tagihan = [0, 4];
 		// $param->kawasan_id = 220;
-		$param->unit_id = 194;
+		$param->unit_id = 255826;
 		// $param->blok_id = $blok;
 		// $param->project_id = 13;
 		$param->service_jenis_id = $metode_tagihan;

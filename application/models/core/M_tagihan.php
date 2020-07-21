@@ -695,7 +695,13 @@ class M_tagihan extends CI_Model
 						$tagihan->nilai_denda = $tagihan->denda_nilai_service;
 					} elseif ($tagihan->denda_jenis_service == 2 || $tagihan->denda_jenis_service == 3) {
 						// print_r('5');
-						$tmp_bulan_telat = $this->dateDifference($tagihan->duedate, $date, '%y,%m,%d');
+						// $tmp_bulan_telat = $this->dateDifference($tagihan->duedate, $date, '%y,%m,%d');
+						$tmp_bulan_telat = 
+							$this->dateDifference(
+								$tagihan->duedate, 
+								date('Y-m-d', strtotime('+1 day', strtotime($date))), 
+								'%y,%m,%d'
+							);
 						$tmp_bulan_telat = explode(',', $tmp_bulan_telat);
 
 						$bulan_telat = ($tmp_bulan_telat[0] * 12) + ($tmp_bulan_telat[1]) + ($tmp_bulan_telat[2] > 0 ? 1 : 0);
@@ -937,7 +943,12 @@ class M_tagihan extends CI_Model
 						$tagihan->nilai_denda = $tagihan->denda_nilai_service;
 					} elseif ($tagihan->denda_jenis_service == 2 || $tagihan->denda_jenis_service == 3) {
 
-						$tmp_bulan_telat = $this->dateDifference($tagihan->duedate, $date, '%y,%m,%d');
+						$tmp_bulan_telat = 
+							$this->dateDifference(
+								$tagihan->duedate, 
+								date('Y-m-d', strtotime('+1 day', strtotime($date))), 
+								'%y,%m,%d'
+							);
 						$tmp_bulan_telat = explode(',', $tmp_bulan_telat);
 
 						$bulan_telat = ($tmp_bulan_telat[0] * 12) + ($tmp_bulan_telat[1]) + ($tmp_bulan_telat[2] > 0 ? 1 : 0);
