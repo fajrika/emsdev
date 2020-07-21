@@ -52,19 +52,25 @@ class m_cara_pembayaran extends CI_Model
                             cara_pembayaran.*, 
                             pt.name as ptName,
                             bank.name as bank")
-                        ->from("cara_pembayaran")
-                        ->join("gl_2018.dbo.view_coa",
-                                "view_coa.coa_id = cara_pembayaran.coa_mapping_id",
-                                "LEFT")
-                        ->join("ems.dbo.pt",
-                                "pt.source_id = view_coa.pt_id",
-                                "LEFT")
-                        ->join("bank",
-                                "bank.id = cara_pembayaran.bank_id",
-                                "LEFT")
-                        ->where("cara_pembayaran.delete",0) 
-                        ->where("cara_pembayaran.project_id",$project->id) 
-                        ->order_by("cara_pembayaran.id desc")->get();
+            ->from("cara_pembayaran")
+            ->join(
+                "gl_2018.dbo.view_coa",
+                "view_coa.coa_id = cara_pembayaran.coa_mapping_id",
+                "LEFT"
+            )
+            ->join(
+                "ems.dbo.pt",
+                "pt.source_id = view_coa.pt_id",
+                "LEFT"
+            )
+            ->join(
+                "bank",
+                "bank.id = cara_pembayaran.bank_id",
+                "LEFT"
+            )
+            ->where("cara_pembayaran.delete", 0)
+            ->where("cara_pembayaran.project_id", $project->id)
+            ->order_by("cara_pembayaran.id desc")->get();
         return $query->result_array();
     }
 
@@ -105,21 +111,21 @@ class m_cara_pembayaran extends CI_Model
                 'active'                    => 1,
                 'delete'                    => 0,
                 'bank_id'                   => $dataTmp['bank'],
-                
+
                 'va_bank'                   => $dataTmp['va_bank'],
                 'va_merchant'               => $dataTmp['va_merchant'],
                 'max_digit'                 => $dataTmp['max_digit'],
-                
+
                 'pt_id'                     => $dataTmp['pt'],
-                
+
 
             ];
 
-        $this->db   ->where('code', $data['code'])
-                    ->where('delete', 0)
-                    ->where('pt_id', $data['pt_id'])
-                    ->where('bank_id', $data["bank_id"])
-                    ->where('project_id', $project->id);
+        $this->db->where('code', $data['code'])
+            ->where('delete', 0)
+            ->where('pt_id', $data['pt_id'])
+            ->where('bank_id', $data["bank_id"])
+            ->where('project_id', $project->id);
         $this->db->from('cara_pembayaran');
 
         // validasi double
@@ -200,11 +206,12 @@ class m_cara_pembayaran extends CI_Model
         $row = $query->row();
 
         return $row;
-    }  
-    public function ajax_edit($id,$dataTmp){
+    }
+    public function ajax_edit($id, $dataTmp)
+    {
         $this->load->model('m_core');
         $this->load->model('m_log');
-        $project = $this->m_core->project();        
+        $project = $this->m_core->project();
 
         $data =
             [
@@ -219,11 +226,11 @@ class m_cara_pembayaran extends CI_Model
                 // 'active'                    => 1,
                 // 'delete'                    => 0,
                 // 'bank_id'                   => $dataTmp['bank'],
-                
+
                 'va_bank'                   => $dataTmp['va_bank'],
                 'va_merchant'               => $dataTmp['va_merchant'],
                 'max_digit'                 => $dataTmp['max_digit'],
-                
+
                 // 'pt_id'                     => $dataTmp['pt'],
             ];
 
@@ -235,7 +242,7 @@ class m_cara_pembayaran extends CI_Model
             $this->db->where('id', $id);
             $this->db->update('cara_pembayaran', $data);
             $after = $this->get_log($id);
-                
+
             $diff = (object) (array_diff_assoc((array) $after, (array) $before));
             $tmpDiff = (array) $diff;
             if ($tmpDiff) {
@@ -257,7 +264,7 @@ class m_cara_pembayaran extends CI_Model
         $project = $this->m_core->project();
         $user_id = $this->m_core->user_id();
 
-        
+
 
         $data =
             [
@@ -279,20 +286,20 @@ class m_cara_pembayaran extends CI_Model
             // $this->db->from('cara_pembayaran');
             // validasi double
             // if ($this->db->count_all_results() == 0) {
-                $before = $this->get_log($dataTmp['id']);
-                $this->db->where('id', $dataTmp['id']);
-                $this->db->update('cara_pembayaran', $data);
-                $after = $this->get_log($dataTmp['id']);
-                
-                $diff = (object) (array_diff_assoc((array) $after, (array) $before));
-                $tmpDiff = (array) $diff;
-                if ($tmpDiff) {
-                    $this->m_log->log_save('cara_pembayaran', $dataTmp['id'], 'Edit', $diff);
+            $before = $this->get_log($dataTmp['id']);
+            $this->db->where('id', $dataTmp['id']);
+            $this->db->update('cara_pembayaran', $data);
+            $after = $this->get_log($dataTmp['id']);
 
-                    return 'success';
-                } else {
-                    return 'Tidak Ada Perubahan';
-                }
+            $diff = (object) (array_diff_assoc((array) $after, (array) $before));
+            $tmpDiff = (array) $diff;
+            if ($tmpDiff) {
+                $this->m_log->log_save('cara_pembayaran', $dataTmp['id'], 'Edit', $diff);
+
+                return 'success';
+            } else {
+                return 'Tidak Ada Perubahan';
+            }
             // } else {
             //     return 'double';
             // }

@@ -28,9 +28,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <select type="text" id="pt" required="required" class="select2 form-control col-md-7 col-xs-12" name="pt" style="width:100%" placeholder="--Pilih PT--" require>
 
                     <option value="" selected="" disabled="">--Pilih PT--</option>
-                    <?php foreach ($pt as $v): ?>
-                        <option value='<?=$v->pt_id?>'><?=$v->name?></option>");
-                    <?php endforeach;?>
+                    <?php foreach ($pt as $v) : ?>
+                        <option value='<?= $v->pt_id ?>'><?= $v->name ?></option>");
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -41,9 +41,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 <select type="text" id="jenis_cara_pembayaran" required="required" class="select2 form-control col-md-7 col-xs-12" name="jenis_cara_pembayaran" style="width:100%" placeholder="--Pilih Jenis Cara Pembayaran--" require>
 
                     <option value="" selected="" disabled="">--Pilih Jenis Cara Pembayaran--</option>
-                    <?php foreach ($dataJenisCaraPembayaran as $v):?>
-                        <option value='<?=$v->id?>' bank='<?=$v->bank?>' nama='<?=$v->name?>' kode='<?=$v->code?>'><?=$v->name?> - <?=$v->code?></option>");
-                    <?php endforeach;?>
+                    <?php foreach ($dataJenisCaraPembayaran as $v) : ?>
+                        <option value='<?= $v->id ?>' bank='<?= $v->bank ?>' nama='<?= $v->name ?>' kode='<?= $v->code ?>'><?= $v->name ?> - <?= $v->code ?></option>");
+                    <?php endforeach; ?>
                 </select>
             </div>
         </div>
@@ -89,7 +89,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
         <div class="form-group">
             <label class="control-label col-md-3 col-sm-3 col-xs-12" for="biaya_admin" id="label_biaya_admin">Max Digit VA</label>
             <div class="col-md-6 col-sm-6 col-xs-12">
-                <input type="number" id="max_digit" name="max_digit" class="form-control col-md-7 col-xs-12" placeholder="Masukkan Max Digit (Sub Bank Merchant + 8)">
+                <input type="number" id="max_digit" name="max_digit" class="form-control col-md-7 col-xs-12" placeholder="Masukkan Max Digit (Sub Bank Merchant + 8)" value="16" disabled>
             </div>
         </div>
         <div class="form-group">
@@ -156,7 +156,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 styling: 'bootstrap3'
             });
         }
-        $('#form-cara-bayar').on('submit', function (e) {
+        $('#form-cara-bayar').on('submit', function(e) {
             console.log("test1");
             e.preventDefault();
             $.ajax({
@@ -164,12 +164,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 url: "<?= site_url() ?>/P_master_cara_pembayaran/save",
                 data: $('form').serialize(),
                 dataType: "json",
-                success: function (data) {
+                success: function(data) {
                     console.log(data);
-                    if( data == "success")
-                        notif("Berhasil","Data Berhasil di Tambah","success")
+                    if (data == "success")
+                        notif("Berhasil", "Data Berhasil di Tambah", "success")
                     else
-                        notif("Gagal","Data Sudah Ada","danger")
+                        notif("Gagal", "Data Sudah Ada", "danger")
                 }
             });
         });
@@ -189,12 +189,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
                 $("#bank").select2();
                 $("#bank").attr("disabled", true);
             }
-            if(val != 3 && val != 1){
-                $("#jenis_pembayaran").attr('readonly',false);
-                $("#code").attr('readonly',false);
-            }else{
-                $("#jenis_pembayaran").attr('readonly',true);
-                $("#code").attr('readonly',true);
+            if (val != 3 && val != 1) {
+                $("#jenis_pembayaran").attr('readonly', false);
+                $("#code").attr('readonly', false);
+            } else {
+                $("#jenis_pembayaran").attr('readonly', true);
+                $("#code").attr('readonly', true);
             }
 
         });
