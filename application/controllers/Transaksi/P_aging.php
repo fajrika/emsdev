@@ -21,7 +21,6 @@ class P_aging extends CI_Controller
 		ini_set('memory_limit','256M'); // This also needs to be increased in some cases. Can be changed to a higher value as per need)
         ini_set('sqlsrv.ClientBufferMaxKBSize','524288'); // Setting to 512M
         ini_set('pdo_sqlsrv.client_buffer_max_kb_size','524288');
-
     }
     
     public function index()
