@@ -44,12 +44,12 @@ class m_pemutihan extends CI_Model
         return $this->db
             ->select("id,jenis_service as name")
             ->from("service_jenis")
-            ->where_in("id",[1,2])
+            ->where_in("id", [1, 2])
             ->get()->result();
     }
     public function get_unit($blok_id, $kawasan_id, $periode_awal, $periode_akhir, $metode_tagihan)
     {
-        
+
         $periode_awal = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
         $periode_akhir = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
         $project = $this->m_core->project();
@@ -140,15 +140,15 @@ class m_pemutihan extends CI_Model
     }
     public function get_unit_test($blok_id, $kawasan_id, $periode_awal, $periode_akhir, $metode_tagihan)
     {
-        
+
         $periode_awal = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
         $periode_akhir = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
         $project = $this->m_core->project();
         $this->load->model('core/m_tagihan');
         $param = (object)[];
-        if($kawasan_id != 'all')
+        if ($kawasan_id != 'all')
             $param->kawasan_id = $kawasan_id;
-        if($blok_id != 'all')
+        if ($blok_id != 'all')
             $param->blok_id = $blok_id;
         $param->status_tagihan = [0];
         $param->service_jenis_id = $metode_tagihan;
@@ -157,9 +157,9 @@ class m_pemutihan extends CI_Model
         // echo('unit<pre>');
         //     print_r($param);
         // echo('</pre>');
-        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit');
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param, 'unit');
         // echo("<pre>");
-        // print_r($this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'unit'));
+        // print_r($this->m_tagihan->get_tagihan_gabungan($param,'unit'));
         // echo("</pre>");
         // die;
         $list = [];
@@ -170,21 +170,20 @@ class m_pemutihan extends CI_Model
         foreach ($tagihans as $tagihan) {
             //tagihan, merupakan banyak tagihan perunit
             $tmp = (object)[];
-            $tmp->unit_id = $tagihan[0]->unit_id; 
-            $tmp->kawasan = $tagihan[0]->kawasan; 
-            $tmp->blok = $tagihan[0]->blok; 
-            $tmp->no_unit = $tagihan[0]->no_unit; 
-            $tmp->pemilik = $tagihan[0]->pemilik; 
-            $tmp->nilai_pokok = 0; 
-            $tmp->denda = 0; 
-            $tmp->total = 0; 
+            $tmp->unit_id = $tagihan[0]->unit_id;
+            $tmp->kawasan = $tagihan[0]->kawasan;
+            $tmp->blok = $tagihan[0]->blok;
+            $tmp->no_unit = $tagihan[0]->no_unit;
+            $tmp->pemilik = $tagihan[0]->pemilik;
+            $tmp->nilai_pokok = 0;
+            $tmp->denda = 0;
+            $tmp->total = 0;
             foreach ($tagihan as $subtagihan) {
                 $tmp->nilai_pokok += $subtagihan->final_nilai_tagihan_tanpa_ppn;
                 $tmp->denda += $subtagihan->final_nilai_denda;
-                $tmp->total += ($subtagihan->final_nilai_tagihan_tanpa_ppn+$subtagihan->final_nilai_denda);                
-            } 
-            array_push($list,$tmp);
-            
+                $tmp->total += ($subtagihan->final_nilai_tagihan_tanpa_ppn + $subtagihan->final_nilai_denda);
+            }
+            array_push($list, $tmp);
         }
         return $list;
     }
@@ -224,19 +223,19 @@ class m_pemutihan extends CI_Model
         $pemutihan->status          = 0;
         $pemutihan->file            = $data->nama_file;
         $pemutihan->code            = $data->kode;
-        $this->db->insert("pemutihan",$pemutihan);
+        $this->db->insert("pemutihan", $pemutihan);
         $pemutihan->id = $this->db->insert_id();
-        
+
         $pemutihan_nilai                        = (object)[];
         $pemutihan_nilai->pemutihan_id          = $pemutihan->id;
         $pemutihan_nilai->nilai_tagihan_type    = $data->nilai_tagihan_type;
-        $pemutihan_nilai->nilai_tagihan         = str_replace(",","",$data->nilai_tagihan);
+        $pemutihan_nilai->nilai_tagihan         = str_replace(",", "", $data->nilai_tagihan);
         $pemutihan_nilai->nilai_denda_type      = $data->nilai_denda_type;
-        $pemutihan_nilai->nilai_denda           = str_replace(",","",$data->nilai_denda);
-        $pemutihan_nilai->perkiraan_pemutihan_nilai_tagihan     = str_replace(",","",$data->perkiraan_pemutihan_nilai_tagihan);
-        $pemutihan_nilai->perkiraan_pemutihan_nilai_denda       = str_replace(",","",$data->perkiraan_pemutihan_nilai_denda);
-        $pemutihan_nilai->perkiraan_pemutihan_total             = str_replace(",","",$data->perkiraan_pemutihan_total);
-        $this->db->insert("pemutihan_nilai",$pemutihan_nilai);
+        $pemutihan_nilai->nilai_denda           = str_replace(",", "", $data->nilai_denda);
+        $pemutihan_nilai->perkiraan_pemutihan_nilai_tagihan     = str_replace(",", "", $data->perkiraan_pemutihan_nilai_tagihan);
+        $pemutihan_nilai->perkiraan_pemutihan_nilai_denda       = str_replace(",", "", $data->perkiraan_pemutihan_nilai_denda);
+        $pemutihan_nilai->perkiraan_pemutihan_total             = str_replace(",", "", $data->perkiraan_pemutihan_total);
+        $this->db->insert("pemutihan_nilai", $pemutihan_nilai);
 
         $periode_awal = new DateTime($pemutihan->periode_awal);
         $periode_akhir = (new DateTime($pemutihan->periode_akhir))->modify("+1 month");
@@ -252,14 +251,14 @@ class m_pemutihan extends CI_Model
         $total_tagihan = 0;
         $total_denda = 0;
 
-        
+
         foreach ($data->service_jenis as $v) {
             $pemutihan_service->service_id          = $this->db->select("id")
                 ->from("service")
                 ->where("project_id", $project->id)
                 ->where("service_jenis_id", $v)
-                ->where("service.active",1)
-                ->where("service.delete",0)
+                ->where("service.active", 1)
+                ->where("service.delete", 0)
                 ->get()->row();
             if ($pemutihan_service->service_id) {
                 $pemutihan_service->service_id          = $pemutihan_service->service_id->id;
@@ -268,7 +267,7 @@ class m_pemutihan extends CI_Model
             }
         }
 
-        if(!$data->unit_id)
+        if (!$data->unit_id)
             return "Tidak ada unit yang terpilih";
 
         // $tagihan = $this->db->select("
@@ -294,7 +293,7 @@ class m_pemutihan extends CI_Model
             'periode_awal' => $pemutihan->periode_awal,
             'periode_akhir' => $pemutihan->periode_akhir
         ];
-        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param,date("Y-m-d"),'periode');
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param, 'periode');
         $tagihan = [];
         foreach ($tagihans as $iterasi => $tagihanTmp) {
             $tmp = (object)[
@@ -306,150 +305,149 @@ class m_pemutihan extends CI_Model
                 "air_nilai_denda" => 0,
                 "periode" => null
             ];
-            if(isset($tagihanTmp->lingkungan->id)){
+            if (isset($tagihanTmp->lingkungan->id)) {
                 $tmp->unit_id = $tagihanTmp->lingkungan->unit_id;
                 $tmp->lingkungan_nilai_pokok = $tagihanTmp->lingkungan->nilai_tagihan_tanpa_ppn;
                 $tmp->lingkungan_nilai_pokok_ppn = $tagihanTmp->lingkungan->nilai_tagihan;
                 $tmp->lingkungan_nilai_denda = $tagihanTmp->lingkungan->nilai_denda;
                 $tmp->periode = $tagihanTmp->lingkungan->periode;
-            }elseif(isset($tagihanTmp->air->id)){
+            } elseif (isset($tagihanTmp->air->id)) {
                 $tmp->unit_id = $tagihanTmp->air->unit_id;
                 $tmp->air_nilai_pokok = $tagihanTmp->air->nilai_tagihan;
                 $tmp->air_nilai_denda = $tagihanTmp->air->nilai_denda;
                 $tmp->periode = $tagihanTmp->air->periode;
             }
-            array_push($tagihan,$tmp);
-        } 
+            array_push($tagihan, $tmp);
+        }
         $pemutihan_tagihan_type = $pemutihan_nilai->nilai_tagihan_type;
         $pemutihan_tagihan      = $pemutihan_nilai->nilai_tagihan;
-        $pemutihan_denda_type   = $pemutihan_nilai->nilai_denda_type; 
+        $pemutihan_denda_type   = $pemutihan_nilai->nilai_denda_type;
         $pemutihan_denda        = $pemutihan_nilai->nilai_denda;
 
-        if($pemutihan_tagihan_type == 0){
+        if ($pemutihan_tagihan_type == 0) {
             $jatah_pemutihan_tagihan_unit = array_flip($data->unit_id);
-            foreach($jatah_pemutihan_tagihan_unit as $k => $v){
+            foreach ($jatah_pemutihan_tagihan_unit as $k => $v) {
                 $jatah_pemutihan_tagihan_unit[$k] = $pemutihan_tagihan;
             }
         }
-        if($pemutihan_denda_type == 0){
+        if ($pemutihan_denda_type == 0) {
             $jatah_pemutihan_denda_unit = array_flip($data->unit_id);
-            foreach($jatah_pemutihan_denda_unit as $k => $v){
+            foreach ($jatah_pemutihan_denda_unit as $k => $v) {
                 $jatah_pemutihan_denda_unit[$k] = $pemutihan_denda;
             }
         }
-        
-        $jatah_pemutihan_unit = array_flip($data->unit_id);           
+
+        $jatah_pemutihan_unit = array_flip($data->unit_id);
 
         foreach ($tagihan as $k => $v) {
             $total_tagihan += $v->lingkungan_nilai_pokok;
             $total_tagihan += $v->air_nilai_pokok;
             $total_denda += $v->lingkungan_nilai_denda;
             $total_denda += $v->air_nilai_denda;
- 
+
             $pemutihan_unit->unit_id = $v->unit_id;
             $pemutihan_unit->periode = $v->periode;
-            if(array_search(2,$data->service_jenis) !== false){
+            if (array_search(2, $data->service_jenis) !== false) {
                 $pemutihan_unit->service_jenis_id   = 2;
-                if($pemutihan_tagihan_type == 0){
-                    if($jatah_pemutihan_tagihan_unit[$v->unit_id] > 0){
-                        if($jatah_pemutihan_tagihan_unit[$v->unit_id] <= $v->air_nilai_pokok){
+                if ($pemutihan_tagihan_type == 0) {
+                    if ($jatah_pemutihan_tagihan_unit[$v->unit_id] > 0) {
+                        if ($jatah_pemutihan_tagihan_unit[$v->unit_id] <= $v->air_nilai_pokok) {
                             $pemutihan_unit->pemutihan_nilai_tagihan = $jatah_pemutihan_tagihan_unit[$v->unit_id];
                             $jatah_pemutihan_tagihan_unit[$v->unit_id] = 0;
-                        }else{
+                        } else {
                             $pemutihan_unit->pemutihan_nilai_tagihan = $v->air_nilai_pokok;
                             $jatah_pemutihan_tagihan_unit[$v->unit_id] -= $v->air_nilai_pokok;
                         }
-                    }else{
+                    } else {
                         $pemutihan_unit->pemutihan_nilai_tagihan = 0;
                     }
-                }else{
-                    $pemutihan_unit->pemutihan_nilai_tagihan = $v->air_nilai_pokok * $pemutihan_nilai->nilai_tagihan /100;
+                } else {
+                    $pemutihan_unit->pemutihan_nilai_tagihan = $v->air_nilai_pokok * $pemutihan_nilai->nilai_tagihan / 100;
                 }
-                if($pemutihan_denda_type == 0){
-                    if($jatah_pemutihan_denda_unit[$v->unit_id] > 0){
-                        if($jatah_pemutihan_denda_unit[$v->unit_id] <= $v->air_nilai_denda){
+                if ($pemutihan_denda_type == 0) {
+                    if ($jatah_pemutihan_denda_unit[$v->unit_id] > 0) {
+                        if ($jatah_pemutihan_denda_unit[$v->unit_id] <= $v->air_nilai_denda) {
                             $pemutihan_unit->pemutihan_nilai_denda = $jatah_pemutihan_denda_unit[$v->unit_id];
                             $jatah_pemutihan_denda_unit[$v->unit_id] = 0;
-                        }else{
+                        } else {
                             $pemutihan_unit->pemutihan_nilai_denda = $v->air_nilai_denda;
                             $jatah_pemutihan_denda_unit[$v->unit_id] -= $v->air_nilai_denda;
                         }
-                    }else{
+                    } else {
                         $pemutihan_unit->pemutihan_nilai_denda = 0;
                     }
-                }else{
-                    $pemutihan_unit->pemutihan_nilai_denda = $v->air_nilai_denda * $pemutihan_nilai->nilai_denda /100;
+                } else {
+                    $pemutihan_unit->pemutihan_nilai_denda = $v->air_nilai_denda * $pemutihan_nilai->nilai_denda / 100;
                 }
-                if($pemutihan_unit->pemutihan_nilai_denda + $pemutihan_unit->pemutihan_nilai_tagihan > 0 ){
+                if ($pemutihan_unit->pemutihan_nilai_denda + $pemutihan_unit->pemutihan_nilai_tagihan > 0) {
                     // echo("<pre>");
                     //     print_r($pemutihan_unit);
                     // echo("</pre>");
-                    $this->db->insert("pemutihan_unit",$pemutihan_unit);                    
+                    $this->db->insert("pemutihan_unit", $pemutihan_unit);
                 }
-                
             }
-            if(array_search(1,$data->service_jenis) !== false){
+            if (array_search(1, $data->service_jenis) !== false) {
                 $pemutihan_unit->service_jenis_id   = 1;
-                if($pemutihan_tagihan_type == 0){
-                    if($jatah_pemutihan_tagihan_unit[$v->unit_id] > 0){
-                        if($jatah_pemutihan_tagihan_unit[$v->unit_id] <= $v->lingkungan_nilai_pokok){
+                if ($pemutihan_tagihan_type == 0) {
+                    if ($jatah_pemutihan_tagihan_unit[$v->unit_id] > 0) {
+                        if ($jatah_pemutihan_tagihan_unit[$v->unit_id] <= $v->lingkungan_nilai_pokok) {
                             $pemutihan_unit->pemutihan_nilai_tagihan = $jatah_pemutihan_tagihan_unit[$v->unit_id];
                             $jatah_pemutihan_tagihan_unit[$v->unit_id] = 0;
-                        }else{
+                        } else {
                             $pemutihan_unit->pemutihan_nilai_tagihan = $v->lingkungan_nilai_pokok;
                             $jatah_pemutihan_tagihan_unit[$v->unit_id] -= $v->lingkungan_nilai_pokok;
                         }
-                    }else{
+                    } else {
                         $pemutihan_unit->pemutihan_nilai_tagihan = 0;
                     }
-                }else{
-                    if($v->lingkungan_nilai_pokok_ppn == $v->lingkungan_nilai_pokok){
-                        $pemutihan_unit->pemutihan_nilai_tagihan = $v->lingkungan_nilai_pokok * $pemutihan_nilai->nilai_tagihan /100;
-                    }else{
-                        $pemutihan_unit->pemutihan_nilai_tagihan = $v->lingkungan_nilai_pokok_ppn * $pemutihan_nilai->nilai_tagihan /100 / 1.1;
+                } else {
+                    if ($v->lingkungan_nilai_pokok_ppn == $v->lingkungan_nilai_pokok) {
+                        $pemutihan_unit->pemutihan_nilai_tagihan = $v->lingkungan_nilai_pokok * $pemutihan_nilai->nilai_tagihan / 100;
+                    } else {
+                        $pemutihan_unit->pemutihan_nilai_tagihan = $v->lingkungan_nilai_pokok_ppn * $pemutihan_nilai->nilai_tagihan / 100 / 1.1;
                     }
                 }
-                if($pemutihan_denda_type == 0){
-                    if($jatah_pemutihan_denda_unit[$v->unit_id] > 0){
-                        if($jatah_pemutihan_denda_unit[$v->unit_id] <= $v->lingkungan_nilai_denda){
+                if ($pemutihan_denda_type == 0) {
+                    if ($jatah_pemutihan_denda_unit[$v->unit_id] > 0) {
+                        if ($jatah_pemutihan_denda_unit[$v->unit_id] <= $v->lingkungan_nilai_denda) {
                             $pemutihan_unit->pemutihan_nilai_denda = $jatah_pemutihan_denda_unit[$v->unit_id];
                             $jatah_pemutihan_denda_unit[$v->unit_id] = 0;
-                        }else{
+                        } else {
                             $pemutihan_unit->pemutihan_nilai_denda = $v->lingkungan_nilai_denda;
                             $jatah_pemutihan_denda_unit[$v->unit_id] -= $v->lingkungan_nilai_denda;
                         }
-                    }else{
+                    } else {
                         $pemutihan_unit->pemutihan_nilai_denda = 0;
                     }
-                }else{
-                    $pemutihan_unit->pemutihan_nilai_denda = $v->lingkungan_nilai_denda * $pemutihan_nilai->nilai_denda /100;
+                } else {
+                    $pemutihan_unit->pemutihan_nilai_denda = $v->lingkungan_nilai_denda * $pemutihan_nilai->nilai_denda / 100;
                 }
-                if($pemutihan_unit->pemutihan_nilai_denda + $pemutihan_unit->pemutihan_nilai_tagihan > 0 ){
+                if ($pemutihan_unit->pemutihan_nilai_denda + $pemutihan_unit->pemutihan_nilai_tagihan > 0) {
                     // echo("<pre>");
                     //     print_r($pemutihan_unit);
                     // echo("</pre>");
-                    $this->db->insert("pemutihan_unit",$pemutihan_unit);
+                    $this->db->insert("pemutihan_unit", $pemutihan_unit);
                 }
             }
             // var_dump($jatah_pemutihan_tagihan_unit[$v->unit_id]);
             // var_dump($jatah_pemutihan_denda_unit[$v->unit_id]);
-            
-            
+
+
         }
         // var_dump($total_tagihan);
         // var_dump($total_denda);
 
-        
-        
-        
+
+
+
         $this->load->model('Setting/Akun/m_permission_dokumen');
         $permission_wewenang = $this->m_permission_dokumen->get_wewenang($project->id, $pemutihan_nilai->perkiraan_pemutihan_total);
         $permission_mengetahui = $this->m_permission_dokumen->get_mengetahui($project->id, $pemutihan_nilai->perkiraan_pemutihan_total);
-        if(isset($permission_wewenang) and isset($permission_mengetahui)){
+        if (isset($permission_wewenang) and isset($permission_mengetahui)) {
             // echo ("<pre>");
             // print_r($permission_wewenang);
             // echo ("</pre>");
-            
+
             // echo ("<pre>");
             // print_r($permission_mengetahui);
             // echo ("</pre>");
@@ -465,12 +463,12 @@ class m_pemutihan extends CI_Model
             $approval->dokumen_code         = $data->kode;
             $approval->dokumen_nilai        = $pemutihan_nilai->perkiraan_pemutihan_total;
             $approval->jarak_approval_closed = 0;
-            $approval->group_user_id        = isset($this->session->userdata['group'])?$this->session->userdata['group']:'0';
+            $approval->group_user_id        = isset($this->session->userdata['group']) ? $this->session->userdata['group'] : '0';
             foreach ($permission_wewenang as $k => $v) {
                 $approval->jarak_approval_closed += $v->jarak_approve;
             }
-            $approval->tgl_closed           = (new DateTime(date("Y-m-d"). " + $approval->jarak_approval_closed day"))->format("Y-m-d");
-            $this->db->insert("approval",$approval);                    
+            $approval->tgl_closed           = (new DateTime(date("Y-m-d") . " + $approval->jarak_approval_closed day"))->format("Y-m-d");
+            $this->db->insert("approval", $approval);
             $approval->id = $this->db->insert_id();
 
             // echo ("approval<pre>");
@@ -478,27 +476,29 @@ class m_pemutihan extends CI_Model
             // echo ("</pre>");            
             $tujuan_email = (object)[];
             foreach ($permission_wewenang as $k => $v) {
-                $list_group_user_id = explode(',',$v->group_user_id);  
+                $list_group_user_id = explode(',', $v->group_user_id);
 
                 $approval_wewenang    = (object) [];
                 $approval_wewenang->approval_status_id = 0;
-                if($k == 0){
+                if ($k == 0) {
                     $tujuan_email->wewenang = $this->db->select('user.name, user.email')
-                                            ->from('group_user')
-                                            ->join("user",
-                                                    "user.id = group_user.user_id")
-                                            ->where_in("group_user.id",$list_group_user_id)
-                                            ->distinct()
-                                            ->get()->result();
+                        ->from('group_user')
+                        ->join(
+                            "user",
+                            "user.id = group_user.user_id"
+                        )
+                        ->where_in("group_user.id", $list_group_user_id)
+                        ->distinct()
+                        ->get()->result();
                     $approval_wewenang->approval_status_id = 3;
                 }
 
                 $approval_wewenang->tgl_kirim_email = $approval->tgl_tambah;
                 $approval_wewenang->approval_id     = $approval->id;
                 $approval_wewenang->jarak_approve   = $v->jarak_approve;
-                $this->db->insert("approval_wewenang",$approval_wewenang);                 
+                $this->db->insert("approval_wewenang", $approval_wewenang);
                 $approval_wewenang->id = $this->db->insert_id();
-    
+
                 // echo("approval_wewenang<pre>");
                 //     print_r($approval_wewenang);
                 // echo("</pre>");
@@ -508,52 +508,54 @@ class m_pemutihan extends CI_Model
                 foreach ($list_group_user_id as $k2 => $v2) {
                     $approval_wewenang_user->group_user_id = $v2;
                     $group_user = $this->db->select("user_id,jabatan_id,project_id")
-                                                ->from("group_user")
-                                                ->where_in('id',$v2)
-                                                ->get()->row();
+                        ->from("group_user")
+                        ->where_in('id', $v2)
+                        ->get()->row();
                     $approval_wewenang_user->user_id = $group_user->user_id;
                     $approval_wewenang_user->jabatan_id = $group_user->jabatan_id;
                     $approval_wewenang_user->project_id = $group_user->project_id;
-                    $this->db->insert("approval_wewenang_user",$approval_wewenang_user);                    
+                    $this->db->insert("approval_wewenang_user", $approval_wewenang_user);
 
                     // echo("approval_wewenang_user<pre>");
                     //     print_r($approval_wewenang_user);
                     // echo("</pre>");
-                                        
+
 
                 }
             }
             $approval_mengetahui    = (object) [];
             $approval_mengetahui->approval_id     = $approval->id;
-            $list_group_user_id = explode(',',$permission_mengetahui->group_user_id);
+            $list_group_user_id = explode(',', $permission_mengetahui->group_user_id);
             $tujuan_email->mengetahui = $this->db->select('user.name, user.email')
-                                            ->from('group_user')
-                                            ->join("user",
-                                                    "user.id = group_user.user_id")
-                                            ->where_in("group_user.id",$list_group_user_id)
-                                            ->distinct()
-                                            ->get()->result();
+                ->from('group_user')
+                ->join(
+                    "user",
+                    "user.id = group_user.user_id"
+                )
+                ->where_in("group_user.id", $list_group_user_id)
+                ->distinct()
+                ->get()->result();
             foreach ($list_group_user_id as $k => $v) {
                 $group_user = $this->db->select("user_id,jabatan_id")
-                                        ->from("group_user")
-                                        ->where('id',$v)
-                                        ->get()->row();
+                    ->from("group_user")
+                    ->where('id', $v)
+                    ->get()->row();
                 $approval_mengetahui->user_id = $group_user->user_id;
                 $approval_mengetahui->jabatan_id = $group_user->jabatan_id;
                 $approval_mengetahui->group_user_id = $v;
                 $approval_mengetahui->tgl_kirim_email = $approval->tgl_tambah;
-                $this->db->insert("approval_mengetahui",$approval_mengetahui);                    
+                $this->db->insert("approval_mengetahui", $approval_mengetahui);
 
                 // echo("approval_mengetahui<pre>");
                 //     print_r($approval_mengetahui);
                 // echo("</pre>");
-                
+
             }
             // echo("tujuan_email<pre>");
             //     print_r($tujuan_email);
             // echo("</pre>");
 
-        
+
             // if ($this->db->trans_status() === FALSE) {
             //     $this->db->trans_rollback();
             //     return false;
@@ -561,7 +563,7 @@ class m_pemutihan extends CI_Model
             //     $this->db->trans_commit();
             //     return true;
             // }
-            
+
             // return "Tidak Memiliki Izin";
             // die;
 
@@ -609,22 +611,22 @@ class m_pemutihan extends CI_Model
                     'smtp_port' => $smtp_port,
                     'crlf'      => "\r\n",
                     'newline'   => "\r\n",
-                    'smtp_crypto'=> 'tls',
+                    'smtp_crypto' => 'tls',
 
                 ];
                 $this->load->library('email', $config);
                 // print_r($config);
                 // $this->db->selec
                 $this->email->from($this->m_parameter_project->get($project->id, "smtp_user"), 'Ciputra EMS - Approval');
-                $name_user_create = $this->db->select('name') 
-                                                ->from('user')
-                                                ->where('user.id',$approval->user_id)
-                                                ->get()->row();
-                $name_dokumen = $this->db->select('name') 
-                                            ->from('dokumen_jenis')
-                                            ->where('dokumen_jenis.id',$approval->dokumen_jenis_id  )
-                                            ->get()->row();
-            
+                $name_user_create = $this->db->select('name')
+                    ->from('user')
+                    ->where('user.id', $approval->user_id)
+                    ->get()->row();
+                $name_dokumen = $this->db->select('name')
+                    ->from('dokumen_jenis')
+                    ->where('dokumen_jenis.id', $approval->dokumen_jenis_id)
+                    ->get()->row();
+
                 $tmp = $this->m_parameter_project->get($project->id, "isi_email_approval");
                 $tmp = str_replace("{{Dokumen}}", $name_dokumen->name, $tmp);
                 $tmp = str_replace("{{Kode}}", $approval->dokumen_code, $tmp);
@@ -687,15 +689,17 @@ class m_pemutihan extends CI_Model
             return "Tidak Memiliki Izin";
         }
     }
-    public function approve($id){
-        $this->db->where("pemutihan.id",$id);
-        $this->db->update("pemutihan",["status"=>1]);
+    public function approve($id)
+    {
+        $this->db->where("pemutihan.id", $id);
+        $this->db->update("pemutihan", ["status" => 1]);
     }
-    public function reject($id){
-        $this->db->where("pemutihan.id",$id);
-        $this->db->update("pemutihan",["status"=>2]);
+    public function reject($id)
+    {
+        $this->db->where("pemutihan.id", $id);
+        $this->db->update("pemutihan", ["status" => 2]);
     }
-    
+
     public function save2($data, $nama_file)
     {
 
@@ -866,8 +870,8 @@ class m_pemutihan extends CI_Model
                 'crlf'      => "\r\n",
                 'newline'   => "\r\n"
             ];
-            if($this->m_parameter_project->get($project->id,"smtp_secure")){
-                $config['smtp_crypto'] = $this->m_parameter_project->get($project->id,"smtp_secure");
+            if ($this->m_parameter_project->get($project->id, "smtp_secure")) {
+                $config['smtp_crypto'] = $this->m_parameter_project->get($project->id, "smtp_secure");
             }
 
             $this->load->library('email', $config);
