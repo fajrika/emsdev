@@ -1,13 +1,14 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class P_kolektabilitas extends CI_Controller {
-	function __construct() {
+class P_kolektabilitas extends CI_Controller
+{
+	function __construct()
+	{
 		parent::__construct();
 		$this->load->database();
 		$this->load->model('m_login');
-		if(!$this->m_login->status_login()) redirect(site_url());
-		$this->load->model('report/m_kolektabilitas','m_history');
+		if (!$this->m_login->status_login()) redirect(site_url());
 		$this->load->model('m_core');
 		global $jabatan;
 		$jabatan = $this->m_core->jabatan();
@@ -18,42 +19,94 @@ class P_kolektabilitas extends CI_Controller {
 	}
 	public function index()
 	{
-        $this->load->model('transaksi/m_meter_air');
-		$service_jenis = $this->m_history->getService();
-		$this->load->view('core/header');
-		$this->load->view('core/side_bar',['menu' => $GLOBALS['menu']]);
-		$this->load->view('core/top_bar',['jabatan' => $GLOBALS['jabatan'],'project' => $GLOBALS['project']]);
-		$this->load->view('core/body_header',['title' => 'Report > Tagihan > Kolektabilitas ','subTitle' => 'Report Harian, Bulanan']);
-		$this->load->view('proyek/report/kolektabilitas/view',[
-            'kawasan'=>$this->m_meter_air->getKawasan()
-        ]);
-		$this->load->view('core/body_footer');
-		$this->load->view('core/footer');
-	}
+		$this->CI = &get_instance();
 
-	public function pdf()
+		// echo ("<pre>");
+		// print_r($this->CI->load->view("proyek/report/exam/index", [], TRUE));
+		// echo ("</pre>");
+		// die;
+		$this->load->view("layouts/admin_gentelella", [
+			"title_submenu" => "Report > Kolektabilitas",
+			"css" 			=> 	$this->load->view("layouts/css/dataTables", [], TRUE).
+								$this->load->view("proyek/report/kolektibilitas/indexcss.php",[],TRUE),
+			"content" 		=> 	$this->load->view("proyek/report/exam/index", [], TRUE),
+			"js" 			=> 	$this->load->view("layouts/js/dataTables", [], TRUE).
+								$this->load->view("proyek/report/kolektibilitas/indexjs",[],TRUE),
+		]);
+		// $this->load->view('core/header');
+		// $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
+		// $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
+		// $this->load->view('core/body_header', ['title' => 'Transaksi Service > Report Pembayaran Service ', 'subTitle' => 'Report Harian, Bulanan']);
+		// $this->load->view('proyek/report/exam/index');
+		// $this->load->view('core/body_footer');
+		// $this->load->view('core/footer');
+	}
+	public function index2()
 	{
-		$this->load->library('pdf');
-		$this->pdf->set_option('defaultMediaType', 'all');
-        $this->pdf->set_option('isFontSubsettingEnabled', true);
-        $this->pdf->set_option('isHtml5ParserEnabled', true);
-        $this->pdf->setPaper('A1', 'landscape');
-		$this->pdf->filename = "Laporan Pembayaran.pdf";
-		$data = $this->input->post();
-		$this->pdf->load_view('proyek/report/kolektabilitas/pdf',['data'=>$data]);
+		$this->load->view("layouts/admin_gentelella2", [
+			"title_submenu" => "Report > P_Exam",
+			"css" => "",
+			"Content" => "",
+			"js"  => "",
+			"menu" => $GLOBALS['menu']
+		]);
+		// $this->load->view('core/header');
+		// $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
+		// $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
+		// $this->load->view('core/body_header', ['title' => 'Transaksi Service > Report Pembayaran Service ', 'subTitle' => 'Report Harian, Bulanan']);
+		// $this->load->view('proyek/report/exam/index');
+		// $this->load->view('core/body_footer');
+		// $this->load->view('core/footer');
 	}
+	public function ajax_get_kawasan(){
+		$kawasans = 
+			$this->db->select("kawasan.id, concat(kawasan.code, ' - ', kawasan.name) as text")
+			->from('kawasan')
+			->where('kawasan.project_id', $GLOBALS['project']->id)
+			->where("CONCAT(kawasan.code,' - ',kawasan.name) like '%" . $this->input->get('data') . "%'")
+			->limit(10)
+			->get()->result();
+		$data = (object)[];
+		$data->result = [];
+		$data->result[0] = (object)[];
+		$data->result[0]->text = 'Project';
+		$data->result[0]->children = $kawasans;
+		$data->result[1] = (object)[];
+		$data->result[1]->text = 'Non Project';
+		$data->result[1]->children = [];
+		echo json_encode($data->result);
+	}
+	public function ajax_get_view()
+	{
 
-	public function ajax_get_all(){
-		ini_set('memory_limit', '-1'); // This also needs to be increased in some cases. Can be changed to a higher value as per need)
-        ini_set('sqlsrv.ClientBufferMaxKBSize', '524288'); // Setting to 512M
-        ini_set('pdo_sqlsrv.client_buffer_max_kb_size', '524288'); // Setting to 512M - for pdo_sqlsrv
-        ini_set('max_execution_time','-1'); // Setting to 512M - for pdo_sqlsrv
-        $kawasan        = $this->input->get("kawasan");
-        $blok           = $this->input->get("blok");
-        $periode_awal   = $this->input->get("periode_awal");
-		$periode_akhir  = $this->input->get("periode_akhir");
-		$cara_bayar  	= $this->input->get("cara_bayar[]");
-		$jns_service  	= $this->input->get("jns_service[]");
-		$this->m_history->getRetribusi($kawasan,$blok,$periode_awal,$periode_akhir,$cara_bayar);
+		$project = $this->m_core->project();
+		$table =    "unit
+                    join blok
+                        ON blok.id = unit.blok_id
+                    JOIN kawasan
+                        ON kawasan.id = blok.kawasan_id
+                    JOIN customer as pemilik
+                        ON pemilik.id = unit.pemilik_customer_id
+                    LEFT JOIN purpose_use
+                        ON purpose_use.id = unit.purpose_use_id
+                    LEFT JOIN unit_lingkungan
+                        ON unit_lingkungan.unit_id = unit.id
+                    LEFT JOIN unit_air
+		                ON unit_air.unit_id = unit.id
+                    WHERE unit.project_id = $project->id";
+		$primaryKey = 'unit.id';
+		$columns = array(
+			array('db' => 'kawasan.name as kawasan_name', 'dt' => 0),
+			array('db' => 'blok.name as blok_name',  'dt' => 1),
+			array('db' => 'unit.no_unit as no_unit',   'dt' => 2),
+			array('db' => 'pemilik.name as pemilik_name',     'dt' => 3),
+			array('db' => "FORMAT (tgl_st, 'dd-MM-yyyy') as tgl_st",     'dt' => 4),
+			array('db' => "isnull(purpose_use.name,'-') as purpose_use_name",     'dt' => 5),
+			array('db' => "CASE
+                                WHEN unit_air.sub_gol_id is not null or unit_lingkungan.sub_gol_id is not null THEN 'Sudah di Setting'
+                                ELSE 'Belum di Setting'
+                            END as status_setting",     'dt' => 6),
+			array('db' => 'unit.id as id',     'dt' => 7)
+		);
 	}
 }

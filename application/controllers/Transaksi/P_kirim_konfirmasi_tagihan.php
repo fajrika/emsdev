@@ -416,13 +416,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
 
         
         //Start OB & put json output-------------------------//
-        udasdgas
-        adsad
-        asd
-        sad
-        ascdasdas
 
-        asdas
         ob_end_clean();
         ignore_user_abort();
         ob_start();
@@ -433,14 +427,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         flush();
         //Run Process Here----------------------------------//
         set_time_limit(0);
-dasdasdas
-asd
-as
-das
-das
-das
-das
-das
+        
         $project   = $this->m_core->project();
         $unit_id   = $this->input->post('unit_id');
         $join_unit = '';

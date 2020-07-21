@@ -33,6 +33,14 @@
         $("#form-report").submit(function(e) {
             e.preventDefault();
             // return false;
+            ajax_get_nilai_tagihan
+            for (let i1 = 1; index <= 12; index++) {
+                for (let i2 = 1; index <= 16; index++) {
+                    if(i2 == 1){
+                        ajax_get_nilai_tagihan?i1
+                    }
+                }
+            }
 
         });
     });
