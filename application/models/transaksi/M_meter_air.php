@@ -176,7 +176,7 @@ class m_meter_air extends CI_Model
                 id,
                 code,
                 name 
-            FROM blok" . ($id != 'all' ?" WHERE kawasan_id = $id" : "") .
+            FROM blok" . ($id != 'all' ? " WHERE kawasan_id = $id" : "") .
                 " ORDER BY id ASC"
         )->result();
         return $query;
@@ -186,8 +186,8 @@ class m_meter_air extends CI_Model
         $periode = substr($periode, 0, 2) . "-01-" . substr($periode, 3, 4);
         $project = $this->m_core->project();
         $query = $this->db
-                        ->distinct()
-                        ->select("
+            ->distinct()
+            ->select("
                         unit.id,
                         case 
                             WHEN count(cek_setelah.id)>0 THEN 'disabled'
@@ -205,30 +205,44 @@ class m_meter_air extends CI_Model
                         END as meter_pakai,
                         t_pencatatan_meter_air.foto_url
                         ")
-                        ->from("unit")
-                        ->join("unit_air",
-                            "unit_air.unit_id = unit.id
-                            AND unit_air.aktif = 1")
-                        ->join("t_pencatatan_meter_air",
-                            "t_pencatatan_meter_air.unit_id = unit.id
-                            AND t_pencatatan_meter_air.periode = '$periode'"
-                            ,"LEFT")
-                        ->join("t_pencatatan_meter_air as cek_sebelum",
-                            "cek_sebelum.unit_id = unit.id
-                            AND cek_sebelum.periode = DATEADD(month,-1,'$periode')"
-                            ,"LEFT")
-                        ->join("t_pencatatan_meter_air as cek_setelah",
-                            "cek_setelah.unit_id = unit.id
-                            AND cek_setelah.periode > '$periode'"
-                            ,"LEFT")
-                        ->join("blok",
-                            "blok.id = unit.blok_id")
-                        ->join("kawasan",
-                            "kawasan.id = blok.kawasan_id")
-                        ->join("customer as pemilik",
-                            "pemilik.id = unit.pemilik_customer_id")
-                        ->where("kawasan.project_id",$project->id)     
-                        ->group_by("
+            ->from("unit")
+            ->join(
+                "unit_air",
+                "unit_air.unit_id = unit.id
+                            AND unit_air.aktif = 1"
+            )
+            ->join(
+                "t_pencatatan_meter_air",
+                "t_pencatatan_meter_air.unit_id = unit.id
+                            AND t_pencatatan_meter_air.periode = '$periode'",
+                "LEFT"
+            )
+            ->join(
+                "t_pencatatan_meter_air as cek_sebelum",
+                "cek_sebelum.unit_id = unit.id
+                            AND cek_sebelum.periode = DATEADD(month,-1,'$periode')",
+                "LEFT"
+            )
+            ->join(
+                "t_pencatatan_meter_air as cek_setelah",
+                "cek_setelah.unit_id = unit.id
+                            AND cek_setelah.periode > '$periode'",
+                "LEFT"
+            )
+            ->join(
+                "blok",
+                "blok.id = unit.blok_id"
+            )
+            ->join(
+                "kawasan",
+                "kawasan.id = blok.kawasan_id"
+            )
+            ->join(
+                "customer as pemilik",
+                "pemilik.id = unit.pemilik_customer_id"
+            )
+            ->where("kawasan.project_id", $project->id)
+            ->group_by("
                             unit.id,
                             kawasan.name,
                             blok.name,
@@ -243,10 +257,10 @@ class m_meter_air extends CI_Model
                             END,
                             t_pencatatan_meter_air.foto_url");
         if ($kawasan != "all") {
-            $query = $query->where("kawasan.id",$kawasan);
+            $query = $query->where("kawasan.id", $kawasan);
         }
         if ($blok != "all") {
-            $query = $query->where("blok.id",$blok);
+            $query = $query->where("blok.id", $blok);
         }
 
         $result = $query->get()->result();
@@ -254,32 +268,32 @@ class m_meter_air extends CI_Model
         return $result;
     }
 
-    public function harga_air($data1,$data2,$data3){
-        
-            $this->load->model('m_core');
-            $hasil = 0;
-            $tableName = '';
-            if ($data1 == '1') {
-                $tableName = 'range_air_detail';
-                $tableNameid = 'range_air_id';
-                $tableRange =  'range_air';
-            } elseif ($data1 == '2') {
-                $tableName = 'range_lingkungan_detail';
-                $tableNameid = 'range_lingkungan_id';
-                $tableRange =  'range_lingkungan';
+    public function harga_air($data1, $data2, $data3)
+    {
 
-            } elseif ($data1 == '3') {
-                $tableName = 'range_listrik_detail';
-                $tableNameid = 'range_listrik_id';
-            }
-            
-            //get minimum pemakaian
-            
-            
-            // $rumus = $this->db->get_where('parameter_project', array('name' => 'Rumus Hitung Air', 'project_id' => 1))->row()->value;
-            $rumus = $this->db->select('formula')->from($tableRange)->where('id',$data2)->get()->row()->formula;
-            if ($rumus == 1) {
-                $query = $this->db->query("
+        $this->load->model('m_core');
+        $hasil = 0;
+        $tableName = '';
+        if ($data1 == '1') {
+            $tableName = 'range_air_detail';
+            $tableNameid = 'range_air_id';
+            $tableRange =  'range_air';
+        } elseif ($data1 == '2') {
+            $tableName = 'range_lingkungan_detail';
+            $tableNameid = 'range_lingkungan_id';
+            $tableRange =  'range_lingkungan';
+        } elseif ($data1 == '3') {
+            $tableName = 'range_listrik_detail';
+            $tableNameid = 'range_listrik_id';
+        }
+
+        //get minimum pemakaian
+
+
+        // $rumus = $this->db->get_where('parameter_project', array('name' => 'Rumus Hitung Air', 'project_id' => 1))->row()->value;
+        $rumus = $this->db->select('formula')->from($tableRange)->where('id', $data2)->get()->row()->formula;
+        if ($rumus == 1) {
+            $query = $this->db->query("
                     select top 1
                         (CAST(harga as BIGINT) * $data3) as harga
                     from $tableName
@@ -287,11 +301,11 @@ class m_meter_air extends CI_Model
                     and range_awal <= $data3
                     order by range_awal desc
                 ");
-                $hasil = $query->result_array()[0]['harga'];
+            $hasil = $query->result_array()[0]['harga'];
 
-                return $hasil;
-            } elseif ($rumus == 2) {
-                $query = $this->db->query("
+            return $hasil;
+        } elseif ($rumus == 2) {
+            $query = $this->db->query("
                     select
                         range_awal,
                         range_akhir,
@@ -300,31 +314,31 @@ class m_meter_air extends CI_Model
                     where $tableNameid = $data2
                     and range_awal <= $data3
                 ");
-                $result = $query->result_array();
-                $i = 0;
-                do {
-                    $range_awal = isset($result[$i-1]['range_akhir'])?$result[$i-1]['range_akhir']:0;
-                    var_dump($i.' = '.$range_awal);
+            $result = $query->result_array();
+            $i = 0;
+            do {
+                $range_awal = isset($result[$i - 1]['range_akhir']) ? $result[$i - 1]['range_akhir'] : 0;
+                var_dump($i . ' = ' . $range_awal);
 
-                    if ($data3 > ($result[$i]['range_akhir']-$range_awal)){//selisih { //15 > 10 ? true
-                        if($i == 0) // false
-                            $hasil += (($result[$i]['range_akhir']) * $result[$i]['harga']); //hasil = 20 * 8800
-                        else //true
-                            $hasil += (($result[$i]['range_akhir']-$range_awal) * $result[$i]['harga']);   //= 10 * 9800
-                    } else { 
-                        $hasil += ($data3 * $result[$i]['harga']); //
+                if ($data3 > ($result[$i]['range_akhir'] - $range_awal)) { //selisih { //15 > 10 ? true
+                    if ($i == 0) // false
+                        $hasil += (($result[$i]['range_akhir']) * $result[$i]['harga']); //hasil = 20 * 8800
+                    else //true
+                        $hasil += (($result[$i]['range_akhir'] - $range_awal) * $result[$i]['harga']);   //= 10 * 9800
+                } else {
+                    $hasil += ($data3 * $result[$i]['harga']); //
 
-                        return $hasil;
-                    }
-                    if($i == 0) 
-                        $data3 -=  $result[$i]['range_akhir']; // 35 - 20 = 15
-                    else
-                        $data3 -= ($result[$i]['range_akhir']-$range_awal);
-                    ++$i; // 1
-                    // var_dump($data3);
-                } while ($data3 > 0);
-            } elseif ($rumus == 3) {
-                $query = $this->db->query("
+                    return $hasil;
+                }
+                if ($i == 0)
+                    $data3 -=  $result[$i]['range_akhir']; // 35 - 20 = 15
+                else
+                    $data3 -= ($result[$i]['range_akhir'] - $range_awal);
+                ++$i; // 1
+                // var_dump($data3);
+            } while ($data3 > 0);
+        } elseif ($rumus == 3) {
+            $query = $this->db->query("
                     select
                         range_akhir,
                         harga
@@ -332,30 +346,29 @@ class m_meter_air extends CI_Model
                     where $tableNameid = $data2
                     and range_awal <= $data3
                 ");
-                $result = $query->result_array();
-                $data3 -= $result[0]['range_akhir'];
-                $hasil = $result[0]['harga'];
-                $i = 1;
-                if (isset($result[$i])) {
-                    do {
-                        if ($data3 > $result[$i]['range_akhir']) {
-                            $hasil += (($result[$i]['range_akhir']-$result[$i-1]['range_akhir']) * $result[$i]['harga']);
-                        } else {
-                            $hasil += ($data3 * $result[$i]['harga']);
+            $result = $query->result_array();
+            $data3 -= $result[0]['range_akhir'];
+            $hasil = $result[0]['harga'];
+            $i = 1;
+            if (isset($result[$i])) {
+                do {
+                    if ($data3 > $result[$i]['range_akhir']) {
+                        $hasil += (($result[$i]['range_akhir'] - $result[$i - 1]['range_akhir']) * $result[$i]['harga']);
+                    } else {
+                        $hasil += ($data3 * $result[$i]['harga']);
 
-                            return $hasil;
-                        }
-                        
-                        $data3 -= ($result[$i]['range_akhir']-$result[$i-1]['range_akhir']);
-                        ++$i;
-                        // var_dump($data3);
-                    } while ($data3 > 0);
-                    
-                }
+                        return $hasil;
+                    }
 
-                return $hasil;
-            } elseif ($rumus == 4) {
-                $query = $this->db->query("
+                    $data3 -= ($result[$i]['range_akhir'] - $result[$i - 1]['range_akhir']);
+                    ++$i;
+                    // var_dump($data3);
+                } while ($data3 > 0);
+            }
+
+            return $hasil;
+        } elseif ($rumus == 4) {
+            $query = $this->db->query("
                         select
                             harga
                         from $tableName
@@ -363,20 +376,20 @@ class m_meter_air extends CI_Model
                         and range_awal <= $data3
                         and range_akhir >= $data3
                     ");
-                $hasil = $query->row();
-                if ($hasil == null) {
-                    $query = $this->db->query("
+            $hasil = $query->row();
+            if ($hasil == null) {
+                $query = $this->db->query("
                             select top 1
                                 harga
                             from $tableName
                             where $tableNameid = $data2
                             order by harga DESC
                         ");
-                    $hasil = $query->row();
-                }
-
-                return $hasil->harga;
+                $hasil = $query->row();
             }
+
+            return $hasil->harga;
+        }
     }
 
     public function ajax_save_meter($meter, $periode, $unit_id)
@@ -385,32 +398,32 @@ class m_meter_air extends CI_Model
         $this->load->model('m_sub_golongan');
 
         // $project = $this->m_core->project();
-        $project = $this->db->select("project_id as id")->from("unit")->where("id",$unit_id)->get()->row();
+        $project = $this->db->select("project_id as id")->from("unit")->where("id", $unit_id)->get()->row();
         // $periode_1 = str_pad((((int)substr($periode, 0, 2))-1), 2, '0',STR_PAD_LEFT). "-01-" . substr($periode, 3, 4);
-        $periode = substr($periode, 3, 4)."-".substr($periode, 0, 2). "-01";
+        $periode = substr($periode, 3, 4) . "-" . substr($periode, 0, 2) . "-01";
 
         $tmp = $periode;
         $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -1 month");
 
-        $tmp = date("Y-m-d",$tmp);
+        $tmp = date("Y-m-d", $tmp);
 
-        $tmp = substr($tmp,5,2).'-'.substr($tmp,8,2).'-'.substr($tmp,0,4);
+        $tmp = substr($tmp, 5, 2) . '-' . substr($tmp, 8, 2) . '-' . substr($tmp, 0, 4);
 
         $periode_1 = $tmp;
 
         $meter = str_replace(',', '', $meter);
-        
+
         // var_dump($periode_1);
         // var_dump($periode);
         // var_dump($tmp);
-        
-        $meter_awal= $this->db->select("meter_akhir")
-        ->from("t_pencatatan_meter_air")
-        ->where("unit_id",$unit_id)
-        ->where("periode",$periode_1)
-        ->get()->row();
 
-        $meter_awal = $meter_awal?$meter_awal->meter_akhir:0;
+        $meter_awal = $this->db->select("meter_akhir")
+            ->from("t_pencatatan_meter_air")
+            ->where("unit_id", $unit_id)
+            ->where("periode", $periode_1)
+            ->get()->row();
+
+        $meter_awal = $meter_awal ? $meter_awal->meter_akhir : 0;
         $dataMeterAir = [
             'unit_id'       => $unit_id,
             'periode'       => $periode,
@@ -426,11 +439,11 @@ class m_meter_air extends CI_Model
                                 AND unit_id = $dataMeterAir[unit_id]
                             ")->row();
         $this->db->trans_start();
-        
-        if($resultMeterAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultMeterAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultMeterAir->id);
             $this->db->update('t_pencatatan_meter_air', $dataMeterAir);
-        }else{
+        } else {
             $this->db->insert('t_pencatatan_meter_air', $dataMeterAir);
         }
         $this->db->trans_complete();
@@ -465,27 +478,27 @@ class m_meter_air extends CI_Model
                                         ORDER BY periode
                                     ")->result();
 
-        
+
 
         // $pemakaian = $meter_awal!=0?$meter-$meter_awal:0;
-        $pemakaian = $meter-$meter_awal;
+        $pemakaian = $meter - $meter_awal;
 
 
         // $pemakaian = $this->getSelect($resultMeterAir->id)?$this->getSelect($resultMeterAir->id)[0]->pemakaian:0;
         $minimum_pemakaian_rp = $this->db
-                                ->select('minimum_pemakaian,minimum_rp')
-                                ->from('unit')
-                                ->join('unit_air','unit_air.unit_id = unit.id')
-                                ->join('sub_golongan','sub_golongan.id = unit_air.sub_gol_id')
-                                ->where('unit.id',$unit_id)->get()->row();
-        if($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
+            ->select('minimum_pemakaian,minimum_rp')
+            ->from('unit')
+            ->join('unit_air', 'unit_air.unit_id = unit.id')
+            ->join('sub_golongan', 'sub_golongan.id = unit_air.sub_gol_id')
+            ->where('unit.id', $unit_id)->get()->row();
+        if ($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
             $pemakaian = $minimum_pemakaian_rp->minimum_pemakaian;
 
-        
+
         // $pemakaian = $resultPemakaian[1]->meter - $resultPemakaian[0]->meter;
         // 1 ialah flag untuk air di m_sub_golongan
-        $biaya = $this->harga_air(1,$resultTagihan->range_id,$pemakaian,$unit_id);
-        if($minimum_pemakaian_rp->minimum_rp > $biaya)
+        $biaya = $this->harga_air(1, $resultTagihan->range_id, $pemakaian, $unit_id);
+        if ($minimum_pemakaian_rp->minimum_rp > $biaya)
             $biaya = $minimum_pemakaian_rp->minimum_rp;
 
         $tagihan_air         = (object)[];
@@ -501,16 +514,16 @@ class m_meter_air extends CI_Model
         $tagihan_air_detail->active         = 1;
         // $tagihan_air_detail->user_id        = $user_id;
 
-        $ppn_flag = $this->db   ->select("ppn_flag")
-                                ->from("service")
-                                ->where("service.project_id",$project->id)
-                                ->where("service_jenis_id",2)
-                                ->get()->row()->ppn_flag;
-        if($ppn_flag == 1)
+        $ppn_flag = $this->db->select("ppn_flag")
+            ->from("service")
+            ->where("service.project_id", $project->id)
+            ->where("service_jenis_id", 2)
+            ->get()->row()->ppn_flag;
+        if ($ppn_flag == 1)
             $tagihan_air_detail->nilai_ppn      = $this->db->select("isnull(value,'0') as value")
-                                                        ->from("parameter_project")
-                                                        ->where("project_id",$project->id)
-                                                        ->where("code","PPN")->get()->row()->value;
+                ->from("parameter_project")
+                ->where("project_id", $project->id)
+                ->where("code", "PPN")->get()->row()->value;
         else
             $tagihan_air_detail->nilai_ppn = 0;
         $tagihan_air_detail->nilai_flag     = 0;
@@ -518,39 +531,39 @@ class m_meter_air extends CI_Model
 
         $data_tagihan->proyek_id    = $project->id;
 
-        $this->db->where('proyek_id',$project->id);                
-        $this->db->where('unit_id',$dataMeterAir['unit_id']);            
-        $this->db->where('periode',$dataMeterAir['periode']);
-        
+        $this->db->where('proyek_id', $project->id);
+        $this->db->where('unit_id', $dataMeterAir['unit_id']);
+        $this->db->where('periode', $dataMeterAir['periode']);
+
         $tagihan_sudah_ada = $this->db->get('t_tagihan');
 
         if (!$tagihan_sudah_ada->num_rows()) {
             $data_tagihan->unit_id      = $dataMeterAir['unit_id'];
             $data_tagihan->periode      = $dataMeterAir['periode'];
 
-            $this->db->insert('t_tagihan',$data_tagihan);
+            $this->db->insert('t_tagihan', $data_tagihan);
 
             $tagihan_air->t_tagihan_id = $this->db->insert_id();
-        }else{
+        } else {
             $tagihan_air->t_tagihan_id = $tagihan_sudah_ada->row()->id;
         }
 
         $tagihan_air->unit_id       = $dataMeterAir['unit_id'];
         $tagihan_air->kode_tagihan  = "EX-Test";
         $tagihan_air->periode       = $dataMeterAir['periode'];
-        $tagihan_air->status_tagihan= 0;            
+        $tagihan_air->status_tagihan = 0;
         // $this->db->insert("t_tagihan_air",$tagihan_air);
 
         $tagihan_air_detail->nilai              = $biaya;
         $tagihan_air_detail->nilai_administrasi = $resultTagihan->administrasi;
         $tagihan_air_detail->nilai_denda        = 0;
-        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag?1:0;
+        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag ? 1 : 0;
 
         $service = $this->db->select("*")
-                    ->from("service")
-                    ->where("service_jenis_id",2)
-                    ->where("project_id",$project->id)
-                    ->get()->row();
+            ->from("service")
+            ->where("service_jenis_id", 2)
+            ->where("project_id", $project->id)
+            ->get()->row();
         $tagihan_air_info->range_id             = $resultTagihan->range_id;
         $tagihan_air_info->range_code           = $resultTagihan->range_code;
         $tagihan_air_info->sub_golongan_id      = $resultTagihan->sub_golongan_id;
@@ -558,7 +571,7 @@ class m_meter_air extends CI_Model
         $tagihan_air_info->pemakaian            = $pemakaian;
         $tagihan_air_info->denda_jenis_service  = $service->denda_jenis;
         $tagihan_air_info->denda_nilai_service  = $service->denda_nilai;
-        
+
         // $meter_air->unit_id     = $tagihan_air->unit_id;
         // $meter_air->periode     = $tagihan_air->periode;
         // $meter_air->meter_awal  = $v->Meter_awal;
@@ -566,7 +579,7 @@ class m_meter_air extends CI_Model
         // $meter_air->keterangan  = "Data Migrasi dari $source";
         // $this->db->insert("t_pencatatan_meter_air",$dataMeterAir);
 
-        
+
         $dataTagihanAir = [
             "proyek_id"                     => $project->id,
             "unit_id"                       => $dataMeterAir['unit_id'],
@@ -598,36 +611,34 @@ class m_meter_air extends CI_Model
                                                 Where periode = '$dataTagihanAir[periode]'
                                                 AND unit_id = $dataTagihanAir[unit_id]
                                             ")->row();
-        
 
-        if($resultTagihanAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultTagihanAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultTagihanAir->id);
             $this->db->update('t_tagihan_air', $tagihan_air);
 
             $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_detail",$tagihan_air_detail);
-            
-            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_info",$tagihan_air_info);
-    
+            $this->db->update("t_tagihan_air_detail", $tagihan_air_detail);
 
-        }else{
+            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
+            $this->db->update("t_tagihan_air_info", $tagihan_air_info);
+        } else {
             $this->db->insert('t_tagihan_air', $tagihan_air);
-            
+
             $tagihan_air_detail->t_tagihan_air_id   = $this->db->insert_id();
             $tagihan_air_info->t_tagihan_air_id     = $tagihan_air_detail->t_tagihan_air_id;
 
-            $this->db->insert("t_tagihan_air_detail",$tagihan_air_detail);
-            $this->db->insert("t_tagihan_air_info",$tagihan_air_info);
+            $this->db->insert("t_tagihan_air_detail", $tagihan_air_detail);
+            $this->db->insert("t_tagihan_air_info", $tagihan_air_info);
         }
-        
-        if ($this->db->trans_status() === FALSE){
-                $this->db->trans_rollback();
-                return false;
-        }else{
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
             $this->db->trans_commit();
             return true;
-        }        
+        }
     }
     public function ajax_save_meter_api_1($meter, $periode, $unit_id, $url)
     {
@@ -635,39 +646,38 @@ class m_meter_air extends CI_Model
         $this->load->model('m_sub_golongan');
 
         // $project = $this->m_core->project();
-        $project = $this->db->select("project_id as id")->from("unit")->where("id",$unit_id)->get()->row();
+        $project = $this->db->select("project_id as id")->from("unit")->where("id", $unit_id)->get()->row();
         // $periode_1 = str_pad((((int)substr($periode, 0, 2))-1), 2, '0',STR_PAD_LEFT). "-01-" . substr($periode, 3, 4);
-        $periode = substr($periode, 3, 4)."-".substr($periode, 0, 2). "-01";
+        $periode = substr($periode, 3, 4) . "-" . substr($periode, 0, 2) . "-01";
 
         $tmp = $periode;
         $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -1 month");
 
-        $tmp = date("Y-m-d",$tmp);
+        $tmp = date("Y-m-d", $tmp);
 
-        $tmp = substr($tmp,5,2).'-'.substr($tmp,8,2).'-'.substr($tmp,0,4);
+        $tmp = substr($tmp, 5, 2) . '-' . substr($tmp, 8, 2) . '-' . substr($tmp, 0, 4);
 
         $periode_1 = $tmp;
 
         $meter = str_replace(',', '', $meter);
-        
+
         // var_dump($periode_1);
         // var_dump($periode);
         // var_dump($tmp);
-        
-        $meter_awal= $this->db->select("meter_akhir")
-        ->from("t_pencatatan_meter_air")
-        ->where("unit_id",$unit_id)
-        ->where("periode",$periode_1)
-        ->get()->row();
 
-        $meter_awal = $meter_awal?$meter_awal->meter_akhir:0;
+        $meter_awal = $this->db->select("meter_akhir")
+            ->from("t_pencatatan_meter_air")
+            ->where("unit_id", $unit_id)
+            ->where("periode", $periode_1)
+            ->get()->row();
+
+        $meter_awal = $meter_awal ? $meter_awal->meter_akhir : 0;
         $dataMeterAir = [
             'unit_id'       => $unit_id,
             'periode'       => $periode,
             'keterangan'    => 'Data Inputan',
             'meter_akhir'         => $meter,
             'meter_awal'         => $meter_awal,
-            'foto_url'      => $url
         ];
         $resultMeterAir =   $this->db->query("
                                 SELECT
@@ -677,12 +687,25 @@ class m_meter_air extends CI_Model
                                 AND unit_id = $dataMeterAir[unit_id]
                             ")->row();
         $this->db->trans_start();
-        
-        if($resultMeterAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultMeterAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultMeterAir->id);
             $this->db->update('t_pencatatan_meter_air', $dataMeterAir);
-        }else{
+        } else {
             $this->db->insert('t_pencatatan_meter_air', $dataMeterAir);
+        }
+        $t_pencatatan_meter_air_id = $this->db->insert_id();
+        $t_pencatatan_meter_air_detail =  (object)[
+            't_pencatatan_meter_air_id' => $t_pencatatan_meter_air_id,
+            'create_at' => date("Y/m/d H:i:s")
+        ];
+        $this->db->insert('t_pencatatan_meter_air_detail', [
+            't_pencatatan_meter_air_id' => $t_pencatatan_meter_air_id,
+            'create_at' => date("Y/m/d H:i:s")
+        ]);
+        foreach ($url as $k => $v) {
+            $t_pencatatan_meter_air_detail->foto_url = $v;
+            $this->db->insert('t_pencatatan_meter_air_detail', $t_pencatatan_meter_air_detail);
         }
         $this->db->trans_complete();
 
@@ -716,27 +739,27 @@ class m_meter_air extends CI_Model
                                         ORDER BY periode
                                     ")->result();
 
-        
+
 
         // $pemakaian = $meter_awal!=0?$meter-$meter_awal:0;
-        $pemakaian = $meter-$meter_awal;
+        $pemakaian = $meter - $meter_awal;
 
 
         // $pemakaian = $this->getSelect($resultMeterAir->id)?$this->getSelect($resultMeterAir->id)[0]->pemakaian:0;
         $minimum_pemakaian_rp = $this->db
-                                ->select('minimum_pemakaian,minimum_rp')
-                                ->from('unit')
-                                ->join('unit_air','unit_air.unit_id = unit.id')
-                                ->join('sub_golongan','sub_golongan.id = unit_air.sub_gol_id')
-                                ->where('unit.id',$unit_id)->get()->row();
-        if($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
+            ->select('minimum_pemakaian,minimum_rp')
+            ->from('unit')
+            ->join('unit_air', 'unit_air.unit_id = unit.id')
+            ->join('sub_golongan', 'sub_golongan.id = unit_air.sub_gol_id')
+            ->where('unit.id', $unit_id)->get()->row();
+        if ($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
             $pemakaian = $minimum_pemakaian_rp->minimum_pemakaian;
 
-        
+
         // $pemakaian = $resultPemakaian[1]->meter - $resultPemakaian[0]->meter;
         // 1 ialah flag untuk air di m_sub_golongan
-        $biaya = $this->harga_air(1,$resultTagihan->range_id,$pemakaian,$unit_id);
-        if($minimum_pemakaian_rp->minimum_rp > $biaya)
+        $biaya = $this->harga_air(1, $resultTagihan->range_id, $pemakaian, $unit_id);
+        if ($minimum_pemakaian_rp->minimum_rp > $biaya)
             $biaya = $minimum_pemakaian_rp->minimum_rp;
 
         $tagihan_air         = (object)[];
@@ -752,16 +775,16 @@ class m_meter_air extends CI_Model
         $tagihan_air_detail->active         = 1;
         // $tagihan_air_detail->user_id        = $user_id;
 
-        $ppn_flag = $this->db   ->select("ppn_flag")
-                                ->from("service")
-                                ->where("service.project_id",$project->id)
-                                ->where("service_jenis_id",2)
-                                ->get()->row()->ppn_flag;
-        if($ppn_flag == 1)
+        $ppn_flag = $this->db->select("ppn_flag")
+            ->from("service")
+            ->where("service.project_id", $project->id)
+            ->where("service_jenis_id", 2)
+            ->get()->row()->ppn_flag;
+        if ($ppn_flag == 1)
             $tagihan_air_detail->nilai_ppn      = $this->db->select("isnull(value,'0') as value")
-                                                        ->from("parameter_project")
-                                                        ->where("project_id",$project->id)
-                                                        ->where("code","PPN")->get()->row()->value;
+                ->from("parameter_project")
+                ->where("project_id", $project->id)
+                ->where("code", "PPN")->get()->row()->value;
         else
             $tagihan_air_detail->nilai_ppn = 0;
         $tagihan_air_detail->nilai_flag     = 0;
@@ -769,39 +792,39 @@ class m_meter_air extends CI_Model
 
         $data_tagihan->proyek_id    = $project->id;
 
-        $this->db->where('proyek_id',$project->id);                
-        $this->db->where('unit_id',$dataMeterAir['unit_id']);            
-        $this->db->where('periode',$dataMeterAir['periode']);
-        
+        $this->db->where('proyek_id', $project->id);
+        $this->db->where('unit_id', $dataMeterAir['unit_id']);
+        $this->db->where('periode', $dataMeterAir['periode']);
+
         $tagihan_sudah_ada = $this->db->get('t_tagihan');
 
         if (!$tagihan_sudah_ada->num_rows()) {
             $data_tagihan->unit_id      = $dataMeterAir['unit_id'];
             $data_tagihan->periode      = $dataMeterAir['periode'];
 
-            $this->db->insert('t_tagihan',$data_tagihan);
+            $this->db->insert('t_tagihan', $data_tagihan);
 
             $tagihan_air->t_tagihan_id = $this->db->insert_id();
-        }else{
+        } else {
             $tagihan_air->t_tagihan_id = $tagihan_sudah_ada->row()->id;
         }
 
         $tagihan_air->unit_id       = $dataMeterAir['unit_id'];
         $tagihan_air->kode_tagihan  = "EX-Test";
         $tagihan_air->periode       = $dataMeterAir['periode'];
-        $tagihan_air->status_tagihan= 0;            
+        $tagihan_air->status_tagihan = 0;
         // $this->db->insert("t_tagihan_air",$tagihan_air);
 
         $tagihan_air_detail->nilai              = $biaya;
         $tagihan_air_detail->nilai_administrasi = $resultTagihan->administrasi;
         $tagihan_air_detail->nilai_denda        = 0;
-        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag?1:0;
+        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag ? 1 : 0;
 
         $service = $this->db->select("*")
-                    ->from("service")
-                    ->where("service_jenis_id",2)
-                    ->where("project_id",$project->id)
-                    ->get()->row();
+            ->from("service")
+            ->where("service_jenis_id", 2)
+            ->where("project_id", $project->id)
+            ->get()->row();
         $tagihan_air_info->range_id             = $resultTagihan->range_id;
         $tagihan_air_info->range_code           = $resultTagihan->range_code;
         $tagihan_air_info->sub_golongan_id      = $resultTagihan->sub_golongan_id;
@@ -809,7 +832,7 @@ class m_meter_air extends CI_Model
         $tagihan_air_info->pemakaian            = $pemakaian;
         $tagihan_air_info->denda_jenis_service  = $service->denda_jenis;
         $tagihan_air_info->denda_nilai_service  = $service->denda_nilai;
-        
+
         // $meter_air->unit_id     = $tagihan_air->unit_id;
         // $meter_air->periode     = $tagihan_air->periode;
         // $meter_air->meter_awal  = $v->Meter_awal;
@@ -817,7 +840,7 @@ class m_meter_air extends CI_Model
         // $meter_air->keterangan  = "Data Migrasi dari $source";
         // $this->db->insert("t_pencatatan_meter_air",$dataMeterAir);
 
-        
+
         $dataTagihanAir = [
             "proyek_id"                     => $project->id,
             "unit_id"                       => $dataMeterAir['unit_id'],
@@ -849,77 +872,74 @@ class m_meter_air extends CI_Model
                                                 Where periode = '$dataTagihanAir[periode]'
                                                 AND unit_id = $dataTagihanAir[unit_id]
                                             ")->row();
-        
 
-        if($resultTagihanAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultTagihanAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultTagihanAir->id);
             $this->db->update('t_tagihan_air', $tagihan_air);
 
             $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_detail",$tagihan_air_detail);
-            
-            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_info",$tagihan_air_info);
-    
+            $this->db->update("t_tagihan_air_detail", $tagihan_air_detail);
 
-        }else{
+            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
+            $this->db->update("t_tagihan_air_info", $tagihan_air_info);
+        } else {
             $this->db->insert('t_tagihan_air', $tagihan_air);
-            
+
             $tagihan_air_detail->t_tagihan_air_id   = $this->db->insert_id();
             $tagihan_air_info->t_tagihan_air_id     = $tagihan_air_detail->t_tagihan_air_id;
 
-            $this->db->insert("t_tagihan_air_detail",$tagihan_air_detail);
-            $this->db->insert("t_tagihan_air_info",$tagihan_air_info);
+            $this->db->insert("t_tagihan_air_detail", $tagihan_air_detail);
+            $this->db->insert("t_tagihan_air_info", $tagihan_air_info);
         }
-        
-        if ($this->db->trans_status() === FALSE){
-                $this->db->trans_rollback();
-                return false;
-        }else{
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
             $this->db->trans_commit();
             return true;
-        }        
+        }
     }
     // have problem
-    public function ajax_save_meter_api_2($meter, $periode, $unit_id, $url,$meter_awal_baru, $meter_akhir_baru)
+    public function ajax_save_meter_api_2($meter, $periode, $unit_id, $url, $meter_awal_baru, $meter_akhir_baru)
     {
 
         $this->load->model('m_sub_golongan');
 
         // $project = $this->m_core->project();
-        $project = $this->db->select("project_id as id")->from("unit")->where("id",$unit_id)->get()->row();
+        $project = $this->db->select("project_id as id")->from("unit")->where("id", $unit_id)->get()->row();
         // $periode_1 = str_pad((((int)substr($periode, 0, 2))-1), 2, '0',STR_PAD_LEFT). "-01-" . substr($periode, 3, 4);
-        $periode = substr($periode, 3, 4)."-".substr($periode, 0, 2). "-01";
+        $periode = substr($periode, 3, 4) . "-" . substr($periode, 0, 2) . "-01";
 
         $tmp = $periode;
         $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -1 month");
 
-        $tmp = date("Y-m-d",$tmp);
+        $tmp = date("Y-m-d", $tmp);
 
-        $tmp = substr($tmp,5,2).'-'.substr($tmp,8,2).'-'.substr($tmp,0,4);
+        $tmp = substr($tmp, 5, 2) . '-' . substr($tmp, 8, 2) . '-' . substr($tmp, 0, 4);
 
         $periode_1 = $tmp;
 
         $meter = str_replace(',', '', $meter);
-        
+
         // var_dump($periode_1);
         // var_dump($periode);
         // var_dump($tmp);
-        
-        $meter_awal= $this->db->select("meter_akhir")
-        ->from("t_pencatatan_meter_air")
-        ->where("unit_id",$unit_id)
-        ->where("periode",$periode_1)
-        ->get()->row();
 
-        $meter_awal = $meter_awal?$meter_awal->meter_akhir:0;
+        $meter_awal = $this->db->select("meter_akhir")
+            ->from("t_pencatatan_meter_air")
+            ->where("unit_id", $unit_id)
+            ->where("periode", $periode_1)
+            ->get()->row();
+
+        $meter_awal = $meter_awal ? $meter_awal->meter_akhir : 0;
         $dataMeterAir = [
             'unit_id'       => $unit_id,
             'periode'       => $periode,
             'keterangan'    => 'Data Inputan',
             'meter_akhir'         => $meter,
             'meter_awal'         => $meter_awal,
-            'foto_url'      => $url
         ];
         $dataMeterAir2 = [
             'unit_id'       => $unit_id,
@@ -927,10 +947,9 @@ class m_meter_air extends CI_Model
             'keterangan'    => 'Data Inputan',
             'meter_akhir'         => $meter_akhir_baru,
             'meter_awal'         => $meter_awal_baru,
-            'foto_url'      => $url,
             'have_problem'  => 1
         ];
-        $pemakaian2 = $meter_awal_baru-$meter_akhir_baru;
+        $pemakaian2 = $meter_awal_baru - $meter_akhir_baru;
 
         $resultMeterAir =   $this->db->query("
                                 SELECT
@@ -940,14 +959,29 @@ class m_meter_air extends CI_Model
                                 AND unit_id = $dataMeterAir[unit_id]
                             ")->row();
         $this->db->trans_start();
-        
-        if($resultMeterAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultMeterAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultMeterAir->id);
             $this->db->update('t_pencatatan_meter_air', $dataMeterAir);
-        }else{
+        } else {
             $this->db->insert('t_pencatatan_meter_air', $dataMeterAir);
         }
         $this->db->insert('t_pencatatan_meter_air', $dataMeterAir2);
+
+        $t_pencatatan_meter_air_id = $this->db->insert_id();
+        $t_pencatatan_meter_air_detail =  (object)[
+            't_pencatatan_meter_air_id' => $t_pencatatan_meter_air_id,
+            'create_at' => date("Y/m/d H:i:s")
+        ];
+        $this->db->insert('t_pencatatan_meter_air_detail', [
+            't_pencatatan_meter_air_id' => $t_pencatatan_meter_air_id,
+            'create_at' => date("Y/m/d H:i:s")
+        ]);
+        foreach ($url as $k => $v) {
+            $t_pencatatan_meter_air_detail->foto_url = $v;
+            $this->db->insert('t_pencatatan_meter_air_detail', $t_pencatatan_meter_air_detail);
+        }
+
         $this->db->trans_complete();
 
         $this->db->trans_start();
@@ -980,28 +1014,28 @@ class m_meter_air extends CI_Model
                                         ORDER BY periode
                                     ")->result();
 
-        
+
 
         // $pemakaian = $meter_awal!=0?$meter-$meter_awal:0;
-        $pemakaian1 = $meter-$meter_awal;
-        $pemakaian2 = $meter_awal_baru-$meter_akhir_baru;
-        $pemakaian = $pemakaian1 + $pemakaian2; 
+        $pemakaian1 = $meter - $meter_awal;
+        $pemakaian2 = $meter_awal_baru - $meter_akhir_baru;
+        $pemakaian = $pemakaian1 + $pemakaian2;
 
         // $pemakaian = $this->getSelect($resultMeterAir->id)?$this->getSelect($resultMeterAir->id)[0]->pemakaian:0;
         $minimum_pemakaian_rp = $this->db
-                                ->select('minimum_pemakaian,minimum_rp')
-                                ->from('unit')
-                                ->join('unit_air','unit_air.unit_id = unit.id')
-                                ->join('sub_golongan','sub_golongan.id = unit_air.sub_gol_id')
-                                ->where('unit.id',$unit_id)->get()->row();
-        if($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
+            ->select('minimum_pemakaian,minimum_rp')
+            ->from('unit')
+            ->join('unit_air', 'unit_air.unit_id = unit.id')
+            ->join('sub_golongan', 'sub_golongan.id = unit_air.sub_gol_id')
+            ->where('unit.id', $unit_id)->get()->row();
+        if ($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
             $pemakaian = $minimum_pemakaian_rp->minimum_pemakaian;
 
-        
+
         // $pemakaian = $resultPemakaian[1]->meter - $resultPemakaian[0]->meter;
         // 1 ialah flag untuk air di m_sub_golongan
-        $biaya = $this->harga_air(1,$resultTagihan->range_id,$pemakaian,$unit_id);
-        if($minimum_pemakaian_rp->minimum_rp > $biaya)
+        $biaya = $this->harga_air(1, $resultTagihan->range_id, $pemakaian, $unit_id);
+        if ($minimum_pemakaian_rp->minimum_rp > $biaya)
             $biaya = $minimum_pemakaian_rp->minimum_rp;
 
         $tagihan_air         = (object)[];
@@ -1017,16 +1051,16 @@ class m_meter_air extends CI_Model
         $tagihan_air_detail->active         = 1;
         // $tagihan_air_detail->user_id        = $user_id;
 
-        $ppn_flag = $this->db   ->select("ppn_flag")
-                                ->from("service")
-                                ->where("service.project_id",$project->id)
-                                ->where("service_jenis_id",2)
-                                ->get()->row()->ppn_flag;
-        if($ppn_flag == 1)
+        $ppn_flag = $this->db->select("ppn_flag")
+            ->from("service")
+            ->where("service.project_id", $project->id)
+            ->where("service_jenis_id", 2)
+            ->get()->row()->ppn_flag;
+        if ($ppn_flag == 1)
             $tagihan_air_detail->nilai_ppn      = $this->db->select("isnull(value,'0') as value")
-                                                        ->from("parameter_project")
-                                                        ->where("project_id",$project->id)
-                                                        ->where("code","PPN")->get()->row()->value;
+                ->from("parameter_project")
+                ->where("project_id", $project->id)
+                ->where("code", "PPN")->get()->row()->value;
         else
             $tagihan_air_detail->nilai_ppn = 0;
         $tagihan_air_detail->nilai_flag     = 0;
@@ -1034,39 +1068,39 @@ class m_meter_air extends CI_Model
 
         $data_tagihan->proyek_id    = $project->id;
 
-        $this->db->where('proyek_id',$project->id);                
-        $this->db->where('unit_id',$dataMeterAir['unit_id']);            
-        $this->db->where('periode',$dataMeterAir['periode']);
-        
+        $this->db->where('proyek_id', $project->id);
+        $this->db->where('unit_id', $dataMeterAir['unit_id']);
+        $this->db->where('periode', $dataMeterAir['periode']);
+
         $tagihan_sudah_ada = $this->db->get('t_tagihan');
 
         if (!$tagihan_sudah_ada->num_rows()) {
             $data_tagihan->unit_id      = $dataMeterAir['unit_id'];
             $data_tagihan->periode      = $dataMeterAir['periode'];
 
-            $this->db->insert('t_tagihan',$data_tagihan);
+            $this->db->insert('t_tagihan', $data_tagihan);
 
             $tagihan_air->t_tagihan_id = $this->db->insert_id();
-        }else{
+        } else {
             $tagihan_air->t_tagihan_id = $tagihan_sudah_ada->row()->id;
         }
 
         $tagihan_air->unit_id       = $dataMeterAir['unit_id'];
         $tagihan_air->kode_tagihan  = "EX-Test";
         $tagihan_air->periode       = $dataMeterAir['periode'];
-        $tagihan_air->status_tagihan= 0;            
+        $tagihan_air->status_tagihan = 0;
         // $this->db->insert("t_tagihan_air",$tagihan_air);
 
         $tagihan_air_detail->nilai              = $biaya;
         $tagihan_air_detail->nilai_administrasi = $resultTagihan->administrasi;
         $tagihan_air_detail->nilai_denda        = 0;
-        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag?1:0;
+        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag ? 1 : 0;
 
         $service = $this->db->select("*")
-                    ->from("service")
-                    ->where("service_jenis_id",2)
-                    ->where("project_id",$project->id)
-                    ->get()->row();
+            ->from("service")
+            ->where("service_jenis_id", 2)
+            ->where("project_id", $project->id)
+            ->get()->row();
         $tagihan_air_info->range_id             = $resultTagihan->range_id;
         $tagihan_air_info->range_code           = $resultTagihan->range_code;
         $tagihan_air_info->sub_golongan_id      = $resultTagihan->sub_golongan_id;
@@ -1074,7 +1108,7 @@ class m_meter_air extends CI_Model
         $tagihan_air_info->pemakaian            = $pemakaian;
         $tagihan_air_info->denda_jenis_service  = $service->denda_jenis;
         $tagihan_air_info->denda_nilai_service  = $service->denda_nilai;
-        
+
         // $meter_air->unit_id     = $tagihan_air->unit_id;
         // $meter_air->periode     = $tagihan_air->periode;
         // $meter_air->meter_awal  = $v->Meter_awal;
@@ -1082,7 +1116,7 @@ class m_meter_air extends CI_Model
         // $meter_air->keterangan  = "Data Migrasi dari $source";
         // $this->db->insert("t_pencatatan_meter_air",$dataMeterAir);
 
-        
+
         $dataTagihanAir = [
             "proyek_id"                     => $project->id,
             "unit_id"                       => $dataMeterAir['unit_id'],
@@ -1114,36 +1148,34 @@ class m_meter_air extends CI_Model
                                                 Where periode = '$dataTagihanAir[periode]'
                                                 AND unit_id = $dataTagihanAir[unit_id]
                                             ")->row();
-        
 
-        if($resultTagihanAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultTagihanAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultTagihanAir->id);
             $this->db->update('t_tagihan_air', $tagihan_air);
 
             $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_detail",$tagihan_air_detail);
-            
-            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_info",$tagihan_air_info);
-    
+            $this->db->update("t_tagihan_air_detail", $tagihan_air_detail);
 
-        }else{
+            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
+            $this->db->update("t_tagihan_air_info", $tagihan_air_info);
+        } else {
             $this->db->insert('t_tagihan_air', $tagihan_air);
-            
+
             $tagihan_air_detail->t_tagihan_air_id   = $this->db->insert_id();
             $tagihan_air_info->t_tagihan_air_id     = $tagihan_air_detail->t_tagihan_air_id;
 
-            $this->db->insert("t_tagihan_air_detail",$tagihan_air_detail);
-            $this->db->insert("t_tagihan_air_info",$tagihan_air_info);
+            $this->db->insert("t_tagihan_air_detail", $tagihan_air_detail);
+            $this->db->insert("t_tagihan_air_info", $tagihan_air_info);
         }
-        
-        if ($this->db->trans_status() === FALSE){
-                $this->db->trans_rollback();
-                return false;
-        }else{
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
             $this->db->trans_commit();
             return true;
-        }        
+        }
     }
     public function ajax_save_meter_api_3($meter_awal, $meter_akhir, $periode, $unit_id)
     {
@@ -1151,29 +1183,29 @@ class m_meter_air extends CI_Model
         $this->load->model('m_sub_golongan');
 
         // $project = $this->m_core->project();
-        $project = $this->db->select("project_id as id")->from("unit")->where("id",$unit_id)->get()->row();
+        $project = $this->db->select("project_id as id")->from("unit")->where("id", $unit_id)->get()->row();
         // $periode_1 = str_pad((((int)substr($periode, 0, 2))-1), 2, '0',STR_PAD_LEFT). "-01-" . substr($periode, 3, 4);
-        $periode = substr($periode, 3, 4)."-".substr($periode, 0, 2). "-01";
+        $periode = substr($periode, 3, 4) . "-" . substr($periode, 0, 2) . "-01";
 
         $tmp = $periode;
         $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -1 month");
 
-        $tmp = date("Y-m-d",$tmp);
+        $tmp = date("Y-m-d", $tmp);
 
-        $tmp = substr($tmp,5,2).'-'.substr($tmp,8,2).'-'.substr($tmp,0,4);
+        $tmp = substr($tmp, 5, 2) . '-' . substr($tmp, 8, 2) . '-' . substr($tmp, 0, 4);
 
         $periode_1 = $tmp;
 
         $meter_awal = str_replace(',', '', $meter_awal);
         $meter_akhir = str_replace(',', '', $meter_akhir);
-        
+
         // var_dump($periode_1);
         // var_dump($periode);
         // var_dump($tmp);
-        
 
-        $meter_awal = $meter_awal?$meter_awal:0;
-        $meter_akhir = $meter_akhir?$meter_akhir:0;
+
+        $meter_awal = $meter_awal ? $meter_awal : 0;
+        $meter_akhir = $meter_akhir ? $meter_akhir : 0;
         $dataMeterAir = [
             'unit_id'       => $unit_id,
             'periode'       => $periode,
@@ -1189,11 +1221,11 @@ class m_meter_air extends CI_Model
                                 AND unit_id = $dataMeterAir[unit_id]
                             ")->row();
         $this->db->trans_start();
-        
-        if($resultMeterAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultMeterAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultMeterAir->id);
             $this->db->update('t_pencatatan_meter_air', $dataMeterAir);
-        }else{
+        } else {
             $this->db->insert('t_pencatatan_meter_air', $dataMeterAir);
         }
         $this->db->trans_complete();
@@ -1228,7 +1260,7 @@ class m_meter_air extends CI_Model
                                         ORDER BY periode
                                     ")->result();
 
-        
+
 
         // $pemakaian = $meter_awal!=0?$meter-$meter_awal:0;
         $pemakaian = $meter_akhir - $meter_awal;
@@ -1236,19 +1268,19 @@ class m_meter_air extends CI_Model
 
         // $pemakaian = $this->getSelect($resultMeterAir->id)?$this->getSelect($resultMeterAir->id)[0]->pemakaian:0;
         $minimum_pemakaian_rp = $this->db
-                                ->select('minimum_pemakaian,minimum_rp')
-                                ->from('unit')
-                                ->join('unit_air','unit_air.unit_id = unit.id')
-                                ->join('sub_golongan','sub_golongan.id = unit_air.sub_gol_id')
-                                ->where('unit.id',$unit_id)->get()->row();
-        if($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
+            ->select('minimum_pemakaian,minimum_rp')
+            ->from('unit')
+            ->join('unit_air', 'unit_air.unit_id = unit.id')
+            ->join('sub_golongan', 'sub_golongan.id = unit_air.sub_gol_id')
+            ->where('unit.id', $unit_id)->get()->row();
+        if ($minimum_pemakaian_rp->minimum_pemakaian > $pemakaian)
             $pemakaian = $minimum_pemakaian_rp->minimum_pemakaian;
 
-        
+
         // $pemakaian = $resultPemakaian[1]->meter - $resultPemakaian[0]->meter;
         // 1 ialah flag untuk air di m_sub_golongan
-        $biaya = $this->harga_air(1,$resultTagihan->range_id,$pemakaian,$unit_id);
-        if($minimum_pemakaian_rp->minimum_rp > $biaya)
+        $biaya = $this->harga_air(1, $resultTagihan->range_id, $pemakaian, $unit_id);
+        if ($minimum_pemakaian_rp->minimum_rp > $biaya)
             $biaya = $minimum_pemakaian_rp->minimum_rp;
 
         $tagihan_air         = (object)[];
@@ -1264,16 +1296,16 @@ class m_meter_air extends CI_Model
         $tagihan_air_detail->active         = 1;
         // $tagihan_air_detail->user_id        = $user_id;
 
-        $ppn_flag = $this->db   ->select("ppn_flag")
-                                ->from("service")
-                                ->where("service.project_id",$project->id)
-                                ->where("service_jenis_id",2)
-                                ->get()->row()->ppn_flag;
-        if($ppn_flag == 1)
+        $ppn_flag = $this->db->select("ppn_flag")
+            ->from("service")
+            ->where("service.project_id", $project->id)
+            ->where("service_jenis_id", 2)
+            ->get()->row()->ppn_flag;
+        if ($ppn_flag == 1)
             $tagihan_air_detail->nilai_ppn      = $this->db->select("isnull(value,'0') as value")
-                                                        ->from("parameter_project")
-                                                        ->where("project_id",$project->id)
-                                                        ->where("code","PPN")->get()->row()->value;
+                ->from("parameter_project")
+                ->where("project_id", $project->id)
+                ->where("code", "PPN")->get()->row()->value;
         else
             $tagihan_air_detail->nilai_ppn = 0;
         $tagihan_air_detail->nilai_flag     = 0;
@@ -1281,39 +1313,39 @@ class m_meter_air extends CI_Model
 
         $data_tagihan->proyek_id    = $project->id;
 
-        $this->db->where('proyek_id',$project->id);                
-        $this->db->where('unit_id',$dataMeterAir['unit_id']);            
-        $this->db->where('periode',$dataMeterAir['periode']);
-        
+        $this->db->where('proyek_id', $project->id);
+        $this->db->where('unit_id', $dataMeterAir['unit_id']);
+        $this->db->where('periode', $dataMeterAir['periode']);
+
         $tagihan_sudah_ada = $this->db->get('t_tagihan');
 
         if (!$tagihan_sudah_ada->num_rows()) {
             $data_tagihan->unit_id      = $dataMeterAir['unit_id'];
             $data_tagihan->periode      = $dataMeterAir['periode'];
 
-            $this->db->insert('t_tagihan',$data_tagihan);
+            $this->db->insert('t_tagihan', $data_tagihan);
 
             $tagihan_air->t_tagihan_id = $this->db->insert_id();
-        }else{
+        } else {
             $tagihan_air->t_tagihan_id = $tagihan_sudah_ada->row()->id;
         }
 
         $tagihan_air->unit_id       = $dataMeterAir['unit_id'];
         $tagihan_air->kode_tagihan  = "EX-Test";
         $tagihan_air->periode       = $dataMeterAir['periode'];
-        $tagihan_air->status_tagihan= 0;            
+        $tagihan_air->status_tagihan = 0;
         // $this->db->insert("t_tagihan_air",$tagihan_air);
 
         $tagihan_air_detail->nilai              = $biaya;
         $tagihan_air_detail->nilai_administrasi = $resultTagihan->administrasi;
         $tagihan_air_detail->nilai_denda        = 0;
-        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag?1:0;
+        $tagihan_air_detail->ppn_flag           = $resultTagihan->ppn_flag ? 1 : 0;
 
         $service = $this->db->select("*")
-                    ->from("service")
-                    ->where("service_jenis_id",2)
-                    ->where("project_id",$project->id)
-                    ->get()->row();
+            ->from("service")
+            ->where("service_jenis_id", 2)
+            ->where("project_id", $project->id)
+            ->get()->row();
         $tagihan_air_info->range_id             = $resultTagihan->range_id;
         $tagihan_air_info->range_code           = $resultTagihan->range_code;
         $tagihan_air_info->sub_golongan_id      = $resultTagihan->sub_golongan_id;
@@ -1321,7 +1353,7 @@ class m_meter_air extends CI_Model
         $tagihan_air_info->pemakaian            = $pemakaian;
         $tagihan_air_info->denda_jenis_service  = $service->denda_jenis;
         $tagihan_air_info->denda_nilai_service  = $service->denda_nilai;
-        
+
         // $meter_air->unit_id     = $tagihan_air->unit_id;
         // $meter_air->periode     = $tagihan_air->periode;
         // $meter_air->meter_awal  = $v->Meter_awal;
@@ -1329,7 +1361,7 @@ class m_meter_air extends CI_Model
         // $meter_air->keterangan  = "Data Migrasi dari $source";
         // $this->db->insert("t_pencatatan_meter_air",$dataMeterAir);
 
-        
+
         $dataTagihanAir = [
             "proyek_id"                     => $project->id,
             "unit_id"                       => $dataMeterAir['unit_id'],
@@ -1361,36 +1393,34 @@ class m_meter_air extends CI_Model
                                                 Where periode = '$dataTagihanAir[periode]'
                                                 AND unit_id = $dataTagihanAir[unit_id]
                                             ")->row();
-        
 
-        if($resultTagihanAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultTagihanAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultTagihanAir->id);
             $this->db->update('t_tagihan_air', $tagihan_air);
 
             $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_detail",$tagihan_air_detail);
-            
-            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
-            $this->db->update("t_tagihan_air_info",$tagihan_air_info);
-    
+            $this->db->update("t_tagihan_air_detail", $tagihan_air_detail);
 
-        }else{
+            $this->db->where('t_tagihan_air_id', $resultTagihanAir->id);
+            $this->db->update("t_tagihan_air_info", $tagihan_air_info);
+        } else {
             $this->db->insert('t_tagihan_air', $tagihan_air);
-            
+
             $tagihan_air_detail->t_tagihan_air_id   = $this->db->insert_id();
             $tagihan_air_info->t_tagihan_air_id     = $tagihan_air_detail->t_tagihan_air_id;
 
-            $this->db->insert("t_tagihan_air_detail",$tagihan_air_detail);
-            $this->db->insert("t_tagihan_air_info",$tagihan_air_info);
+            $this->db->insert("t_tagihan_air_detail", $tagihan_air_detail);
+            $this->db->insert("t_tagihan_air_info", $tagihan_air_info);
         }
-        
-        if ($this->db->trans_status() === FALSE){
-                $this->db->trans_rollback();
-                return false;
-        }else{
+
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
             $this->db->trans_commit();
             return true;
-        }        
+        }
     }
     public function ajax_save_meter_api_4($meter_awal, $meter_akhir, $periode, $unit_id)
     {
@@ -1398,29 +1428,29 @@ class m_meter_air extends CI_Model
         $this->load->model('m_sub_golongan');
 
         // $project = $this->m_core->project();
-        $project = $this->db->select("project_id as id")->from("unit")->where("id",$unit_id)->get()->row();
+        $project = $this->db->select("project_id as id")->from("unit")->where("id", $unit_id)->get()->row();
         // $periode_1 = str_pad((((int)substr($periode, 0, 2))-1), 2, '0',STR_PAD_LEFT). "-01-" . substr($periode, 3, 4);
-        $periode = substr($periode, 3, 4)."-".substr($periode, 0, 2). "-01";
+        $periode = substr($periode, 3, 4) . "-" . substr($periode, 0, 2) . "-01";
 
         $tmp = $periode;
         $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -1 month");
 
-        $tmp = date("Y-m-d",$tmp);
+        $tmp = date("Y-m-d", $tmp);
 
-        $tmp = substr($tmp,5,2).'-'.substr($tmp,8,2).'-'.substr($tmp,0,4);
+        $tmp = substr($tmp, 5, 2) . '-' . substr($tmp, 8, 2) . '-' . substr($tmp, 0, 4);
 
         $periode_1 = $tmp;
 
         $meter_awal = str_replace(',', '', $meter_awal);
         $meter_akhir = str_replace(',', '', $meter_akhir);
-        
+
         // var_dump($periode_1);
         // var_dump($periode);
         // var_dump($tmp);
-        
 
-        $meter_awal = $meter_awal?$meter_awal:0;
-        $meter_akhir = $meter_akhir?$meter_akhir:0;
+
+        $meter_awal = $meter_awal ? $meter_awal : 0;
+        $meter_akhir = $meter_akhir ? $meter_akhir : 0;
         $dataMeterAir = [
             'unit_id'       => $unit_id,
             'periode'       => $periode,
@@ -1436,21 +1466,21 @@ class m_meter_air extends CI_Model
                                 AND unit_id = $dataMeterAir[unit_id]
                             ")->row();
         $this->db->trans_start();
-        
-        if($resultMeterAir){ //jika t_meter_air sudah ada, maka di update
+
+        if ($resultMeterAir) { //jika t_meter_air sudah ada, maka di update
             $this->db->where('id', $resultMeterAir->id);
             $this->db->update('t_pencatatan_meter_air', $dataMeterAir);
-        }else{
+        } else {
             $this->db->insert('t_pencatatan_meter_air', $dataMeterAir);
         }
 
-        if ($this->db->trans_status() === FALSE){
-                $this->db->trans_rollback();
-                return false;
-        }else{
+        if ($this->db->trans_status() === FALSE) {
+            $this->db->trans_rollback();
+            return false;
+        } else {
             $this->db->trans_commit();
             return true;
-        }        
+        }
     }
     public function last_id()
     {
@@ -1458,7 +1488,7 @@ class m_meter_air extends CI_Model
             SELECT TOP 1 id FROM customer 
             ORDER by id desc
         ");
-        return $query->row() ?$query->row()->id : 0;
+        return $query->row() ? $query->row()->id : 0;
     }
     public function cek($id)
     {
@@ -1480,7 +1510,7 @@ class m_meter_air extends CI_Model
         ");
         $row = $query->row();
 
-        return isset($row) ?1 : 0;
+        return isset($row) ? 1 : 0;
     }
 
     public function save($dataTmp)
