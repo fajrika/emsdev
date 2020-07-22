@@ -195,6 +195,7 @@ class m_aging extends CI_Model
         $project = $this->m_core->project();
         $result = $this->db->select("
                                             unit.id,
+                                            t_tagihan.periode,
                                             kawasan.name as kawasan,
                                             blok.name as blok,
                                             unit.no_unit,
@@ -672,7 +673,8 @@ class m_aging extends CI_Model
                                         "service_lingkungan.project_id = $project->id
                                         AND service_lingkungan.service_jenis_id = 1
                                         AND service_lingkungan.active = 1
-                                        AND service_lingkungan.delete = 0")
+                                        AND service_lingkungan.delete = 0",
+                                        "LEFT")
                                 ->join("v_tagihan_lingkungan",
                                         "v_tagihan_lingkungan.t_tagihan_id = t_tagihan.id",
                                         "LEFT")
@@ -730,6 +732,24 @@ class m_aging extends CI_Model
                                                     ELSE 0
                                                 END
                                             ) as nilai_tagihan_air_30,
+                                            (
+                                                CASE 
+                                                    WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(0+$toleransi_aging)." and datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= ".(30+$toleransi_aging)." THEN
+                                                        CASE 
+                                                            WHEN v_tagihan_air.status_tagihan = 0 THEN
+                                                                t_pencatatan_meter_air.meter_akhir     
+                                                            ELSE 
+                                                                CASE 
+                                                                    WHEN '".$date_aging."' < t_pembayaran_air.tgl_bayar THEN 
+                                                                        t_pencatatan_meter_air.meter_akhir
+                                                                    ELSE
+                                                                        0
+                                                                END
+
+                                                        END
+                                                    ELSE 0
+                                                END
+                                            ) as meter_akhir_30,
                                             (
                                                 CASE
                                                     WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(0+$toleransi_aging)." and datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= ".(30+$toleransi_aging)." THEN
@@ -827,6 +847,24 @@ class m_aging extends CI_Model
                                                 END
                                             ) as nilai_tagihan_air_60,
                                             (
+                                                CASE 
+                                                    WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(30+$toleransi_aging)." and datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= ".(60+$toleransi_aging)." THEN
+                                                        CASE 
+                                                            WHEN v_tagihan_air.status_tagihan = 0 THEN
+                                                                t_pencatatan_meter_air.meter_akhir     
+                                                            ELSE 
+                                                                CASE 
+                                                                    WHEN '".$date_aging."' < t_pembayaran_air.tgl_bayar THEN 
+                                                                        t_pencatatan_meter_air.meter_akhir 
+                                                                    ELSE
+                                                                        0
+                                                                END
+
+                                                        END
+                                                    ELSE 0
+                                                END
+                                            ) as meter_akhir_60,
+                                            (
                                                 CASE
                                                     WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(30+$toleransi_aging)." and datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= ".(60+$toleransi_aging)." THEN
 
@@ -923,6 +961,24 @@ class m_aging extends CI_Model
                                                 END
                                             ) as nilai_tagihan_air_90,
                                             (
+                                                CASE 
+                                                    WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(60+$toleransi_aging)." and datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= ".(90+$toleransi_aging)." THEN
+                                                        CASE 
+                                                            WHEN v_tagihan_air.status_tagihan = 0 THEN
+                                                                t_pencatatan_meter_air.meter_akhir     
+                                                            ELSE 
+                                                                CASE 
+                                                                    WHEN '".$date_aging."' < t_pembayaran_air.tgl_bayar THEN 
+                                                                        t_pencatatan_meter_air.meter_akhir 
+                                                                    ELSE
+                                                                        0
+                                                                END
+
+                                                        END
+                                                    ELSE 0
+                                                END
+                                            ) as meter_akhir_90,
+                                            (
                                                 CASE
                                                     WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(60+$toleransi_aging)." and datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= ".(90+$toleransi_aging)." THEN
 
@@ -1002,7 +1058,7 @@ class m_aging extends CI_Model
                 $result = $result   ->select("
                                             (
                                                 CASE 
-                                                    WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(90+$toleransi_aging)."  THEN
+                                                    WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(90+$toleransi_aging)." THEN
                                                         CASE 
                                                             WHEN v_tagihan_air.status_tagihan = 0 THEN
                                                                 v_tagihan_air.nilai     
@@ -1018,6 +1074,25 @@ class m_aging extends CI_Model
                                                     ELSE 0
                                                 END
                                             ) as nilai_tagihan_air_120,
+                                            (
+                                                CASE 
+                                                    WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(90+$toleransi_aging)." and 
+                                                    datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') <= 120  THEN
+                                                        CASE 
+                                                            WHEN v_tagihan_air.status_tagihan = 0 THEN
+                                                                t_pencatatan_meter_air.meter_akhir     
+                                                            ELSE 
+                                                                CASE 
+                                                                    WHEN '".$date_aging."' < t_pembayaran_air.tgl_bayar THEN 
+                                                                        t_pencatatan_meter_air.meter_akhir 
+                                                                    ELSE
+                                                                        0
+                                                                END
+
+                                                        END
+                                                    ELSE 0
+                                                END
+                                            ) as meter_akhir_120,
                                             (
                                                 CASE
                                                     WHEN datediff(day,DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode),'".$date_aging."') > ".(90+$toleransi_aging)." THEN
@@ -1109,6 +1184,11 @@ class m_aging extends CI_Model
                                 ->join("t_pembayaran as t_pembayaran_air",
                                         "t_pembayaran_air.id = t_pembayaran_detail_air.t_pembayaran_id",
                                         "LEFT")
+                                ->join("t_pencatatan_meter_air",
+                                        "t_pencatatan_meter_air.unit_id = v_tagihan_air.unit_id
+                                        AND t_pencatatan_meter_air.periode = v_tagihan_air.periode
+                                        AND t_pencatatan_meter_air.have_problem = 0",
+                                        "LEFT")
                                 ->distinct()
                                 ->group_by("
                                             v_tagihan_air.status_tagihan,
@@ -1124,7 +1204,8 @@ class m_aging extends CI_Model
                                             service_air.denda_selisih_bulan,
                                             service_air.denda_tanggal_jt,
                                             v_tagihan_air.total,
-                                            v_tagihan_air.ppn");
+                                            v_tagihan_air.ppn,
+                                            t_pencatatan_meter_air.meter_akhir");
                                 // ->group_by("DATEADD(day, service_air.tgl_jatuh_tempo - 1 ,t_tagihan.periode)",false);
         }
 
@@ -1160,14 +1241,18 @@ class m_aging extends CI_Model
         }
         if("air"){
             $result = $result.",
+                        sum(meter_akhir_30) as meter_akhir_30,
                         sum(nilai_tagihan_air_30) as nilai_tagihan_air_30,
                         sum(nilai_denda_air_30) as nilai_denda_air_30,
+                        sum(meter_akhir_60) as meter_akhir_60,
                         sum(nilai_ppn_air_30) as nilai_ppn_air_30,
                         sum(nilai_tagihan_air_60) as nilai_tagihan_air_60,
                         sum(nilai_denda_air_60) as nilai_denda_air_60,
+                        sum(meter_akhir_90) as meter_akhir_90,
                         sum(nilai_ppn_air_60) as nilai_ppn_air_60,
                         sum(nilai_tagihan_air_90) as nilai_tagihan_air_90,
                         sum(nilai_denda_air_90) as nilai_denda_air_90,
+                        sum(meter_akhir_120) as meter_akhir_120,
                         sum(nilai_ppn_air_90) as nilai_ppn_air_90,
                         sum(nilai_tagihan_air_120) as nilai_tagihan_air_120,
                         sum(nilai_denda_air_120) as nilai_denda_air_120,
@@ -1187,7 +1272,10 @@ class m_aging extends CI_Model
                             order by kawasan,blok,no_unit
                             ";
         $result = $this->db->query($result);
-        return $result->result();
+        // var_dump($thos)
+        $result =  $result->result();
+        // var_dump($this->db->last_query());
+        return $result;
         // return $result->result();
     }
     public function ajax_get_unit($kawasan, $blok, $periode)

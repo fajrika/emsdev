@@ -120,30 +120,34 @@ defined('BASEPATH') or exit('No direct script access allowed');
                         <th rowspan="2">Luas Tanah</th>
                         <th rowspan="2">Luas Bangunan</th>
                         <!-- <th rowspan="2">Status Huni</th> -->
-                        <th colspan="4">30 Hari
+                        <th colspan="5">30 Hari
                         </th>
-                        <th colspan="4">60 Hari
+                        <th colspan="5">60 Hari
                         </th>
-                        <th colspan="4">90 Hari
+                        <th colspan="5">90 Hari
                         </th>
-                        <th colspan="4">>90 Hari
+                        <th colspan="5">>90 Hari
                         </th>
                         <th rowspan="2">Total
                         </th>
                     </tr>
                     <tr>
+                        <th>Meter Akhir</th>
                         <th>Air</th>
                         <th>Lingkungan</th>
                         <th>PPN</th>
                         <th>Denda</th>
+                        <th>Meter Akhir</th>
                         <th>Air</th>
                         <th>Lingkungan</th>
                         <th>PPN</th>
                         <th>Denda</th>
+                        <th>Meter Akhir</th>
                         <th>Air</th>
                         <th>Lingkungan</th>
                         <th>PPN</th>
                         <th>Denda</th>
+                        <th>Meter Akhir</th>
                         <th>Air</th>
                         <th>Lingkungan</th>
                         <th>PPN</th>
@@ -347,18 +351,22 @@ defined('BASEPATH') or exit('No direct script access allowed');
                                     "<td>" + data[i].luas_tanah + "</td>" +
                                     "<td>" + data[i].luas_bangunan + "</td>" +
 
+                                    "<td class='text-right'>" + formatNumber(data[i].meter_akhir_30) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_air_30) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_ipl_30) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_ppn_air_30 + data[i].nilai_ppn_ipl_30) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_denda_air_30 + data[i].nilai_denda_ipl_30) + "</td>" +
+                                    "<td class='text-right'>" + formatNumber(data[i].meter_akhir_60) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_air_60) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_ipl_60) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_ppn_air_60 + data[i].nilai_ppn_ipl_60) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_denda_air_60 + data[i].nilai_denda_ipl_60) + "</td>" +
+                                    "<td class='text-right'>" + formatNumber(data[i].meter_akhir_90) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_air_90) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_ipl_90) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_ppn_air_90 + data[i].nilai_ppn_ipl_90) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_denda_air_90 + data[i].nilai_denda_ipl_90) + "</td>" +
+                                    "<td class='text-right'>" + formatNumber(data[i].meter_akhir_120) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_air_120) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_tagihan_ipl_120) + "</td>" +
                                     "<td class='text-right'>" + formatNumber(data[i].nilai_ppn_air_120 + data[i].nilai_ppn_ipl_120) + "</td>" +
