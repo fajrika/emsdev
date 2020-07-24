@@ -68,18 +68,50 @@ class P_kolektabilitas extends CI_Controller
         $periode_akhir          = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
         $param->status_tagihan  = [1, 4];
         $param->kawasan_id      = $id_kawasan;
-        // $param->unit_id      = 194;
-        // $param->blok_id      = $blok;
         $param->project_id      = $GLOBALS['project']->id;
-        // $param->service_jenis_id= $metode_tagihan;
         $param->periode_awal    = $periode_awal;
         $param->periode_akhir   = $periode_akhir;
         $param->date            = date("Y-m-d");
 
-        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param);
-        $tagihans2 = $this->m_tagihan->get_lingkungan($param);
-        // $tagihans = $this->m_tagihan->get_air($param);
-        
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan([
+			"status_tagihan" => [1,4],
+			"kawasan_id" => $id_kawasan,
+			"project_id" => $GLOBALS['project']->id,
+			"periode_awal" => $periode_awal,
+			"periode_akhir" => $periode_akhir, 
+			"date" => date("Y-m-d"),
+			"service_jenis_id" => [1]
+		],'unit');
+		$tagihans2 = $this->m_tagihan->get_lingkungan([
+			"status_tagihan" => [1,4],
+			"kawasan_id" => $id_kawasan,
+			"project_id" => $GLOBALS['project']->id,
+			"periode_awal" => $periode_awal,
+			"periode_akhir" => $periode_akhir, 
+			"date" => date("Y-m-d")
+		]);
+		$sumGabungan = 0;
+		foreach ($tagihans as $key => $subtagihans) {
+			foreach ($subtagihans as $key => $tagihan) {
+				$sumGabungan += $tagihan->final_nilai_tagihan_tanpa_ppn;
+			}
+		}
+		$sumIPL = 0;
+
+		foreach ($tagihans2 as $key => $value) {
+            $sumIPL += $value->final_nilai_tagihan_tanpa_ppn;
+        }
+		
+		$tagihan = [
+			"param" => $param,
+			"sumGabungan" => $sumGabungan,
+			"sumIPL" => $sumIPL,
+			"gabungan" => $tagihans,
+			"ipl" => $tagihans2,
+		];
+		
+		echo(json_encode($tagihan));
+		die;
         print_r($tagihans);exit();
         // print_r($tagihans2);exit();
 
