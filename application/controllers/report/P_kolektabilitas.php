@@ -8,6 +8,8 @@ class P_kolektabilitas extends CI_Controller
 		parent::__construct();
 		$this->load->database();
 		$this->load->model('m_login');
+        $this->load->model('core/m_tagihan');
+        $this->load->model('transaksi/m_aging');
 		if (!$this->m_login->status_login()) redirect(site_url());
 		$this->load->model('m_core');
 		global $jabatan;
@@ -19,27 +21,15 @@ class P_kolektabilitas extends CI_Controller
 	}
 	public function index()
 	{
-		$this->CI = &get_instance();
-
-		// echo ("<pre>");
-		// print_r($this->CI->load->view("proyek/report/exam/index", [], TRUE));
-		// echo ("</pre>");
-		// die;
+		$data['kawasan'] = $this->db->where("project_id", $GLOBALS['project']->id)->order_by('id ASC')->get('kawasan')->result();
 		$this->load->view("layouts/admin_gentelella", [
 			"title_submenu" => "Report > Kolektabilitas",
 			"css" 			=> 	$this->load->view("layouts/css/dataTables", [], TRUE).
 								$this->load->view("proyek/report/kolektibilitas/indexcss.php",[],TRUE),
-			"content" 		=> 	$this->load->view("proyek/report/exam/index", [], TRUE),
+			"content" 		=> 	$this->load->view("proyek/report/exam/index", $data, TRUE),
 			"js" 			=> 	$this->load->view("layouts/js/dataTables", [], TRUE).
 								$this->load->view("proyek/report/kolektibilitas/indexjs",[],TRUE),
 		]);
-		// $this->load->view('core/header');
-		// $this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
-		// $this->load->view('core/top_bar', ['jabatan' => $GLOBALS['jabatan'], 'project' => $GLOBALS['project']]);
-		// $this->load->view('core/body_header', ['title' => 'Transaksi Service > Report Pembayaran Service ', 'subTitle' => 'Report Harian, Bulanan']);
-		// $this->load->view('proyek/report/exam/index');
-		// $this->load->view('core/body_footer');
-		// $this->load->view('core/footer');
 	}
 	public function index2()
 	{
@@ -58,6 +48,56 @@ class P_kolektabilitas extends CI_Controller
 		// $this->load->view('core/body_footer');
 		// $this->load->view('core/footer');
 	}
+
+    public function generate()
+    {
+        $get_month      = $this->input->post('month');
+        $month          = str_pad($get_month, 2, 0, STR_PAD_LEFT);
+        $get_periode    = $this->input->post('periode_awal');
+        $column_ke      = $this->input->post('column_ke');
+
+        $blok           = 1;
+        $periode_awal   = $month.'/'.substr($get_periode, 6, 4); //"04/2020";
+        $periode_akhir  = $month.'/'.substr($get_periode, 6, 4); //"04/2020";
+        $metode_tagihan = [1, 2];
+        $param          = (object)[];
+
+        $periode_awal           = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
+        $periode_akhir          = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
+        $param->status_tagihan  = [1, 4];
+        $param->kawasan_id      = $this->input->post('id_kawasan');
+        // $param->unit_id      = 194;
+        // $param->blok_id      = $blok;
+        $param->project_id      = $GLOBALS['project']->id;
+        // $param->service_jenis_id= $metode_tagihan;
+        $param->periode_awal    = $periode_awal;
+        $param->periode_akhir   = $periode_akhir;
+        $param->date            = date("Y-m-d");
+
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan($param);
+        // $tagihans = $this->m_tagihan->get_lingkungan($param);
+        // $tagihans = $this->m_tagihan->get_air($param);
+        // echo"<pre>";print_r($tagihans);
+        // echo json_encode($tagihans);
+
+        // print_r($tagihans);exit();
+
+        $sum_nilai_tagihan_tanpa_ppn = 0;
+        foreach ($tagihans as $key => $value) {
+            if ($value->lingkungan) {
+                $sum_nilai_tagihan_tanpa_ppn += $value->lingkungan->final_nilai_tagihan_tanpa_ppn;
+            }
+        }
+
+        // print_r($tagihans);exit();
+
+        echo json_encode(array(
+            'bulan_ke' => $get_month,
+            'column_ke' => $column_ke,
+            'nilai_tagihan' => $sum_nilai_tagihan_tanpa_ppn
+        ));
+    }
+
 	public function ajax_get_kawasan(){
 		$kawasans = 
 			$this->db->select("kawasan.id, concat(kawasan.code, ' - ', kawasan.name) as text")
