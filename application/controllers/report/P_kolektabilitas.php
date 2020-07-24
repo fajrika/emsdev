@@ -57,6 +57,8 @@ class P_kolektabilitas extends CI_Controller
         $get_periode    = $this->input->post('periode_awal');
         $column_ke      = $this->input->post('column_ke');
         $id_kawasan     = $this->input->post('id_kawasan');
+        $format_date    = explode("/", $get_periode);
+        $date_now       = $format_date[2].'-'.$format_date[1].'-'.$format_date[0];
 
         $blok           = 1;
         $periode_awal   = $month.'/'.substr($get_periode, 6, 4); //"04/2020";
@@ -66,69 +68,40 @@ class P_kolektabilitas extends CI_Controller
 
         $periode_awal           = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
         $periode_akhir          = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
-        $param->status_tagihan  = [1, 4];
-        $param->kawasan_id      = $id_kawasan;
-        $param->project_id      = $GLOBALS['project']->id;
-        $param->periode_awal    = $periode_awal;
-        $param->periode_akhir   = $periode_akhir;
-        $param->date            = date("Y-m-d");
+        // $param->status_tagihan  = [1, 4];
+        // $param->kawasan_id      = $id_kawasan;
+        // $param->project_id      = $GLOBALS['project']->id;
+        // $param->periode_awal    = $periode_awal;
+        // $param->periode_akhir   = $periode_akhir;
+        // $param->date            = date("Y-m-d");
 
-        $tagihans = $this->m_tagihan->get_tagihan_gabungan([
-			"status_tagihan" => [1,4],
-			"kawasan_id" => $id_kawasan,
-			"project_id" => $GLOBALS['project']->id,
-			"periode_awal" => $periode_awal,
-			"periode_akhir" => $periode_akhir, 
-			"date" => date("Y-m-d"),
-			"service_jenis_id" => [1,2]
-		],'unit');
-		$tagihans2 = $this->m_tagihan->get_lingkungan([
-			"status_tagihan" => [1,4],
-			"kawasan_id" => $id_kawasan,
-			"project_id" => $GLOBALS['project']->id,
-			"periode_awal" => $periode_awal,
-			"periode_akhir" => $periode_akhir, 
-			"date" => date("Y-m-d")
-		]);
-		$sumGabungan = 0;
+        // $tagihans2 = $this->m_tagihan->get_lingkungan([
+        //     "status_tagihan"    => [1,4],
+        //     "kawasan_id"        => $id_kawasan,
+        //     "project_id"        => $GLOBALS['project']->id,
+        //     "periode_awal"      => $periode_awal,
+        //     "periode_akhir"     => $periode_akhir, 
+        //     "date"              => date("Y-m-d")
+        // ]);
+        $tagihans = $this->m_tagihan->get_tagihan_gabungan(
+            [
+    			"status_tagihan"   => [1,4],
+    			"kawasan_id"       => $id_kawasan,
+    			"project_id"       => $GLOBALS['project']->id,
+    			"periode_awal"     => $periode_awal,
+    			"periode_akhir"    => $periode_akhir, 
+    			"date"             => $date_now,
+    			"service_jenis_id" => [1,2]
+    		], 
+            'unit'
+        );
+
+		$sum_nilai_tagihan_tanpa_ppn = 0;
 		foreach ($tagihans as $key => $subtagihans) {
 			foreach ($subtagihans as $key => $tagihan) {
-				$sumGabungan += $tagihan->final_nilai_tagihan_tanpa_ppn;
+				$sum_nilai_tagihan_tanpa_ppn += $tagihan->final_nilai_tagihan_tanpa_ppn;
 			}
 		}
-		$sumIPL = 0;
-
-		foreach ($tagihans2 as $key => $value) {
-            $sumIPL += $value->final_nilai_tagihan_tanpa_ppn;
-        }
-		
-		$tagihan = [
-			"param" => $param,
-			"sumGabungan" => $sumGabungan,
-			"sumIPL" => $sumIPL,
-			"gabungan" => $tagihans,
-			"ipl" => $tagihans2,
-		];
-		
-		echo(json_encode($tagihan));
-		die;
-        print_r($tagihans);exit();
-        // print_r($tagihans2);exit();
-
-        $sum_nilai_tagihan_tanpa_ppn = 0;
-        foreach ($tagihans as $key => $value) {
-            if ($value->lingkungan) {
-                $sum_nilai_tagihan_tanpa_ppn += $value->lingkungan->final_nilai_tagihan_tanpa_ppn;
-            }
-        }
-
-
-        $sum_nilai_tagihan_tanpa_ppn2 = 0;
-        foreach ($tagihans2 as $key => $value) {
-            $sum_nilai_tagihan_tanpa_ppn2 += $value->final_nilai_tagihan_tanpa_ppn;
-        }
-
-        // print_r('gabungan: '.$sum_nilai_tagihan_tanpa_ppn . ' ' . 'lingkungan: ' . $sum_nilai_tagihan_tanpa_ppn2);exit();
 
         echo json_encode(array(
             'bulan_ke' => $get_month,

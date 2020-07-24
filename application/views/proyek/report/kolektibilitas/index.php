@@ -66,7 +66,7 @@
                             </thead>
                             <tbody id="tbody_unit">
                                 <?php
-                                $total_data   = 1;
+                                $total_data   = 12;
                                 $number_left  = 1;
                                 $number_right = 1;
                                 $month        = array(1=>'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December');
