@@ -80,7 +80,7 @@ class P_kolektabilitas extends CI_Controller
 			"periode_awal" => $periode_awal,
 			"periode_akhir" => $periode_akhir, 
 			"date" => date("Y-m-d"),
-			"service_jenis_id" => [1]
+			"service_jenis_id" => [1,2]
 		],'unit');
 		$tagihans2 = $this->m_tagihan->get_lingkungan([
 			"status_tagihan" => [1,4],
