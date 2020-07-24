@@ -32,12 +32,15 @@ class P_master_unit_virtual extends CI_Controller {
 	{
 		$this->load->model('m_unit_virtual');
 		$dataUnit = $this->m_unit_virtual->get();
-		$dataCustomer = $this->m_unit_virtual->getCustomer();
+		// $dataCustomer = $this->m_unit_virtual->getCustomer();
 	    $this->load->view('core/header');
 		$this->load->view('core/side_bar',['menu' => $GLOBALS['menu']]);
 		$this->load->view('core/top_bar');
 		$this->load->view('core/body_header',['title' => 'Master > Unit Virtual', 'subTitle' => 'Add']);
-		$this->load->view('proyek/master/unit_virtual/add', ['dataUnit' => $dataUnit,'dataCustomer' => $dataCustomer]);
+		$this->load->view('proyek/master/unit_virtual/add', [
+			'dataUnit' => $dataUnit,
+			// 'dataCustomer' => $dataCustomer
+		]);
 		$this->load->view('core/body_footer');
 		$this->load->view('core/footer');
 	}
@@ -69,7 +72,19 @@ class P_master_unit_virtual extends CI_Controller {
 			$this->load->view('core/alert',['title' => 'Gagal','text'=>'Data Inputan suda Ada','type'=>'danger']);
 					
 	}
-	
+	public function get_ajax_customer(){
+		$unit = 
+			$this->db
+			->select("customer.id as id")
+			->select("customer.name as text")			
+			->from('customer')
+			->where('customer.project_id', $GLOBALS['project']->id)
+			->where("customer.name like '%" . $this->input->get('data') . "%'")
+			->limit(10)
+			->get()->result();
+		
+		echo json_encode($unit);
+	}
 	public function edit()
 	{
 		$status = 0;

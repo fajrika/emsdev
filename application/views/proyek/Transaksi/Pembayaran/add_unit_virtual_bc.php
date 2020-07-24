@@ -42,16 +42,18 @@ defined('BASEPATH') or exit('No direct script access allowed');
 	<form id="form" data-parsley-validate="" class="form-horizontal form-label-left" novalidate="" method="post" action="<?= site_url(); ?>/Transaksi/P_transaksi_generate_bill/save" autocomplete="off">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:20px">
 			<div class="form-group">
-				<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12">Unit Virtual</label>
+				<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12">Kawasan - Blok - Unit - Pemilik</label>
 				<div class="col-lg-8 col-md-9 col-sm-12 col-xs-12">
-					<select name="unit" required="" id="unit" class="form-control select2" placeholder="-- Pilih Unit Virtual --">
-						<?php if ($unit->id != 0) : ?>
-							<option selected value="<?= $unit->id ?>"><?= $unit->text ?></option>
+					<select name="unit_virtual" required="" id="unit_virtual" class="form-control select2" placeholder="-- Pilih Kawasan - Blok - Unit - Pemilik --">
+						<?php if ($unit_virtual->id != 0) : ?>
+							<option selected value="<?= $unit_virtual->id ?>"><?= $unit_virtual->text ?></option>
 						<?php endif; ?>
 					</select>
 				</div>
 			</div>
 		</div>
+
+
 
 		<div class="col-lg-6 col-md-12 col-sm-12 col-xs-12" style="margin-top:20px">
 			<div class="form-group">
@@ -112,25 +114,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					<input id="tgl_pembayaran" type="text" value="<?= date("d/m/Y") ?>" class="form-control tgl_pembayaran">
 				</div>
 			</div>
-			<div class="form-group">
-				<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12">Saldo Deposit (Rp)</label>
-				<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-					<input id="saldo_deposit" type="text" class="form-control" readonly>
-				</div>
-			</div>
-			<div class="form-group">
-				<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12">Deposit yang Digunakan</label>
-				<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-					<input id="deposit_digunakan" type="text" class="form-control" value=0 readonly>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12">Saldo Akhir Deposit</label>
-				<div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
-					<input id="saldo_akhir" type="text" class="form-control" readonly>
-				</div>
-			</div>
 		</div>
 		<div class="clearfix"></div>
 		<br>
@@ -148,15 +131,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							<th class="col-md-1 col-sm-1 col-lg-1 col-xs-1" id="di_bayar_dengan_table">
 								<input id="check-all-bayar" type='checkbox' class='flat table-check'> Bayar
 							</th>
-							<th style="width:1px">Deposit</th>
 							<th class='text-right'>Periode Tagihan</th>
 							<th>Service</th>
 							<th class='text-right'>Nilai Pokok</th>
 							<th class='text-right'>Denda</th>
-							<th class='text-right'>Pemutihan Nilai Pokok</th>
-							<th class='text-right'>Pemutihan Denda</th>
-							<th class='text-right'>Nilai Pokok<br>Yang Harus di Bayar</th>
-							<th class='text-right'>Denda<br>Yang Harus di Bayar</th>
 							<th class='text-right'>Pinalty</th>
 							<th class='text-right'>Tunggakan</th>
 							<th class='text-right'>Total</th>
@@ -262,24 +240,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 									</div>
 									<div class="col-lg-8 col-md-8 col-sm-1 col-xs-11">
 										<input id="modal_di_bayar_dengan" type="text" class="form-control" readonly style="text-align: right;">
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12" id="modal_label_di_bayar_dengan_deposit">Di Bayar dengan<br>Deposit</label>
-									<div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
-										Rp.
-									</div>
-									<div class="col-lg-8 col-md-8 col-sm-1 col-xs-11">
-										<input id="modal_di_bayar_dengan_deposit" type="text" class="form-control" readonly style="text-align: right;">
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="control-label col-lg-3 col-md-3 col-sm-12 col-xs-12">Saldo Akhir Deposit</label>
-									<div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">
-										Rp.
-									</div>
-									<div class="col-lg-8 col-md-8 col-sm-1 col-xs-11">
-										<input id="modal_saldo_akhir" type="text" class="form-control" readonly style="text-align: right;">
 									</div>
 								</div>
 							</div>
@@ -423,13 +383,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					console.log(name_service);
 				}
 			}
-			// bayar deposit
-			if ($(this).children().eq(1).find("input").is(":checked")) {
-				var name_service = $(this).parents('tr').children().eq(3).html();
-				if ($.inArray(name_service, rincian_service) == -1) {
-					rincian_service.push(name_service);
-				}
-			}
 		})
 	}
 	$(function() {
@@ -483,7 +436,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					// test
 					var diskon = {};
 					$.each($("table").find("tbody").children(), function(i, v) {
-						if ($(this).find(".check_bayar").is(":checked") || $(this).find(".check_deposit").is(":checked")) {
+						if ($(this).find(".check_bayar").is(":checked")) {
 							var service_id = parseInt($(this).attr("service_id"));
 							var is_tagihan = parseInt($(this).attr("is_tagihan"));
 							if (diskon[service_id] !== undefined) {
@@ -498,7 +451,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 						type: "GET",
 						data: {
 							diskon: diskon,
-							unit_id: $("#unit").val()
+							unit_virtual_id: $("#unit_virtual").val()
 						},
 						url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_diskon",
 						dataType: "json",
@@ -510,8 +463,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 									console.log(abc.nilai);
 									$.each($("#tbody_unit").find("tr"), function(k, v) {
 										check_bayar = $("#tbody_unit").find("tr").eq(k).find('.check_bayar').is(':checked');
-										check_bayar_deposit = $("#tbody_unit").find("tr").eq(k).find('.check_deposit').is(':checked');
-										if((check_bayar == 1 || check_bayar_deposit == 1) && $("#tbody_unit").find("tr").eq(k).children().eq(2).html() >= '<?=date("Y-m-01")?>'){
+										if((check_bayar == 1) && $("#tbody_unit").find("tr").eq(k).children().eq(2).html() >= '<?=date("Y-m-01")?>'){
 											a = unformatNumber($("#tbody_unit").find("tr").eq(k).find("td").eq(8).html()) * abc.nilai; 
 											return;
 										}
@@ -558,11 +510,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					return $(this).val() + "|" + unformatNumber($(this).parents('tr').find("input").last().val());
 				}
 			}).get();
-			var bayar_deposit = $("input[name='check_deposit[]']").map(function() {
-				if ($(this).is(":checked")) {
-					return $(this).val() + "|" + unformatNumber($(this).parents('tr').find("input").last().val());
-				}
-			}).get();
 			// for (let i = 0; i < $("#tbody_unit").find("tr").length; i++) {
 			// 	// if($("#tbody_unit").find("tr").eq(i).find("td").eq(2).html() == "<?= date("Y-m-01") ?>"){
 			// 	// 	mulai_diskon = $("#tbody_unit").find("tr").eq(10).find("td").eq(0).find(".check_bayar").val();
@@ -585,9 +532,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			$.ajax({
 				type: "POST",
 				data: {
-					unit_id: $("#unit").val(),
+					unit_virtual_id: $("#unit_virtual").val(),
 					bayar: bayar,
-					bayar_deposit: bayar_deposit,
 					cara_pembayaran: $("[name = cara_pembayaran]").val(),
 					biaya_admin: unformatNumber($("#biaya_admin_pembayaran").val()),
 					date: $("#tgl_pembayaran").val(),
@@ -605,12 +551,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 			});
 			$('#modal_cetak_kwitansi').modal('show');
-			$("#unit").val($("#unit").val()).change();
+			$("#unit_virtual").val($("#unit_virtual").val()).change();
 
 			$.ajax({
 				type: "GET",
 				data: {
-					unit_id: $("#unit").val(),
+					unit_virtual_id: $("#unit_virtual").val(),
 				},
 				url: "<?= site_url() ?>/Transaksi/P_unit/get_ajax_unit_detail",
 				dataType: "json",
@@ -653,7 +599,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 					} );
 				}
 			});
-			$("#unit").val($("#unit").val()).change();
+			$("#unit_virtual").val($("#unit_virtual").val()).change();
 
 		});
 		$("body").on("click", ".btn-save-kwitansi", function() {
@@ -678,29 +624,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			});
 		});
 
-		function disable_check() {
-			total = 0;
-			for (var i = 0; i < $(".check_deposit").length; i++) {
-				if (!$(".check_deposit").eq(i).is(":checked")) {
-					$(".check_bayar").eq(i).parent().css("pointer-events", "unset");
-					if (parseInt(unformatNumber($("#saldo_akhir").val())) < unformatNumber($(".check_deposit").eq(i).parent().parent().parent().children(".total").html()))
-						$(".check_deposit").eq(i).parent().css("pointer-events", "none");
-					else
-						$(".check_deposit").eq(i).parent().css("pointer-events", "unset");
-				} else
-					$(".check_bayar").eq(i).parent().css("pointer-events", "none");
-
-				if ($(".check_bayar").eq(i).is(":checked")) {
-					$(".check_deposit").eq(i).parent().css("pointer-events", "none");
-					total += parseInt(unformatNumber($(".check_deposit").eq(i).parent().parent().parent().children(".td_bisa_bayar").children('.bisa_bayar').val()));
-				} else
-				if (parseInt(unformatNumber($("#saldo_akhir").val())) >= unformatNumber($(".check_deposit").eq(i).parent().parent().parent().children(".td_bisa_bayar").children(".td_bisa_bayar").val()))
-					$(".check_deposit").eq(i).parent().css("pointer-events", "unset");
-			}
-			$("#di_bayar_dengan").val(formatNumber(total));
-			$("#modal_di_bayar_dengan").val(formatNumber(total));
-
-		}
+		
 		$("table").on("ifChanged", "#check-all-bayar", function() {
 			if ($("#check-all-bayar").is(":checked")) {
 				$(".check_bayar").iCheck("check");
@@ -786,7 +710,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			$("#view_biaya_admin_pembayaran").val(formatNumber($("#bank").children("option:selected").attr('biaya_admin')));
 			setTotalModal();
 		});
-		$("#unit").select2({
+		$("#unit_virtual").select2({
 			width: 'resolve',
 			// resize:true,
 			minimumInputLength: 1,
@@ -795,7 +719,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 				type: "GET",
 				dataType: "json",
 				data: $(this).val(),
-				url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_get_unit/",
+				url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_get_unit_virtual/",
 				data: function(params) {
 					return {
 						data: params.term
@@ -810,16 +734,16 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			}
 		});
 		$('#tgl_pembayaran').on('dp.change', function(e) {
-			$("#unit").trigger("change");
+			$("#unit_virtual").trigger("change");
 		})
 
-		$("#unit").change(function() {
+		$("#unit_virtual").change(function() {
 			$.ajax({
 				type: "POST",
 				data: {
-					unit_id: $("#unit").val()
+					unit_virtual_id: $("#unit_virtual").val()
 				},
-				url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_get_deposit/" + $("#unit").val(),
+				url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_get_deposit/" + $("#unit_virtual").val(),
 				dataType: "json",
 				success: function(data) {
 					$("#saldo_deposit").val(formatNumber(data));
@@ -831,11 +755,11 @@ defined('BASEPATH') or exit('No direct script access allowed');
 			$.ajax({
 				type: "POST",
 				data: {
-					unit_id: $("#unit").val(),
+					unit_virtual_id: $("#unit_virtual").val(),
 					date: $("#tgl_pembayaran").val()
 
 				},
-				url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_get_tagihan",
+				url: "<?= site_url() ?>/Transaksi/P_pembayaran/ajax_get_tagihan_unit_virtual",
 				dataType: "json",
 				success: function(data) {
 					console.log(data);
@@ -861,8 +785,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							+ 0 
 							- (v.view_pemutihan_nilai_tagihan + v.view_pemutihan_nilai_denda);
 						total += v.nilai_tagihan + v.nilai_denda + v.belum_bayar + 0 - (v.view_pemutihan_nilai_tagihan + v.view_pemutihan_nilai_denda);
-						sisa_tagihan = v.nilai_tagihan - v.view_pemutihan_nilai_tagihan;
-						sisa_denda = v.nilai_denda - v.view_pemutihan_nilai_denda;
+						// sisa_tagihan = v.nilai_tagihan - v.view_pemutihan_nilai_tagihan;
+						// sisa_denda = v.nilai_denda - v.view_pemutihan_nilai_denda;
 						var tmp1 = '';
 						if (v.belum_bayar)
 							tmp1 = 'disabled';
@@ -878,10 +802,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 						table += "<tr service_id='" + v.service_id + "' is_tagihan='" + v.is_tagihan + "' style='" + color + ";" + color_font + "'>" +
 							"<td>" +
-							"<input type='checkbox' class='check_bayar flat table-check' name='check_bayar[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + 0 + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "' " + tmp2 + ">" +
+							"<input type='checkbox' class='check_bayar flat table-check' name='check_bayar[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + v.nilai_penalti + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "' " + tmp2 + ">" +
 							"</td>" +
 							"<td>" +
-							"<input type='checkbox' class='check_deposit flat table-check' name='check_deposit[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + 0 + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "' " + tmp2 + ">" +
+							"<input type='checkbox' class='check_deposit flat table-check' name='check_deposit[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + v.nilai_penalti + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "' " + tmp2 + ">" +
 							"</td>" +
 							"<td class='text-right'>" +
 							v.periode +
@@ -893,19 +817,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							formatNumber(v.belum_bayar==0?v.nilai_denda:0) +
 							"</td>" +
 							"<td class='text-right'>" +
-							formatNumber(v.view_pemutihan_nilai_tagihan) +
-							"</td>" +
-							"<td class='text-right'>" +
-							formatNumber(v.view_pemutihan_nilai_denda) +
-							"</td>" +
-							"<td class='text-right'>" +
-							formatNumber(sisa_tagihan) +
-							"</td>" +
-							"<td class='text-right'>" +
-							formatNumber(sisa_denda) +
-							"</td>" +
-							"<td class='text-right'>" +
-							formatNumber(0) +
+							formatNumber(v.nilai_penalti?v.nilai_penalti:0) +
 							"</td>" +
 							"<td class='text-right'>" +
 							formatNumber(v.belum_bayar) +
@@ -1010,10 +922,10 @@ defined('BASEPATH') or exit('No direct script access allowed');
 						}
 						table += "<tr service_id='" + v.service_id + "' is_tagihan='" + v.is_tagihan + "' style='" + color + ";" + color_font + "'>" +
 							"<td>" +
-							"<input type='checkbox' class='check_bayar flat table-check' name='check_bayar[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + 0 + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "' " + tmp2 + ">" +
+							"<input type='checkbox' class='check_bayar flat table-check' name='check_bayar[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + v.nilai_penalti + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "' " + tmp2 + ">" +
 							"</td>" +
 							"<td>" +
-							"<input type='checkbox' class='check_deposit flat table-check' name='check_deposit[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + 0 + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "'>" +
+							"<input type='checkbox' class='check_deposit flat table-check' name='check_deposit[]' value='" + v.service_id + "|" + v.service_jenis_id + "|" + v.tagihan_id + "|" + v.nilai_tagihan + "|" + v.nilai_denda + "|" + v.nilai_penalti + "|" + v.view_pemutihan_nilai_tagihan + "|" + v.view_pemutihan_nilai_denda + "|" + v.belum_bayar + "'>" +
 							"</td>" +
 							"<td class='text-right'>" + v.periode + "</td>" +
 							"<td>AIR</td>" +
@@ -1035,7 +947,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							formatNumber(sisa_denda) +
 							"</td>" +
 							"<td class='text-right'>" +
-							formatNumber(0) +
+							formatNumber(v.nilai_penalti?v.nilai_penalti:0) +
 							"</td>" +
 							"<td class='text-right'>" +
 							formatNumber(v.belum_bayar) +
@@ -1169,8 +1081,8 @@ defined('BASEPATH') or exit('No direct script access allowed');
 				}
 			})
 		});
-		if (<?= $unit->id ?> != 0)
-			$("#unit").val(<?= $unit->id ?>).change();
+		if (<?= $unit_virtual_id?$unit_virtual_id:0 ?> != 0)
+			$("#unit_virtual").val(<?= $unit_virtual_id?$unit_virtual_id:0 ?>).change();
 		$(".tableDT2").DataTable({
 			"paging": false
 		});

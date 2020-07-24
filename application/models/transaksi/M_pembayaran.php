@@ -65,7 +65,7 @@ class m_pembayaran extends CI_Model
 							->join('customer',
 									'customer.id = unit.pemilik_customer_id')
 							->where('unit.project_id',$project->id)
-							->where("CONCAT(kawasan.name,'-',blok.name,'/',unit.no_unit,'-',customer.name) like '%".$data."%'")
+							->where("CONCAT(kawasan.name,'-',blok.name,'/',unit.no_unit,'-',customer.name, ' ') like '%".$data."%'")
 							->get()->result();
         return $unit;
     }
