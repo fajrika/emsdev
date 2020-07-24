@@ -99,7 +99,7 @@ class P_kolektabilitas extends CI_Controller
 		$sum_nilai_tagihan_tanpa_ppn = 0;
 		foreach ($tagihans as $key => $subtagihans) {
 			foreach ($subtagihans as $key => $tagihan) {
-				$sum_nilai_tagihan_tanpa_ppn += $tagihan->final_nilai_tagihan_tanpa_ppn;
+				$sum_nilai_tagihan_tanpa_ppn += $tagihan->nilai_tagihan_tanpa_ppn;
 			}
 		}
 

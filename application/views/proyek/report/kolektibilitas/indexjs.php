@@ -72,7 +72,9 @@
                             var split = unique_id.split('_');
                             var month = split[0];
                             var id_column = split[1];
-                            if (id_column == '1') {
+                            if (id_column == '1') 
+                            {
+                                $('#'+month+'_'+id_column).text('');
                                 $.ajax({
                                     url: $('#form-report').attr('action'),
                                     cache: false,
