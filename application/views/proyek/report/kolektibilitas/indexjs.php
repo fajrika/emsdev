@@ -2,6 +2,7 @@
 <script type="text/javascript" src="<?= base_url(); ?>vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
 <script>
     $(function() {
+        var used = false;
         $(".datetimepicker").datetimepicker({
             viewMode: 'years',
             format: 'DD/MM/YYYY'
@@ -9,6 +10,16 @@
         $('.select2').select2({
             width: '100%'
         });
+        $('.select2').on("select2:select", function(e) { 
+            e.preventDefault();
+            used = false;
+        });
+
+        $(".table-collect").dataTable().fnDestroy();
+        $(".table-collect").dataTable({
+            "paging": false,
+        });
+
         /*$("#kawasan").select2({
             width: '100%',
             // resize:true,
@@ -32,7 +43,6 @@
                 }
             }
         });*/
-        var used = false;
         $("#form-report").submit(function(e){
             e.preventDefault();
             var ErrMsg   = '';
@@ -51,8 +61,10 @@
             }
             else
             {
-                if (used == false) 
-                {
+                // $(".table-collect").dataTable().fnDestroy();
+                // $("#tbody_unit").html("");
+                // if (used == false) 
+                // {
                     $('.table-collect tbody tr td').each(function(){
                         var unique_id = $(this).attr('id');
                         if (unique_id !== undefined) 
@@ -68,7 +80,8 @@
                                     data: {
                                         month: month,
                                         column_ke: id_column,
-                                        periode_awal: $('#periode_awal').val()
+                                        periode_awal: $('#periode_awal').val(),
+                                        id_kawasan: $('#kawasan').val(),
                                     },
                                     dataType: "json",
                                     success: function(data) {
@@ -79,8 +92,14 @@
                             }
                         }
                     });
-                }
+                // }
             }
         });
     });
 </script>
+<style type="text/css">
+    .table-collect th,
+    .table-collect td {
+        font-size: 12px;
+    }
+</style>

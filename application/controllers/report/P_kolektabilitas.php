@@ -26,7 +26,7 @@ class P_kolektabilitas extends CI_Controller
 			"title_submenu" => "Report > Kolektabilitas",
 			"css" 			=> 	$this->load->view("layouts/css/dataTables", [], TRUE).
 								$this->load->view("proyek/report/kolektibilitas/indexcss.php",[],TRUE),
-			"content" 		=> 	$this->load->view("proyek/report/exam/index", $data, TRUE),
+			"content" 		=> 	$this->load->view("proyek/report/kolektibilitas/index", $data, TRUE),
 			"js" 			=> 	$this->load->view("layouts/js/dataTables", [], TRUE).
 								$this->load->view("proyek/report/kolektibilitas/indexjs",[],TRUE),
 		]);
@@ -51,10 +51,12 @@ class P_kolektabilitas extends CI_Controller
 
     public function generate()
     {
+        // print_r($_POST);exit();
         $get_month      = $this->input->post('month');
         $month          = str_pad($get_month, 2, 0, STR_PAD_LEFT);
         $get_periode    = $this->input->post('periode_awal');
         $column_ke      = $this->input->post('column_ke');
+        $id_kawasan     = $this->input->post('id_kawasan');
 
         $blok           = 1;
         $periode_awal   = $month.'/'.substr($get_periode, 6, 4); //"04/2020";
@@ -65,7 +67,7 @@ class P_kolektabilitas extends CI_Controller
         $periode_awal           = substr($periode_awal, 3, 4) . "-" . substr($periode_awal, 0, 2) . "-01";
         $periode_akhir          = substr($periode_akhir, 3, 4) . "-" . substr($periode_akhir, 0, 2) . "-01";
         $param->status_tagihan  = [1, 4];
-        $param->kawasan_id      = $this->input->post('id_kawasan');
+        $param->kawasan_id      = $id_kawasan;
         // $param->unit_id      = 194;
         // $param->blok_id      = $blok;
         $param->project_id      = $GLOBALS['project']->id;
@@ -75,12 +77,11 @@ class P_kolektabilitas extends CI_Controller
         $param->date            = date("Y-m-d");
 
         $tagihans = $this->m_tagihan->get_tagihan_gabungan($param);
-        // $tagihans = $this->m_tagihan->get_lingkungan($param);
+        $tagihans2 = $this->m_tagihan->get_lingkungan($param);
         // $tagihans = $this->m_tagihan->get_air($param);
-        // echo"<pre>";print_r($tagihans);
-        // echo json_encode($tagihans);
-
-        // print_r($tagihans);exit();
+        
+        print_r($tagihans);exit();
+        // print_r($tagihans2);exit();
 
         $sum_nilai_tagihan_tanpa_ppn = 0;
         foreach ($tagihans as $key => $value) {
@@ -89,7 +90,13 @@ class P_kolektabilitas extends CI_Controller
             }
         }
 
-        // print_r($tagihans);exit();
+
+        $sum_nilai_tagihan_tanpa_ppn2 = 0;
+        foreach ($tagihans2 as $key => $value) {
+            $sum_nilai_tagihan_tanpa_ppn2 += $value->final_nilai_tagihan_tanpa_ppn;
+        }
+
+        // print_r('gabungan: '.$sum_nilai_tagihan_tanpa_ppn . ' ' . 'lingkungan: ' . $sum_nilai_tagihan_tanpa_ppn2);exit();
 
         echo json_encode(array(
             'bulan_ke' => $get_month,
