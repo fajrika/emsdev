@@ -1069,6 +1069,8 @@ class M_tagihan extends CI_Model
 		else
 			$tagihan->airs = [];
 
+		// echo(json_encode($tagihan->lingkungans));
+		// die;
 
 
 		$tagihan->gabungans = [];
@@ -1089,7 +1091,7 @@ class M_tagihan extends CI_Model
 
 
 		$now = $periode->min;
-
+		// untuk 1 unit
 		if ($group_by == 'periode') {
 			while ($now <= $periode->max) {
 				$tmpLingkungan = (object)[];
