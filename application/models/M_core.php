@@ -23,6 +23,21 @@ class m_core extends CI_Model {
                     AND m1.active = 1
                     ORDER BY m1.id ASC
                 ");
+        $query = $this->db->select("m1.id as id1,m1.name as name1")
+                            ->from("menu as m1")
+                            ->JOIN("menu as m2",
+                                    "m1.id_parent = m2.id",
+                                    "LEFT")
+                            ->JOIN("menu as m3",
+                                    "m2.id_parent = m3.id",
+                                    "LEFT")
+                            ->JOIN("menu as m4",
+                                    "m3.id_parent = m4.id",
+                                    "LEFT")
+                            ->WHERE("m2.id is null")
+                            ->where('m1.active',1)
+                            ->order_by("m1.id ASC")
+                            ->get();
         $row = $query->result_array(); 
         $menu['level1'] = $row;
         
@@ -95,8 +110,8 @@ class m_core extends CI_Model {
                             m2.id as id2,
                             m2.name as name2,
                             CASE 
-                                WHEN m1.url is not null and (permission_menu.[read] is null or permission_menu.[read] = 0) THEN '0'
-                                WHEN m1.url is not null and (permission_menu.[read] is not null or permission_menu.[read] != 0) THEN '1'
+                                WHEN m1.url is not null and (permission_menu.read is null or permission_menu.read = 0) THEN '0'
+                                WHEN m1.url is not null and (permission_menu.read is not null or permission_menu.read != 0) THEN '1'
                                 WHEN m1.url is null THEN '1'
                             END as akses")
                         ->from("menu as m1")

@@ -11,7 +11,12 @@ class m_login extends CI_Model {
         if($this->session->userdata('username') and $this->session->userdata('password')){
             $username = $this->session->userdata('username');
             $password = $this->session->userdata('password');
-            $query = $this->db->query("SELECT * FROM [user] WHERE username = '$username' AND password = '$password'");
+            $query = $this->db->select("*")
+                            ->from('user')
+                            ->where("username",$username)
+                            ->where('password',$password)
+                            ->get();
+            // $query = $this->db->query("SELECT * FROM [user] WHERE username = '$username' AND password = '$password'");
             $row = $query->row(); 
             if($row){
                 return true;
@@ -24,7 +29,12 @@ class m_login extends CI_Model {
     public function cek_user($username,$password)
     {
         $password = md5($password);
-        $query = $this->db->query("SELECT * FROM [user] WHERE username = '$username' AND password = '$password'");
+        // $query = $this->db->query("SELECT * FROM [user] WHERE username = '$username' AND password = '$password'");
+        $query = $this->db->select("*")
+                            ->from('user')
+                            ->where("username",$username)
+                            ->where('password',$password)
+                            ->get();
         $row = $query->row(); 
         // var_dump($row);
         return $row;
