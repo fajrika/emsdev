@@ -119,8 +119,8 @@ class m_core extends CI_Model
                             m2.id as id2,
                             m2.name as name2,
                             CASE 
-                                WHEN m1.url is not null and (permission_menu.\"read\" is null or permission_menu.\"read\" = 0) THEN '0'
-                                WHEN m1.url is not null and (permission_menu.\"read\" is not null or permission_menu.\"read\" != 0) THEN '1'
+                                WHEN m1.url is not null and (permission_menu.[read] is null or permission_menu.[read] = 0) THEN '0'
+                                WHEN m1.url is not null and (permission_menu.[read] is not null or permission_menu.[read] != 0) THEN '1'
                                 WHEN m1.url is null THEN '1'
                             END as akses")
             ->from("menu as m1")
