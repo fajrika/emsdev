@@ -74,6 +74,16 @@ class Builder extends Element
                     if ($row_item->tag == 'input') {
                         $builder = $builder . "<input id='$row_item->id' class='form-control col-md-12 $row_item->class' type='$row_item->tipe' name='$row_item->name' value='$row_item->value' $row_item->attribut>";
                     }
+                    if ($row_item->tag == 'textarea') {
+                        $builder = $builder . "<textarea id='$row_item->id' class='form-control col-md-12 $row_item->class' type='$row_item->tipe' name='$row_item->name' $row_item->attribut>$row_item->value</textarea>";
+                    }
+                    if ($row_item->tag == 'select') {
+                        $builder = $builder . "<select id='$row_item->id' class='form-control col-md-12 $row_item->class' name='$row_item->name' $row_item->attribut>
+                                                    <option selected disabled>.:: Manual Option ::.</option>$row_item->value</select>";
+                    }
+                    if ($row_item->tag == 'button') {
+                        $builder = $builder . "<button id='$row_item->id' class='form-control col-md-12 $row_item->class' name='$row_item->name' $row_item->attribut>$row_item->value</button>";
+                    }
                     $builder = $builder . "
                                                 </div>
                                             </div>";
