@@ -70,7 +70,7 @@
             })
             $(this).find(".input-add-column").val($(this).find(".e-column").length);
         })
-        $("#input-add-row").val(row);
+        $("#input-add-row").val($(".e-row").length);
 
         var column = 0;
         $(".e-row").each(function(i) {
