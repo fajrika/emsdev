@@ -32,7 +32,6 @@ class Builder extends Element
     {
         $this->theme("layouts/admin_gentelella");
         $this->title_submenu("Builder > Prototipe V 1.0");
-        // $this->content("proyek/report/exam/index");
         $this->content("builder/index");
         $this->css("layouts/css/dataTables");
         $this->css("layouts/css/dataTables");
@@ -64,7 +63,7 @@ class Builder extends Element
                     $row_item = (object)$row_item;
                     $builder = $builder . "
                                             <div class='item form-group'>
-                                                <label class='control-label col-md-1 col-sm-1 col-xs-12'>
+                                                <label class='control-label col-form-label col-md-1 col-sm-1 col-xs-12'>
                                                     $row_item->label
                                                 </label>
                                                 <div class='col-md-11 col-sm-11 col-xs-12'>";
