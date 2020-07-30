@@ -17,7 +17,6 @@
     }
     *{
         /*font-family: 'DotMatrix';*/
-        font-family: 'casbanti';
     }
     .casabanti {
         /* font-family: 'casbanti'; */
@@ -101,7 +100,7 @@
     }
 
     body {
-        /* font-weight: bold; */
+        font-weight: bold; 
         padding-top: -5px
     }
 
