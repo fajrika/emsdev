@@ -99,7 +99,8 @@
     }
 
     body {
-        font-weight: bold; 
+        /*font-weight: bold;*/
+        font-weight: 500;
         padding-top: -5px
     }
 
