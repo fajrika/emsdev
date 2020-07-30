@@ -6,7 +6,6 @@
     <title>Konfirmasi Tagihan</title>
     <link href="<?= base_url() ?>vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- <link href="/ems/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet"> -->
-
 </head>
 <style>
     @font-face {
