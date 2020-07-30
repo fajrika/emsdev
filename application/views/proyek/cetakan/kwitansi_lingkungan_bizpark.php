@@ -16,7 +16,8 @@
         src: url('<?= base_url() ?>vendor/dompdf/dompdf/lib/fonts/DotMatrix-TwoRegular.ttf') format('truetype');
     }
     *{
-        font-family: 'DotMatrix';
+        /*font-family: 'DotMatrix';*/
+        font-family: 'casbanti';
     }
     .casabanti {
         /* font-family: 'casbanti'; */
