@@ -158,7 +158,7 @@
         </table>
         <table class="col-xs-12 col-sm-12 col-md-12 col-lg-12 row" style="margin-top: 32px;">
             <tbody>
-                <table id="box1" style="padding-left:70px;padding-top:17px;">
+                <table id="box1" style="padding-left:70px;padding-top:27px;">
                     <td style="text-align:right">
                         <p style="margin-right:25px;margin-top:2px"><?= $tagihan->tagihan ?></p>
                         <p style="margin-right:25px;margin-top:-8px"><?= $tagihan->denda ?></p>
