@@ -39,10 +39,11 @@ abstract class Element extends CI_Controller
     {
         $this->title_submenu = $url;
     }
-    public function content($url)
+    public function content($url, $content = [])
     {
-        $this->content = $this->content . "\n" . $this->load->view($url, [], true);
+        $this->content = $this->content . "\n" . $this->load->view($url, $content, true);
     }
+
 
     public function css($url)
     {
@@ -52,15 +53,32 @@ abstract class Element extends CI_Controller
     {
         $this->js = $this->js . "\n" . $this->load->view($url, [], true);
     }
-    public function render()
+    public function render($data = [])
     {
+        $data = (object)$data;
+        if (property_exists($data, 'css')) {
+            $css = array_map(function ($v) {
+                return "<link href='$v' rel='stylesheet'>";
+            }, $data->css);
+            $css = implode("\n", $css);
+        } else {
+            $css = "";
+        }
+        if (property_exists($data, 'js')) {
+            $js = array_map(function ($v) {
+                return "<script src='$v'></script>";
+            }, $data->js);
+            $js = implode("\n", $js);
+        } else {
+            $js = "";
+        }
         echo ($this->load->view(
             "layouts/admin_gentelella",
             [
                 "title_submenu" => $this->title_submenu,
-                "css"           =>  $this->css,
+                "css"           =>  $this->css . $css,
                 "content"       =>  $this->content,
-                "js"            =>  $this->js
+                "js"            =>  $this->js . $js
             ],
             TRUE
         ));
