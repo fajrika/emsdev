@@ -37,6 +37,8 @@
                     $("#data-migrasi6").val(data6);
                     console.log(newData);
                     save();
+                } else {
+                    clearInterval(checkF);
                 }
             }
         });
@@ -47,12 +49,17 @@
             $.ajax({
                 type: "POST",
                 data: $("#formSync").serialize(),
-                url: "<?= site_url("Sync/Desktop_tagihan_air/check") ?>",
+                url: "<?= site_url("Sync/Desktop_tagihan_air/progress") ?>",
                 dataType: "html",
                 success: function(newData) {
                     persentase = Math.round((newData - data1) * 100 / data5 * 100) / 100;
                     $("#pb-length").attr('style', `width: ${persen}%`);
                     $("#pb-label").html(`${persen}%`);
+                },
+                error: function(xhr, status, error) {
+                    $("#modal-footer").html("<h6 class=''col-lg-8 col-md-8 col-sm-8 justify-content-center align-self-center'' style=''color: red;''>Error, koneksi Terputus silahkan di reload</h6>" +
+                        "<button class=''btn btn-success''>Reload</button>" +
+                        "<button type=''button'' class=''btn btn-secondary offset-md-10'' data-dismiss=''modal'' disabled=''>Close</button>");
                 }
             });
         }, 5000);
@@ -114,6 +121,7 @@
                             $("#pb-length").html('');
 
                             save();
+                            check();
                         }
                     });
                 }

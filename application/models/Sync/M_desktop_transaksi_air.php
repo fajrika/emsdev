@@ -5,16 +5,12 @@ class m_desktop_transaksi_air extends CI_Model
 {
     public function telahDiMigrasi($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
     {
+        // sleep(2);
+        // echo (json_encode(0));
+        // die;
         // var_dump($source);
         // die;
-        $username = $this->session->userdata('username');
-        $password = $this->session->userdata('password');
-        $user_id = $this->db->SELECT("id")
-            ->from("user")
-            ->where("username", $username)
-            ->where("password", $password)
-            ->get()->row();
-        $user_id = $user_id ? $user_id->id : 0;
+
         $tagihan_air_tmp = $this->db->select("count(*) as c")
             ->from("ems_temp.$source.td_air")
             ->join(
@@ -52,14 +48,10 @@ class m_desktop_transaksi_air extends CI_Model
     }
     public function belumDiMigrasi($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
     {
-        $username = $this->session->userdata('username');
-        $password = $this->session->userdata('password');
-        $user_id = $this->db->SELECT("id")
-            ->from("user")
-            ->where("username", $username)
-            ->where("password", $password)
-            ->get()->row();
-        $user_id = $user_id ? $user_id->id : 0;
+        // sleep(2);
+        // echo (json_encode(100000));
+        // die;
+
         $tagihan_air_tmp = $this->db->select("count(*) as c")
             ->from("ems_temp.$source.td_air")
             ->join(
@@ -95,6 +87,7 @@ class m_desktop_transaksi_air extends CI_Model
                 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0"
             )
             ->get()->row();
+
         echo (json_encode($tagihan_air_tmp->c ?? '0'));
     }
     public function progress($project_id)
@@ -110,20 +103,8 @@ class m_desktop_transaksi_air extends CI_Model
         $data = $data->c;
         echo (json_encode($data ?? '-1'));
     }
-    public function save($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
+    public function getDataBeforeMigrate($source, $jarak_periode = 0)
     {
-        sleep(5);
-        echo (json_encode(100));
-        die;
-
-        $username = $this->session->userdata('username');
-        $password = $this->session->userdata('password');
-        $user_id = $this->db->SELECT("id")
-            ->from("user")
-            ->where("username", $username)
-            ->where("password", $password)
-            ->get()->row();
-        $user_id = $user_id ? $user_id->id : 0;
         $tagihan_air_tmp = $this->db->select("
                                                 td_air.td_air_id,
                                                 td_air.th_trans_id,
@@ -145,9 +126,7 @@ class m_desktop_transaksi_air extends CI_Model
                                                 range_air.id as range_id,
                                                 range_air.code as range_code
                                                 ")
-            // ->select("t_tagihan_air.id as tagihan_id")
             ->select("t_tagihan_air_detail.t_tagihan_air_id as tagihan_id")
-
             ->from("ems_temp.$source.td_air")
             ->join(
                 "ems_temp.$source.th_trans",
@@ -156,7 +135,7 @@ class m_desktop_transaksi_air extends CI_Model
             ->join(
                 "unit",
                 "unit.source_table = '$source'
-                                                    AND unit.source_id = th_trans.cust_id"
+                AND unit.source_id = th_trans.cust_id"
             )
             ->join(
                 "unit_air",
@@ -170,15 +149,10 @@ class m_desktop_transaksi_air extends CI_Model
                 "range_air",
                 "range_air.id = sub_golongan.range_id"
             )
-            // ->join("t_tagihan_air",
-            //         "t_tagihan_air.unit_id = unit.id
-            //         AND t_tagihan_air.periode =  DATEADD(MONTH,$jarak_periode,FORMAT(td_air.periode,'yyyy-MM-01'))",
-            //         "LEFT")
-
             ->join(
                 "t_tagihan_air_detail",
                 "t_tagihan_air_detail.source_table = '$source'
-                                                    AND t_tagihan_air_detail.id = td_air.td_air_id",
+                 AND t_tagihan_air_detail.id = td_air.td_air_id",
                 "LEFT"
             )
             ->where("td_air.nilai_pakai != 0
@@ -186,8 +160,20 @@ class m_desktop_transaksi_air extends CI_Model
             ->order_by("tagihan_id")
             ->limit("10000")
             ->get()->result();
-        // var_dump($this->db->last_query());
-        // die;
+        echo (json_encode($tagihan_air_tmp));
+    }
+    public function save($project_id, $source, $denda_jenis_service, $denda_nilai_service, $tagihan_air_tmp)
+    {
+
+        $username = $this->session->userdata('username');
+        $password = $this->session->userdata('password');
+        $user_id = $this->db->SELECT("id")
+            ->from("user")
+            ->where("username", $username)
+            ->where("password", $password)
+            ->get()->row();
+        $user_id = $user_id ? $user_id->id : 0;
+
         $tagihan_air         = (object)[];
         $tagihan_air_detail  = (object)[];
         $tagihan_air_info    = (object)[];
@@ -203,12 +189,7 @@ class m_desktop_transaksi_air extends CI_Model
         $tagihan_air_detail->nilai_denda_flag = 0;
         $data_tagihan->proyek_id    = $project_id;
         $i = 0;
-        // $this->db->trans_begin();
-        // var_dump($tagihan_air_tmp);
-        // die;
         foreach ($tagihan_air_tmp as $k => $v) {
-            // var_dump($v);
-            // $double = ($v->tagihan_id) ? 1 : 0;
             if (!$v->tagihan_id) {
 
 

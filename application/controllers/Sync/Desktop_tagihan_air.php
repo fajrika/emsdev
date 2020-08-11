@@ -21,10 +21,10 @@ class Desktop_Tagihan_Air extends Element
         $project = $this->m_core->project();
         global $menu;
         $menu = $this->m_core->menu();
-        ini_set('memory_limit', '256M'); // This also needs to be increased in some cases. Can be changed to a higher value as per need)
-        ini_set('sqlsrv.ClientBufferMaxKBSize', '524288'); // Setting to 512M
-        ini_set('pdo_sqlsrv.client_buffer_max_kb_size', '524288'); // Setting to 512M - for pdo_sqlsrv
-        ini_set('max_execution_time', '-1'); // Setting to 512M - for pdo_sqlsrv
+        // ini_set('memory_limit', '256M'); // This also needs to be increased in some cases. Can be changed to a higher value as per need)
+        // ini_set('sqlsrv.ClientBufferMaxKBSize', '524288'); // Setting to 512M
+        // ini_set('pdo_sqlsrv.client_buffer_max_kb_size', '524288'); // Setting to 512M - for pdo_sqlsrv
+        // ini_set('max_execution_time', '-1'); // Setting to 512M - for pdo_sqlsrv
     }
 
     public function add()
@@ -82,7 +82,7 @@ class Desktop_Tagihan_Air extends Element
             $this->input->post("source"),
             $this->input->post("denda_jenis_service"),
             $this->input->post("denda_nilai_service"),
-            $this->input->post("jarak_periode")
+            $this->input->post("data")
         );
         // $this->m_desktop_transaksi_air->save2($this->input->get("project_id"),$this->input->get("source"),1);
         // print_r($this->input->get('data_id'));        
@@ -90,5 +90,12 @@ class Desktop_Tagihan_Air extends Element
     public function progress()
     {
         $this->m_desktop_transaksi_air->progress($this->input->post("project_id"));
+    }
+    public function getDataBeforeMigrate()
+    {
+        $this->m_desktop_transaksi_air->getDataBeforeMigrate(
+            $this->input->post("source"),
+            $this->input->post("jarak_periode")
+        );
     }
 }

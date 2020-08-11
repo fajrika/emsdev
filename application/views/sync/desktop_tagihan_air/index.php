@@ -46,8 +46,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" disabled>Close</button>
+            <div class="modal-footer col-md-12" style="justify-content: flex-start">
+                <!-- <h6 class="col-lg-8 col-md-8 col-sm-8 justify-content-center align-self-center" style="color: red;">Error, koneksi Terputus silahkan di reload</h6>
+                <button class="btn btn-success">Reload</button> -->
+                <button type="button" class="btn btn-secondary offset-md-10" data-dismiss="modal" disabled="">Close</button>
             </div>
         </div>
     </div>
