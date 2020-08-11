@@ -1,9 +1,69 @@
 <script>
+    var data1 = 0;
+    var data2 = 0;
+    var data3 = 0;
+    var data4 = 0;
+    var data5 = 0;
+    var data6 = 0;
+    var checkF;
+    const save = () => {
+
+        $.ajax({
+            type: "POST",
+            data: $("#formSync").serialize(),
+            url: "<?= site_url("Sync/Desktop_tagihan_air/save") ?>",
+            dataType: "html",
+            beforeSend: function() {
+                $("#data-migrasi6").val(data6);
+            },
+            success: function(newData) {
+                if (data6 != -1) {
+                    data2 = parseInt(data2) + parseInt(newData);
+                    data3 = parseInt(data1) + parseInt(data2);
+                    data5 = parseInt(data5) - parseInt(newData);
+                    data6 = parseInt(data6) + parseInt(newData);
+                    persen = Math.round(100 * data6 / data5 * 100) / 100;
+                    console.log(`data1 : ${data1}`);
+                    console.log(`data2 : ${data2}`);
+                    console.log(`data3 : ${data3}`);
+                    console.log(`data4 : ${data4}`);
+                    console.log(`data5 : ${data5}`);
+                    console.log(`data6 : ${data6}`);
+                    // $("#pb-length").attr('style', `width: ${persen}%`);
+                    // $("#pb-label").html(`${persen}%`);
+                    $("#data-migrasi2").val(data2);
+                    $("#data-migrasi3").val(data3);
+                    $("#data-migrasi5").val(data5);
+                    $("#data-migrasi6").val(data6);
+                    console.log(newData);
+                    save();
+                }
+            }
+        });
+    }
+    var persentase = 0;
+    const check = () => {
+        checkF = setInterval(() => {
+            $.ajax({
+                type: "POST",
+                data: $("#formSync").serialize(),
+                url: "<?= site_url("Sync/Desktop_tagihan_air/check") ?>",
+                dataType: "html",
+                success: function(newData) {
+                    persentase = Math.round((newData - data1) * 100 / data5 * 100) / 100;
+                    $("#pb-length").attr('style', `width: ${persen}%`);
+                    $("#pb-label").html(`${persen}%`);
+                }
+            });
+        }, 5000);
+    }
     $(function() {
         $("#source,#denda_jenis_service,#project_id").select2({
             width: '100%',
             placeholder: "Pilih salah satu",
         });
+
+
         $("#formSync").submit((e) => {
             e.preventDefault();
 
@@ -18,30 +78,42 @@
             $('.modal-dialog').draggable({
                 handle: ".modal-header"
             });
+
+
             $.ajax({
                 type: "POST",
                 data: $("#formSync").serialize(),
                 url: "<?= site_url("Sync/Desktop_tagihan_air/telahDiMigrasi") ?>",
                 dataType: "html",
-                success: function(data) {
-                    console.log("telah di migrasi " + data);
+                beforeSend: function() {
+                    $("#data-migrasi1").val('Process...');
+                    $("#data-migrasi2").val(data2);
+                    $("#data-migrasi3").val('Process...');
+                    $("#data-migrasi4").val(0);
+                    $("#data-migrasi5").val(0);
+                    $("#data-migrasi6").val(0);
+                },
+                success: function(data1) {
+                    data3 = data1;
+                    $("#data-migrasi1").val(data1);
+                    $("#data-migrasi3").val(data3);
                     $.ajax({
                         type: "POST",
                         data: $("#formSync").serialize(),
                         url: "<?= site_url("Sync/Desktop_tagihan_air/belumDiMigrasi") ?>",
                         dataType: "html",
-                        success: function(data) {
-                            console.log("belum di migrasi " + data);
-                            $.ajax({
-                                type: "POST",
-                                data: $("#formSync").serialize(),
-                                url: "<?= site_url("Sync/Desktop_tagihan_air/save") ?>",
-                                dataType: "html",
-                                success: function(data) {
-                                    console.log("save di migrasi " + data);
+                        beforeSend: function() {
+                            $("#data-migrasi4").val('Process...');
+                            $("#data-migrasi5").val('Process...');
+                        },
+                        success: function(data4) {
+                            data5 = data4;
+                            $("#data-migrasi4").val(data4);
+                            $("#data-migrasi5").val(data5);
+                            data6 = 0;
+                            $("#pb-length").html('');
 
-                                }
-                            });
+                            save();
                         }
                     });
                 }

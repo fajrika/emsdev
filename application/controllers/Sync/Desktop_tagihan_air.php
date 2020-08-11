@@ -87,4 +87,8 @@ class Desktop_Tagihan_Air extends Element
         // $this->m_desktop_transaksi_air->save2($this->input->get("project_id"),$this->input->get("source"),1);
         // print_r($this->input->get('data_id'));        
     }
+    public function progress()
+    {
+        $this->m_desktop_transaksi_air->progress($this->input->post("project_id"));
+    }
 }

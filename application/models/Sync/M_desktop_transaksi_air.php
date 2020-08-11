@@ -39,7 +39,7 @@ class m_desktop_transaksi_air extends CI_Model
                 "range_air.id = sub_golongan.range_id"
             )
             ->join(
-                "t_tagihan_detail",
+                "t_tagihan_air_detail",
                 "t_tagihan_air_detail.source_table = '$source'
                 AND t_tagihan_air_detail.id = td_air.td_air_id"
             )
@@ -47,7 +47,7 @@ class m_desktop_transaksi_air extends CI_Model
                 "td_air.nilai_pakai != 0
                 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0"
             )
-            ->get()->first();
+            ->get()->row();
         echo (json_encode($tagihan_air_tmp->c ?? '0'));
     }
     public function belumDiMigrasi($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
@@ -84,21 +84,38 @@ class m_desktop_transaksi_air extends CI_Model
                 "range_air.id = sub_golongan.range_id"
             )
             ->join(
-                "t_tagihan_detail",
+                "t_tagihan_air_detail",
                 "t_tagihan_air_detail.source_table = '$source'
                 AND t_tagihan_air_detail.id = td_air.td_air_id",
                 "LEFT"
             )
-            ->where("t_tagihan_detail.id is null")
+            ->where("t_tagihan_air_detail.id is null")
             ->where(
                 "td_air.nilai_pakai != 0
                 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0"
             )
-            ->get()->first();
+            ->get()->row();
         echo (json_encode($tagihan_air_tmp->c ?? '0'));
+    }
+    public function progress($project_id)
+    {
+        $data = $this->db->select("count(*) as c")
+            ->from("t_tagihan_air")
+            ->join(
+                "t_tagihan_air_info",
+                "t_tagihan_air_info.t_tagihan_air_id = t_tagihan_air.id"
+            )
+            ->where("proyek_id", $project_id)
+            ->get()->row();
+        $data = $data->c;
+        echo (json_encode($data ?? '-1'));
     }
     public function save($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
     {
+        sleep(5);
+        echo (json_encode(100));
+        die;
+
         $username = $this->session->userdata('username');
         $password = $this->session->userdata('password');
         $user_id = $this->db->SELECT("id")
@@ -159,18 +176,18 @@ class m_desktop_transaksi_air extends CI_Model
             //         "LEFT")
 
             ->join(
-                "t_tagihan_detail",
+                "t_tagihan_air_detail",
                 "t_tagihan_air_detail.source_table = '$source'
                                                     AND t_tagihan_air_detail.id = td_air.td_air_id",
                 "LEFT"
             )
             ->where("td_air.nilai_pakai != 0
                                                     OR (td_air.Meter_akhir - td_air.Meter_awal) > 0")
-            ->order_by("t_tagihan_air.id asc")
-            ->limit("50000")
-            ->get();
-        var_dump($this->db->last_query());
-        die;
+            ->order_by("tagihan_id")
+            ->limit("10000")
+            ->get()->result();
+        // var_dump($this->db->last_query());
+        // die;
         $tagihan_air         = (object)[];
         $tagihan_air_detail  = (object)[];
         $tagihan_air_info    = (object)[];
@@ -186,12 +203,13 @@ class m_desktop_transaksi_air extends CI_Model
         $tagihan_air_detail->nilai_denda_flag = 0;
         $data_tagihan->proyek_id    = $project_id;
         $i = 0;
-        $this->db->trans_begin();
-        var_dump($tagihan_air_tmp);
-        die;
+        // $this->db->trans_begin();
+        // var_dump($tagihan_air_tmp);
+        // die;
         foreach ($tagihan_air_tmp as $k => $v) {
-            $double = $v->tagihan_id ? 1 : 0;
-            if ($double == 0) {
+            // var_dump($v);
+            // $double = ($v->tagihan_id) ? 1 : 0;
+            if (!$v->tagihan_id) {
 
 
                 $this->db->where('proyek_id', $project_id);
@@ -205,7 +223,6 @@ class m_desktop_transaksi_air extends CI_Model
                     $data_tagihan->periode      = $v->periode;
 
                     $this->db->insert('t_tagihan', $data_tagihan);
-                    $i++;
                     $tagihan_air->t_tagihan_id = $this->db->insert_id();
                 } else {
                     $tagihan_air->t_tagihan_id = $tagihan_sudah_ada->row()->id;
@@ -217,7 +234,7 @@ class m_desktop_transaksi_air extends CI_Model
                 $tagihan_air->periode = $v->periode;
                 $tagihan_air->status_tagihan = $v->tanggal_bayar ? 1 : 0;
                 $this->db->insert("t_tagihan_air", $tagihan_air);
-
+                $i++;
                 $tagihan_air_detail->t_tagihan_air_id   = $this->db->insert_id();;
                 $tagihan_air_detail->nilai              = $v->nilai_pakai;
                 $tagihan_air_detail->nilai_administrasi = $v->nilai_admin;
@@ -247,7 +264,9 @@ class m_desktop_transaksi_air extends CI_Model
             }
         }
         $this->db->trans_commit();
-
-        echo (json_encode($i));
+        if ($i == 0)
+            echo (json_encode(-1));
+        else
+            echo (json_encode($i));
     }
 }

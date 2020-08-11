@@ -3,48 +3,46 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-justify">Process Migration</h5>
-                <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button> -->
             </div>
             <div class="modal-body">
                 <div class="progress">
-                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%">0%</div>
+                    <div id="pb-length" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+                    <div id="pb-label" class="progress-bar-striped ui-progressbar ui-corner-all ui-widget ui-widget-content" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 100%;text-align: center;position: absolute;"></div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 form-group d-flex justify-content-center">
                     <label class="control-label col-lg-5 col-md-5 col-sm-5 justify-content-center align-self-center">Data yang telah Termigrasi Sebelumnya</label>
                     <div class="col-lg-3 col-md-3 col-sm-3">
-                        <input id="data1" type="text" class="form-control" disabled>
+                        <input id="data-migrasi1" type="text" class="form-control" disabled>
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 form-group d-flex justify-content-center">
                     <label class="control-label col-lg-5 col-md-5 col-sm-5 justify-content-center align-self-center">Data yang telah Termigrasi (saat ini)</label>
                     <div class="col-lg-3 col-md-3 col-sm-3">
-                        <input id="data1" type="text" class="form-control" disabled>
+                        <input id="data-migrasi2" type="text" class="form-control" disabled>
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 form-group d-flex justify-content-center">
                     <label class="control-label col-lg-5 col-md-5 col-sm-5 justify-content-center align-self-center">Data yang telah Termigrasi (akumulasi)</label>
                     <div class="col-lg-3 col-md-3 col-sm-3">
-                        <input id="data1" type="text" class="form-control" disabled>
+                        <input id="data-migrasi3" type="text" class="form-control" disabled>
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 form-group d-flex justify-content-center mt-5">
                     <label class="control-label col-lg-5 col-md-5 col-sm-5 justify-content-center align-self-center">Data yang belum Termigrasi Sebelumnya</label>
                     <div class="col-lg-3 col-md-3 col-sm-3">
-                        <input id="data1" type="text" class="form-control" disabled>
+                        <input id="data-migrasi4" type="text" class="form-control" disabled>
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 form-group d-flex justify-content-center">
                     <label class="control-label col-lg-5 col-md-5 col-sm-5 justify-content-center align-self-center">Data yang belum Termigrasi (saat ini)</label>
                     <div class="col-lg-3 col-md-3 col-sm-3">
-                        <input id="data1" type="text" class="form-control" disabled>
+                        <input id="data-migrasi5" type="text" class="form-control" disabled>
                     </div>
                 </div>
                 <div class="col-lg-12 col-md-12 col-sm-12 form-group d-flex justify-content-center mt-5">
                     <label class="control-label col-lg-5 col-md-5 col-sm-5 justify-content-center align-self-center">Proses</label>
                     <div class="col-lg-3 col-md-3 col-sm-3">
-                        <input id="data1" type="text" class="form-control" disabled>
+                        <input id="data-migrasi6" type="text" class="form-control" disabled>
                     </div>
                 </div>
             </div>
