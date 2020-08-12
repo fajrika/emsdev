@@ -19,3 +19,5 @@ db/ems_backup_2020_07_07_120008_7798038.bak
 application/config/*
 db/ems_backup_2020_07_07_120008_7798038.bak
 db/ems_backup_2020_07_07_120008_7798038.7z
+db/ems_cgc_sh1_20200804.sql
+db/mysql/citraland_ambon_20200808.sql
