@@ -6,6 +6,22 @@
     var data5 = 0;
     var data6 = 0;
     var checkF;
+    var dataMigrate = [];
+    const getDataBeforeMigrate = () => {
+        $.ajax({
+            type: "POST",
+            data: $("#formSync").serialize(),
+            url: "<?= site_url("Sync/Desktop_tagihan_air/getDataBeforeMigrate") ?>",
+            dataType: "html",
+            beforeSend: function() {
+                $("#data-migrasi6").val(data6);
+            },
+            success: function(newData) {
+                console.log(newData);
+                dataMigrate = newData;
+            }
+        })
+    }
     const save = () => {
 
         $.ajax({
@@ -119,9 +135,9 @@
                             $("#data-migrasi5").val(data5);
                             data6 = 0;
                             $("#pb-length").html('');
-
-                            save();
-                            check();
+                            getDataBeforeMigrate();
+                            // save();
+                            // check();
                         }
                     });
                 }

@@ -105,7 +105,7 @@ class m_desktop_transaksi_air extends CI_Model
     }
     public function getDataBeforeMigrate($source, $jarak_periode = 0)
     {
-        $tagihan_air_tmp = $this->db->select("
+        $data = $this->db->select("
                                                 td_air.td_air_id,
                                                 td_air.th_trans_id,
                                                 DATEADD(MONTH,$jarak_periode,FORMAT(td_air.periode,'yyyy-MM-01')) as periode,
@@ -155,12 +155,12 @@ class m_desktop_transaksi_air extends CI_Model
                  AND t_tagihan_air_detail.id = td_air.td_air_id",
                 "LEFT"
             )
-            ->where("td_air.nilai_pakai != 0
-                                                    OR (td_air.Meter_akhir - td_air.Meter_awal) > 0")
+            ->where("t_tagihan_air_detail.t_tagihan_air_id is null")
+            ->where("td_air.nilai_pakai != 0 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0")
             ->order_by("tagihan_id")
             ->limit("10000")
             ->get()->result();
-        echo (json_encode($tagihan_air_tmp));
+        echo (json_encode($data));
     }
     public function save($project_id, $source, $denda_jenis_service, $denda_nilai_service, $tagihan_air_tmp)
     {
