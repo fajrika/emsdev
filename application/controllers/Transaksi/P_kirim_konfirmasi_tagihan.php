@@ -7,7 +7,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     public function __construct()
     {
         // die('Under Construction'); //=== die by Arif
-        
+
         parent::__construct();
         $this->load->database();
         $this->load->model('m_core');
@@ -114,15 +114,15 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     ";
         $primaryKey = 'unit_id';
         $columns = array(
-            array( 'db' => 'unit_id as unit_id', 'dt' => 0 ),
-            array( 'db' => 'kawasan as kawasan',  'dt' => 1 ),
-            array( 'db' => 'blok as blok', 'dt' => 2 ),
-            array( 'db' => 'no_unit as no_unit', 'dt' => 3 ),
-            array( 'db' => "tujuan as tujuan", 'dt' => 4 ),
-            array( 'db' => "pemilik as pemilik", 'dt' => 5 ),
-            array( 'db' => "'Belum di kirim' as send_email", 'dt' => 6 ),
-            array( 'db' => "send_sms as send_sms", 'dt' => 7 ),
-            array( 'db' => "send_surat as send_surat", 'dt' => 8 )
+            array('db' => 'unit_id as unit_id', 'dt' => 0),
+            array('db' => 'kawasan as kawasan',  'dt' => 1),
+            array('db' => 'blok as blok', 'dt' => 2),
+            array('db' => 'no_unit as no_unit', 'dt' => 3),
+            array('db' => "tujuan as tujuan", 'dt' => 4),
+            array('db' => "pemilik as pemilik", 'dt' => 5),
+            array('db' => "'Belum di kirim' as send_email", 'dt' => 6),
+            array('db' => "send_sms as send_sms", 'dt' => 7),
+            array('db' => "send_surat as send_surat", 'dt' => 8)
         );
         $sql_details = array(
             'user' => $this->db->username,
@@ -132,27 +132,27 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         );
         $this->load->library("SSP");
 
-    
-        $table = SSP::simple( $_GET, $sql_details, $table, $primaryKey, $columns );
+
+        $table = SSP::simple($_GET, $sql_details, $table, $primaryKey, $columns);
         $this->load->helper('directory');
 
         $map = directory_map('./application/pdf');
-        
+
         foreach ($table["data"] as $k => $v) {
 
-            $table["data"][$k][9] = 
+            $table["data"][$k][9] =
                 "<button class='btn btn-primary' onClick=\"window.open('" . site_url() . "/Cetakan/konfirmasi_tagihan/unit/" . $table["data"][$k][0] . "')\">View Dokumen</button>";
 
             $unit_id_periode = $table["data"][$k][0] . "_" . date("Y-m-");
             $result = preg_grep("/^$unit_id_periode/i", $map);
-            $table["data"][$k][10] = end($result) 
-                ? "<button class='btn btn-primary' onClick=\"window.location.href='" . base_url() . "pdf/".end($result)."'\">View Dokumen</button>" 
+            $table["data"][$k][10] = end($result)
+                ? "<button class='btn btn-primary' onClick=\"window.location.href='" . base_url() . "pdf/" . end($result) . "'\">View Dokumen</button>"
                 : "";
 
-            $table["data"][$k][0] = 
+            $table["data"][$k][0] =
                 "<input name='unit_id[]' type='checkbox' class='flat table-check' val='$v[0]'>";
         }
-        echo(json_encode($table));  
+        echo (json_encode($table));
     }
     public function test()
     {
@@ -168,11 +168,12 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         // 52                           = Kesalahan Format Nomor Tujuan
         // 20                           = Pesan Pending Terkirim, nomor tujuan tidak aktif dalam waktu tertentu
     }
-    public function total_outstanding($unit_id){
+    public function total_outstanding($unit_id)
+    {
         $this->load->model("core/m_tagihan");
         $project = $this->m_core->project();
-        $lingkungans = $this->m_tagihan->lingkungan($project->id,['unit_id'=>$unit_id,'status_tagihan'=> [0,4]]);
-        $airs = $this->m_tagihan->air($project->id,['unit_id'=>$unit_id,'status_tagihan'=> [0,4]]);
+        $lingkungans = $this->m_tagihan->lingkungan($project->id, ['unit_id' => $unit_id, 'status_tagihan' => [0, 4]]);
+        $airs = $this->m_tagihan->air($project->id, ['unit_id' => $unit_id, 'status_tagihan' => [0, 4]]);
         $total = 0;
         foreach ($lingkungans as $lingkungan) {
             $total = $total + ($lingkungan->belum_bayar != 0 ? $lingkungan->belum_bayar : $lingkungan->total);
@@ -207,17 +208,23 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             $message = str_replace("{{Kawasan}}", $kawasan, $message);
             $message = str_replace("{{Total_tagihan}}", number_format($total_tagihan, 0, ",", "."), $message);
             $uid =  $this->db->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
-                        ->from("unit")
-                    ->join("project",
-                            "project.id = unit.project_id")
-                    ->join("blok",
-                            "blok.id = unit.blok_id")
-                    ->join("kawasan",
-                            "kawasan.id = blok.kawasan_id")
-                    ->where("unit.id",$unit_id)
-                    ->get()->row();
-            $uid = $uid?$uid->uid:0;    
-            $message = str_replace("{{no_iplk}}",$uid,$message);
+                ->from("unit")
+                ->join(
+                    "project",
+                    "project.id = unit.project_id"
+                )
+                ->join(
+                    "blok",
+                    "blok.id = unit.blok_id"
+                )
+                ->join(
+                    "kawasan",
+                    "kawasan.id = blok.kawasan_id"
+                )
+                ->where("unit.id", $unit_id)
+                ->get()->row();
+            $uid = $uid ? $uid->uid : 0;
+            $message = str_replace("{{no_iplk}}", $uid, $message);
             $data_customer = $this->m_customer->getSelect($data_unit->pemilik);
             $data_customer->mobilephone1 = preg_replace("/[^0-9]/", "", $data_customer->mobilephone1);
             // echo("<pre>");
@@ -361,23 +368,29 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                 $email = explode(";", $email);
                 $parameter_delay = explode(";", $this->m_parameter_project->get($project->id, "delay_email"));
                 $uid =  $this->db->select("concat(project.source_id,kawasan.code,blok.code,'/',unit.no_unit) as uid")
-                                        ->from("unit")
-                                        ->join("project",
-                                                "project.id = unit.project_id")
-                                        ->join("blok",
-                                                "blok.id = unit.blok_id")
-                                        ->join("kawasan",
-                                                "kawasan.id = blok.kawasan_id")
-                                        ->where("unit.id",$unit_id)
-                                        ->get()->row();
-                $uid = $uid?$uid->uid:0;    
-                $result->isi = str_replace("{{no_iplk}}",$uid,$result->isi);
+                    ->from("unit")
+                    ->join(
+                        "project",
+                        "project.id = unit.project_id"
+                    )
+                    ->join(
+                        "blok",
+                        "blok.id = unit.blok_id"
+                    )
+                    ->join(
+                        "kawasan",
+                        "kawasan.id = blok.kawasan_id"
+                    )
+                    ->where("unit.id", $unit_id)
+                    ->get()->row();
+                $uid = $uid ? $uid->uid : 0;
+                $result->isi = str_replace("{{no_iplk}}", $uid, $result->isi);
                 foreach ($email as $k => $v) {
                     if ($k != 0 && ($k + 1) % $parameter_delay[0] == 0) {
                         sleep($parameter_delay[1]);
                     }
 
-                    
+
                     $this->email->clear(TRUE);
                     $this->email->from($this->m_parameter_project->get($project->id, "smtp_user"), 'EMS Ciputra');
                     $this->email->subject($this->m_parameter_project->get($project->id, "subjek_konfirmasi_tagihan"));
@@ -405,7 +418,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     | function for send whatsapp blast to customer
     | --------------------------------------------------------------------
     | july 16, 2020
-    */
+     */
     public function send_whatsapp()
     {
         $json_data['status'] = 1;
@@ -424,15 +437,14 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         flush();
         //Run Process Here----------------------------------//
         set_time_limit(0);
-        
+
         $project   = $this->m_core->project();
         $unit_id   = $this->input->post('unit_id');
         $join_unit = '';
         $join_unit_comma = '';
-        foreach ($unit_id as $value) 
-        {
-            $join_unit .= "'".$value."',";
-            $join_unit_comma .= $value.",";
+        foreach ($unit_id as $value) {
+            $join_unit .= "'" . $value . "',";
+            $join_unit_comma .= $value . ",";
         }
         $join_unit = rtrim($join_unit, ',');
         $join_unit_comma = rtrim($join_unit_comma, ',');
@@ -459,8 +471,8 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                 LEFT JOIN customer AS pemilik ON pemilik.id = unit.pemilik_customer_id
                 LEFT JOIN customer AS penghuni ON penghuni.id = unit.penghuni_customer_id
             WHERE 1=1
-                AND unit.project_id = '".$project->id."'
-                AND unit.id IN (".$join_unit.")
+                AND unit.project_id = '" . $project->id . "'
+                AND unit.id IN (" . $join_unit . ")
         ";
         $sql = $this->db->query($sql);
 
@@ -473,68 +485,65 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         // $dummy_no_hp = array('08567159231', '081585810669');
         $dummy_no_hp = array('08567159231');
         $key_tsel_me = "170821cc33b400304660a940afeb51463e9958e699544189";
-        if ($sql->num_rows() > 0) 
-        {
-            foreach ($sql->result() as $d) 
-            {
+        if ($sql->num_rows() > 0) {
+            foreach ($sql->result() as $d) {
                 // if ($d->pemilik_no > 7) 
                 // {
-                    $no_pemilik  = preg_replace('/[^A-Za-z0-9\-]/', '', trim($d->pemilik_no));
-                    $no_penghuni = preg_replace('/[^A-Za-z0-9\-]/', '', trim($d->penghuni_no));
-                    // print_r($no.' '.$no_pemilik.' '.$no_penghuni);echo "<br>";
-                    foreach ($dummy_no_hp as $phone_no) 
-                    {
-                        $call     = $this->print_pdf('send_wa', $d->id);
-                        // $file_url = "https://ces-ems.ciputragroup.com:11443/pdf/".$call['nama_file'];
-                        $file_url = "https://ces-ems.ciputragroup.com:11443/pdf/".$call;
-                        $message  = "*Informasi Tagihan Retribusi Estate*\n\n";
-                        $message .= "Kepada Yth,\n" . $d->pemilik_name . "\n\n";
-                        $message .= "Dengan ini kami sampaikan informasi total tagihan dari bulan september 2018 sampai maret 2020, dengan perincian sebagai berikut :";
-                        // $message .= "Dengan ini kami sampaikan informasi total tagihan";
-                        // if($call['periode_first'] == $call['periode_last']){
-                        //     $message .= (" bulan " . strtolower($call['periode_first']));
-                        // }else{
-                        //     $message .= (" dari bulan ".strtolower($call['periode_first'])." sampai ".strtolower($call['periode_last']));
-                        // }
-                        // $message .= ", dengan perincian sebagai berikut :";
+                $no_pemilik  = preg_replace('/[^A-Za-z0-9\-]/', '', trim($d->pemilik_no));
+                $no_penghuni = preg_replace('/[^A-Za-z0-9\-]/', '', trim($d->penghuni_no));
+                // print_r($no.' '.$no_pemilik.' '.$no_penghuni);echo "<br>";
+                foreach ($dummy_no_hp as $phone_no) {
+                    $call     = $this->print_pdf('send_wa', $d->id);
+                    // $file_url = "https://ces-ems.ciputragroup.com:11443/pdf/".$call['nama_file'];
+                    $file_url = "https://ces-ems.ciputragroup.com:11443/pdf/" . $call;
+                    $message  = "*Informasi Tagihan Retribusi Estate*\n\n";
+                    $message .= "Kepada Yth,\n" . $d->pemilik_name . "\n\n";
+                    $message .= "Dengan ini kami sampaikan informasi total tagihan dari bulan september 2018 sampai maret 2020, dengan perincian sebagai berikut :";
+                    // $message .= "Dengan ini kami sampaikan informasi total tagihan";
+                    // if($call['periode_first'] == $call['periode_last']){
+                    //     $message .= (" bulan " . strtolower($call['periode_first']));
+                    // }else{
+                    //     $message .= (" dari bulan ".strtolower($call['periode_first'])." sampai ".strtolower($call['periode_last']));
+                    // }
+                    // $message .= ", dengan perincian sebagai berikut :";
 
-                        // print_r($call);exit();
+                    // print_r($call);exit();
 
-                        // Send WA Text
-                        $data = array("key"=>$key_tsel_me, "phone_no"=>$phone_no, "message"=>$message);
-                        $data_string = json_encode($data);
-                        $ch = curl_init('http://116.203.92.59/api/send_message');
-                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-                        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data_string)));
-                        curl_exec($ch);
+                    // Send WA Text
+                    $data = array("key" => $key_tsel_me, "phone_no" => $phone_no, "message" => $message);
+                    $data_string = json_encode($data);
+                    $ch = curl_init('http://116.203.92.59/api/send_message');
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_VERBOSE, 0);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data_string)));
+                    curl_exec($ch);
 
-                        // Send WA Attachment
-                        $data = array("phone_no"=>$phone_no, "key"=>$key_tsel_me, "url"=>$file_url);
-                        $data_string = json_encode($data);
-                        $ch = curl_init('http://116.203.92.59/api/send_file_url');
-                        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
-                        curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
-                        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-                        curl_setopt($ch, CURLOPT_VERBOSE, 0);
-                        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
-                        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-                        curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data_string)));
-                        curl_exec($ch);
+                    // Send WA Attachment
+                    $data = array("phone_no" => $phone_no, "key" => $key_tsel_me, "url" => $file_url);
+                    $data_string = json_encode($data);
+                    $ch = curl_init('http://116.203.92.59/api/send_file_url');
+                    curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
+                    curl_setopt($ch, CURLOPT_POSTFIELDS, $data_string);
+                    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+                    curl_setopt($ch, CURLOPT_VERBOSE, 0);
+                    curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 0);
+                    curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+                    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'Content-Length: ' . strlen($data_string)));
+                    curl_exec($ch);
 
-                        // $log = $this->db->insert('send_sms', [
-                        //     'unit_id' => $d->id,
-                        //     'no' => $phone_no,
-                        //     'status_full' => $res,
-                        //     'create_date' => date('Y-m-d'),
-                        //     'message' => $message,
-                        //     'send_by' => 1
-                        // ]);
-                    }
+                    // $log = $this->db->insert('send_sms', [
+                    //     'unit_id' => $d->id,
+                    //     'no' => $phone_no,
+                    //     'status_full' => $res,
+                    //     'create_date' => date('Y-m-d'),
+                    //     'message' => $message,
+                    //     'send_by' => 1
+                    // ]);
+                }
                 // }
             }
         }
@@ -546,7 +555,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     | Process request query kirim konfirmasi tagihan
     | Jakarta, 2020-07-08
     |
-    */
+     */
     public function request_tagihan_json()
     {
         $project        = $this->m_core->project();
@@ -585,12 +594,12 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                 LEFT JOIN t_tagihan_air ON t_tagihan_air.unit_id = unit.id AND t_tagihan_air.status_tagihan != 1
                 LEFT JOIN send_sms ON send_sms.unit_id = unit.id AND FORMAT( send_sms.create_date, 'yyyy-MM' ) = FORMAT( GETDATE(), 'yyyy-MM' )
             WHERE 1=1
-                AND unit.project_id = '".$project->id."'
+                AND unit.project_id = '" . $project->id . "'
                 AND (
-                    customer.name LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR unit.id LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR kawasan.name LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR blok.name LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    customer.name LIKE '%" . $this->db->escape_like_str($like_value) . "%'
+                    OR unit.id LIKE '%" . $this->db->escape_like_str($like_value) . "%'
+                    OR kawasan.name LIKE '%" . $this->db->escape_like_str($like_value) . "%'
+                    OR blok.name LIKE '%" . $this->db->escape_like_str($like_value) . "%'
                 )
             GROUP BY
                 unit.project_id,
@@ -616,13 +625,13 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             2 => 'blok',
             3 => 'no_unit',
             4 => 'tujuan',
-            5 => 'pemilik', 
-            6 => 'send_email', 
-            7 => 'send_sms', 
-            8 => 'send_surat', 
+            5 => 'pemilik',
+            6 => 'send_email',
+            7 => 'send_sms',
+            8 => 'send_surat',
         );
-        $sql  .= " ORDER BY ".$columns_order_by[$column_order]." ".$column_dir." ";
-        $sql  .= " OFFSET ".$limit_start." ROWS FETCH NEXT ".$limit_length." ROWS ONLY ";
+        $sql  .= " ORDER BY " . $columns_order_by[$column_order] . " " . $column_dir . " ";
+        $sql  .= " OFFSET " . $limit_start . " ROWS FETCH NEXT " . $limit_length . " ROWS ONLY ";
         // $sql  .= " TOP ".$limit_start." ,".$limit_length." ";
 
         $data_sql['query'] = $this->db->query($sql);
@@ -633,21 +642,20 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         $data   = array();
         $urut1  = 1;
         $urut2  = 0;
-        foreach($query->result_array() as $row)
-        {
+        foreach ($query->result_array() as $row) {
             $nestedData  = array();
             $total_data  = $totalData;
             $start_dari  = $requestData['start'];
             $perhalaman  = $requestData['length'];
             $asc_desc    = $requestData['order'][0]['dir'];
-            if($asc_desc == 'asc'){
+            if ($asc_desc == 'asc') {
                 $nomor = $urut1 + $start_dari;
             }
-            if($asc_desc == 'desc'){
+            if ($asc_desc == 'desc') {
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
-            $nestedData[] = "<center><input name='unit_id[]' type='checkbox' class='flat table-check' value='".$row['unit_id']."' style='cursor: pointer;'></center>";
+            $nestedData[] = "<center><input name='unit_id[]' type='checkbox' class='flat table-check' value='" . $row['unit_id'] . "' style='cursor: pointer;'></center>";
             $nestedData[] = $row['kawasan'];
             $nestedData[] = $row['blok'];
             $nestedData[] = $row['no_unit'];
@@ -678,9 +686,9 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         }
 
         $json_data = array(
-            "draw"            => intval( $requestData['draw'] ),
-            "recordsTotal"    => intval( $totalData ),
-            "recordsFiltered" => intval( $totalFiltered ),
+            "draw"            => intval($requestData['draw']),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
         );
         echo json_encode($json_data);
@@ -691,17 +699,18 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
     | Process print pdf by mpdf
     | Jakarta, 2020-07-08
     |
-    */
-    public function print_pdf($type=NULL, $params=NULL)
+     */
+    public function print_pdf($type = NULL, $params = NULL)
     {
         require_once 'vendor/MPDF/vendor/autoload.php';
-        $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4']);
+        $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => 'A4']);
         // $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4', 'orientation' => 'L']);
-        ini_set("pcre.backtrack_limit", "1000000");
+        // ini_set("pcre.backtrack_limit", "1000000");
         ob_start();
-        ?>
+?>
         <!DOCTYPE html>
         <html lang="en">
+
         <head>
             <title>Kirim Konfirmasi Tagihan</title>
             <style type="text/css">
@@ -709,35 +718,62 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     margin-top: 200px;
                     padding: 0px;
                 }
+
                 body {
                     font-size: 13.5px;
                 }
+
                 table {
                     width: 100%;
                 }
+
                 .casabanti {
                     font-family: 'casbanti';
                 }
+
                 .f-20 {
                     font-size: 20px;
                     font-weight: 700;
                     line-height: 15px;
                 }
-                .f-14, .f-15 { font-size: 14px; }
-                .lh-15 { line-height: 15px; }
-                .align-center, .text-center { text-align: center; }
-                .text-right { text-align: right; }
-                .font-normal { font-weight: 500; }
-                .table-striped tr:nth-child(even) { background-color: #f2f2f2; }
-                .table-striped th { font-size: 12px; }
+
+                .f-14,
+                .f-15 {
+                    font-size: 14px;
+                }
+
+                .lh-15 {
+                    line-height: 15px;
+                }
+
+                .align-center,
+                .text-center {
+                    text-align: center;
+                }
+
+                .text-right {
+                    text-align: right;
+                }
+
+                .font-normal {
+                    font-weight: 500;
+                }
+
+                .table-striped tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+
+                .table-striped th {
+                    font-size: 12px;
+                }
             </style>
         </head>
+
         <body>
             <?php
-            if (! empty($_GET['unit_id']) OR !empty($params))
-            {
+            if (!empty($_GET['unit_id']) or !empty($params)) {
                 ### jika type send whatsapp
-                if (!empty($type) AND $type=='send_wa') {
+                if (!empty($type) and $type == 'send_wa') {
                     $unit_ids = $params;
                 } else {
                     $unit_ids = $this->input->get('unit_id');
@@ -747,24 +783,23 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                 $nomor    = 1;
                 $jml_data = count($unit_ids) - 1;
                 $project  = $this->m_core->project();
-                $ttd      = $this->m_parameter_project->get($project->id,"ttd_konfirmasi_tagihan");
+                $ttd      = $this->m_parameter_project->get($project->id, "ttd_konfirmasi_tagihan");
                 $service_air = $this->db->select("jarak_periode_penggunaan")
                     ->from("service")
-                    ->where("project_id",$project->id)
-                    ->where("service_jenis_id",2)
+                    ->where("project_id", $project->id)
+                    ->where("service_jenis_id", 2)
                     ->get()
                     ->row();
                 $service_air = $service_air ? $service_air->jarak_periode_penggunaan : 0;
                 $service_lingkungan = $this->db->select("jarak_periode_penggunaan")
                     ->from("service")
-                    ->where("project_id",$project->id)
-                    ->where("service_jenis_id",1)
+                    ->where("project_id", $project->id)
+                    ->where("service_jenis_id", 1)
                     ->get()
                     ->row();
                 $service_lingkungan = $service_lingkungan ? $service_lingkungan->jarak_periode_penggunaan : 0;
 
-                foreach ($unit_ids as $unit_id)
-                {
+                foreach ($unit_ids as $unit_id) {
                     $this->load->model('Cetakan/m_konfirmasi_tagihan');
                     $unit                 = $this->m_konfirmasi_tagihan->get_unit($unit_id);
                     $status_saldo_deposit = $this->m_konfirmasi_tagihan->get_status_saldo_deposit($unit_id);
@@ -781,7 +816,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                         ->where("unit.id", $unit_id)
                         ->get()
                         ->row();
-                    $uid = $uid ? $uid->uid : 0;    
+                    $uid = $uid ? $uid->uid : 0;
                     $catatan = str_replace("{{no_iplk}}", $uid, $catatan);
 
                     //Data Tagihan Without Sorting
@@ -789,7 +824,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
 
                     //After sort
                     $dataTagihanWS = [];
-                    
+
                     $min_tagihan_air        = isset($dataTagihanWoS->tagihan_air[0]) ? $dataTagihanWoS->tagihan_air[0]->periode : null;
                     $max_tagihan_air        = isset($dataTagihanWoS->tagihan_air[0]) ? end($dataTagihanWoS->tagihan_air)->periode : null;
                     $min_tagihan_lingkungan = isset($dataTagihanWoS->tagihan_lingkungan[0]) ? $dataTagihanWoS->tagihan_lingkungan[0]->periode : null;
@@ -797,11 +832,14 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
 
                     if ($min_tagihan_air == null) {
                         $min_tagihan_air = $min_tagihan_lingkungan;
-                    } if ($min_tagihan_lingkungan == null) {
+                    }
+                    if ($min_tagihan_lingkungan == null) {
                         $min_tagihan_lingkungan = $min_tagihan_air;
-                    } if ($max_tagihan_air == null) {
+                    }
+                    if ($max_tagihan_air == null) {
                         $max_tagihan_air = $max_tagihan_lingkungan;
-                    } if ($max_tagihan_lingkungan == null) {
+                    }
+                    if ($max_tagihan_lingkungan == null) {
                         $max_tagihan_lingkungan = $max_tagihan_air;
                     }
                     $min_tagihan = new DateTime($min_tagihan_air > $min_tagihan_lingkungan ? $min_tagihan_lingkungan : $min_tagihan_air);
@@ -817,28 +855,27 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                     $total_tagihan->tunggakan = null;
                     $total_tagihan->total   = null;
                     $total_tagihan->lain    = null;
-                    $periode_first = $this->bln_indo(substr($min_tagihan->format("Y-m-01"),5,2))." ".substr($min_tagihan->format("Y-m-01"),0,4);
-                    $periode_last  = $this->bln_indo(substr($max_tagihan->format("Y-m-01"),5,2))." ".substr($max_tagihan->format("Y-m-01"),0,4);
+                    $periode_first = $this->bln_indo(substr($min_tagihan->format("Y-m-01"), 5, 2)) . " " . substr($min_tagihan->format("Y-m-01"), 0, 4);
+                    $periode_last  = $this->bln_indo(substr($max_tagihan->format("Y-m-01"), 5, 2)) . " " . substr($max_tagihan->format("Y-m-01"), 0, 4);
 
-                    
+
                     if ($service_air == $service_lingkungan) {
                         $jarak_periode_penggunaan = $service_air;
                     } else {
                         $jarak_periode_penggunaan = -1;
                     }
-                    for($i = $min_tagihan; $i <= $max_tagihan; $i->modify('+1 month'))
-                    {
+                    for ($i = $min_tagihan; $i <= $max_tagihan; $i->modify('+1 month')) {
                         $periode = $i->format("Y-m-01");
                         $periode_1 = $periode;
-                        if($jarak_periode_penggunaan != -1) {
+                        if ($jarak_periode_penggunaan != -1) {
                             $tmp = $periode;
                             $tmp = strtotime(date("Y-m-d", strtotime($tmp)) . " -$jarak_periode_penggunaan month");
-                            $tmp = date("Y-m-d",$tmp);
+                            $tmp = date("Y-m-d", $tmp);
                             $periode_1 = $tmp;
                         }
-                        $dataTagihanWS[$iterasi] =(object)[];
-                        $dataTagihanWS[$iterasi]->periode = substr($this->bln_indo(substr($periode,5,2)),0,3)." ".substr($periode,0,4);
-                        $dataTagihanWS[$iterasi]->periode_penggunaan = substr($this->bln_indo(substr($periode_1,5,2)),0,3)."<br>".substr($periode_1,0,4);
+                        $dataTagihanWS[$iterasi] = (object)[];
+                        $dataTagihanWS[$iterasi]->periode = substr($this->bln_indo(substr($periode, 5, 2)), 0, 3) . " " . substr($periode, 0, 4);
+                        $dataTagihanWS[$iterasi]->periode_penggunaan = substr($this->bln_indo(substr($periode_1, 5, 2)), 0, 3) . "<br>" . substr($periode_1, 0, 4);
                         $dataTagihanWS[$iterasi]->meter_awal    = null;
                         $dataTagihanWS[$iterasi]->meter_akhir   = null;
                         $dataTagihanWS[$iterasi]->pakai         = null;
@@ -848,17 +885,16 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                         $dataTagihanWS[$iterasi]->denda         = 0;
                         $dataTagihanWS[$iterasi]->tunggakan     = 0;
                         $dataTagihanWS[$iterasi]->total         = null;
-                        
+
                         foreach ($dataTagihanWoS->tagihan_air as $k => $v) {
-                            if($v->periode == $periode) {
+                            if ($v->periode == $periode) {
                                 $tmp_tagihan_air = $v;
                                 $dataTagihanWS[$iterasi]->meter_awal    = $v->meter_awal;
                                 $dataTagihanWS[$iterasi]->meter_akhir   = $v->meter_akhir;
-                                $dataTagihanWS[$iterasi]->pakai         = $v->meter_akhir-$v->meter_awal;
+                                $dataTagihanWS[$iterasi]->pakai         = $v->meter_akhir - $v->meter_awal;
                                 if ($v->belum_bayar > 0) {
                                     $dataTagihanWS[$iterasi]->tunggakan = $v->belum_bayar;
                                     $dataTagihanWS[$iterasi]->total    += $v->belum_bayar;
-                                        
                                 } else {
                                     $dataTagihanWS[$iterasi]->air       = $v->nilai_tagihan;
                                     $dataTagihanWS[$iterasi]->denda    += $v->nilai_denda;
@@ -873,14 +909,13 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                                 if ($v->belum_bayar > 0) {
                                     $dataTagihanWS[$iterasi]->tunggakan += $v->belum_bayar;
                                     $dataTagihanWS[$iterasi]->total  += $v->belum_bayar;
-                                        
                                 } else {
                                     $dataTagihanWS[$iterasi]->ipl    = $v->total_tanpa_ppn;
-                                    $dataTagihanWS[$iterasi]->ppn    = $v->nilai_tagihan-$v->total_tanpa_ppn;
+                                    $dataTagihanWS[$iterasi]->ppn    = $v->nilai_tagihan - $v->total_tanpa_ppn;
                                     $dataTagihanWS[$iterasi]->denda += $v->nilai_denda;
                                     $dataTagihanWS[$iterasi]->total += $v->total;
                                 }
-                                break;                
+                                break;
                             }
                         }
                         $total_tagihan->pakai   += $dataTagihanWS[$iterasi]->pakai;
@@ -893,8 +928,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                         $iterasi++;
                     }
 
-                    if($jarak_periode_penggunaan != -1) 
-                    {
+                    if ($jarak_periode_penggunaan != -1) {
                         $data = [
                             "unit" => $unit,
                             "catatan" => $catatan,
@@ -910,7 +944,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
                         ];
                         $this->load->view('proyek/transaksi/kirim_konfirmasi_tagihan/print_pdf_second', $data);
                     } else {
-                        $data =[
+                        $data = [
                             "unit" => $unit,
                             "catatan" => $catatan,
                             "tagihan" => $dataTagihanWS,
@@ -929,27 +963,28 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
             }
             ?>
         </body>
+
         </html>
-        <?php
-        $nama_file = "konf_tagihan_".$project->id."_".date("Ymd").".pdf";
+<?php
+        $nama_file = "konf_tagihan_" . $project->id . "_" . date("Ymd") . ".pdf";
         $html = ob_get_contents(); //Proses untuk mengambil data
         ob_end_clean();
         $mpdf->WriteHTML(utf8_encode($html));
-        $mpdf->WriteHTML($html,1);
+        $mpdf->WriteHTML($html, 1);
 
         ### jika type send whatsapp
-        if (!empty($type) AND $type=='send_wa') {
-            $mpdf->Output("pdf/".$nama_file, \Mpdf\Output\Destination::FILE);
+        if (!empty($type) and $type == 'send_wa') {
+            $mpdf->Output("pdf/" . $nama_file, \Mpdf\Output\Destination::FILE);
             // return array('nama_file'=>$nama_file, 'periode_first'=>$periode_first, 'periode_last'=>$periode_last);
             return $nama_file;
         } else {
-            $mpdf->Output($nama_file."_".date("YmdHis").".pdf" ,'I');
+            $mpdf->Output($nama_file . "_" . date("YmdHis") . ".pdf", 'I');
         }
     }
 
     function bln_indo($tmp)
     {
-        $bulan = array (
+        $bulan = array(
             1 => 'Januari',
             'Februari',
             'Maret',
@@ -973,7 +1008,7 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         $dateForm = $this->input->post("date");
 
         if ($dateForm) {
-            $periode_now = substr($dateForm,6,4)."-".substr($dateForm,3,2)."-01";
+            $periode_now = substr($dateForm, 6, 4) . "-" . substr($dateForm, 3, 2) . "-01";
         } else {
             $periode_now = date("Y-m-01");
         }
@@ -981,8 +1016,8 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         $periode_pemakaian = date("Y-m-01", strtotime("-1 Months"));
 
         $this->load->model("core/m_tagihan");
-        $tagihan_air = $this->m_tagihan->air($project->id,['status_tagihan'=>[0,2,3,4],'unit_id'=>[$unit_id],'periode'=>$periode_now]);
-        $tagihan_lingkungan = $this->m_tagihan->lingkungan($project->id,['status_tagihan'=>[0,2,3,4],'unit_id'=>[$unit_id],'periode'=>$periode_now]);
+        $tagihan_air = $this->m_tagihan->air($project->id, ['status_tagihan' => [0, 2, 3, 4], 'unit_id' => [$unit_id], 'periode' => $periode_now]);
+        $tagihan_lingkungan = $this->m_tagihan->lingkungan($project->id, ['status_tagihan' => [0, 2, 3, 4], 'unit_id' => [$unit_id], 'periode' => $periode_now]);
 
         $jumlah_tunggakan_bulan = 0;
         $jumlah_tunggakan = 0;

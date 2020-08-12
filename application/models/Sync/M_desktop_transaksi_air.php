@@ -3,129 +3,76 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class m_desktop_transaksi_air extends CI_Model
 {
-    public function telahDiMigrasi($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
+    public function telahDiMigrasi($source)
     {
-        // sleep(2);
-        // echo (json_encode(0));
-        // die;
-        // var_dump($source);
-        // die;
-
-        $tagihan_air_tmp = $this->db->select("count(*) as c")
+        $data =
+            $this->db
+            ->select("count(*) as c")
             ->from("ems_temp.$source.td_air")
             ->join(
-                "ems_temp.$source.th_trans",
-                "th_trans.th_trans_id = td_air.th_trans_id"
-            )
-            ->join(
-                "unit",
-                "unit.source_table = '$source'
-                AND unit.source_id = th_trans.cust_id"
-            )
-            ->join(
-                "unit_air",
-                "unit_air.unit_id = unit.id"
-            )
-            ->join(
-                "sub_golongan",
-                "sub_golongan.id = unit_air.sub_gol_id"
-            )
-            ->join(
-                "range_air",
-                "range_air.id = sub_golongan.range_id"
-            )
-            ->join(
                 "t_tagihan_air_detail",
-                "t_tagihan_air_detail.source_table = '$source'
-                AND t_tagihan_air_detail.id = td_air.td_air_id"
+                "t_tagihan_air_detail.source_table = 'ems_cgc_sh1_20200804'
+                    AND t_tagihan_air_detail.source_id = td_air.td_air_id"
             )
-            ->where(
-                "td_air.nilai_pakai != 0
-                OR (td_air.Meter_akhir - td_air.Meter_awal) > 0"
-            )
+            ->where("td_air.nilai_pakai != 0")
+            ->or_where("(td_air.meter_akhir - td_air.meter_awal) > 0")
             ->get()->row();
-        echo (json_encode($tagihan_air_tmp->c ?? '0'));
+        return $data->c ?? '0';
     }
-    public function belumDiMigrasi($project_id, $source, $denda_jenis_service, $denda_nilai_service, $jarak_periode = 0)
+    public function belumDiMigrasi($source)
     {
-        // sleep(2);
-        // echo (json_encode(100000));
-        // die;
-
-        $tagihan_air_tmp = $this->db->select("count(*) as c")
+        $data =
+            $this->db
+            ->select("count(*) as c")
             ->from("ems_temp.$source.td_air")
             ->join(
-                "ems_temp.$source.th_trans",
-                "th_trans.th_trans_id = td_air.th_trans_id"
-            )
-            ->join(
-                "unit",
-                "unit.source_table = '$source'
-                AND unit.source_id = th_trans.cust_id"
-            )
-            ->join(
-                "unit_air",
-                "unit_air.unit_id = unit.id"
-            )
-            ->join(
-                "sub_golongan",
-                "sub_golongan.id = unit_air.sub_gol_id"
-            )
-            ->join(
-                "range_air",
-                "range_air.id = sub_golongan.range_id"
-            )
-            ->join(
                 "t_tagihan_air_detail",
-                "t_tagihan_air_detail.source_table = '$source'
-                AND t_tagihan_air_detail.id = td_air.td_air_id",
+                "t_tagihan_air_detail.source_table = 'ems_cgc_sh1_20200804'
+                    AND t_tagihan_air_detail.source_id = td_air.td_air_id",
                 "LEFT"
             )
             ->where("t_tagihan_air_detail.id is null")
-            ->where(
-                "td_air.nilai_pakai != 0
-                OR (td_air.Meter_akhir - td_air.Meter_awal) > 0"
-            )
+            ->where("td_air.nilai_pakai != 0")
+            ->or_where("(td_air.meter_akhir - td_air.meter_awal) > 0")
             ->get()->row();
-
-        echo (json_encode($tagihan_air_tmp->c ?? '0'));
+        return $data->c ?? '0';
     }
-    public function progress($project_id)
-    {
-        $data = $this->db->select("count(*) as c")
-            ->from("t_tagihan_air")
-            ->join(
-                "t_tagihan_air_info",
-                "t_tagihan_air_info.t_tagihan_air_id = t_tagihan_air.id"
-            )
-            ->where("proyek_id", $project_id)
-            ->get()->row();
-        $data = $data->c;
-        echo (json_encode($data ?? '-1'));
-    }
+    // public function progress($project_id)
+    // {
+    //     $data = $this->db->select("count(*) as c")
+    //         ->from("t_tagihan_air")
+    //         ->join(
+    //             "t_tagihan_air_info",
+    //             "t_tagihan_air_info.t_tagihan_air_id = t_tagihan_air.id"
+    //         )
+    //         ->where("proyek_id", $project_id)
+    //         ->get()->row();
+    //     $data = $data->c;
+    //     echo (json_encode($data ?? '-1'));
+    // }
     public function getDataBeforeMigrate($source, $jarak_periode = 0)
     {
-        $data = $this->db->select("
-                                                td_air.td_air_id,
-                                                td_air.th_trans_id,
-                                                DATEADD(MONTH,$jarak_periode,FORMAT(td_air.periode,'yyyy-MM-01')) as periode,
-                                                td_air.range_id,
-                                                td_air.bayar_id,
-                                                td_air.tanggal_bayar,
-                                                td_air.Meter_awal,
-                                                td_air.Meter_akhir,
-                                                td_air.nilai_admin,
-                                                td_air.nilai_denda,
-                                                td_air.nilai_pakai,
-                                                td_air.nilai_pipa,
-                                                td_air.nomor,
-                                                td_air.nilai_ppnair,
-                                                unit.id as unit_id,
-                                                sub_golongan.id as sub_gol_id,
-                                                sub_golongan.code as sub_gol_code,
-                                                range_air.id as range_id,
-                                                range_air.code as range_code
-                                                ")
+        $data =
+            $this->db
+            ->select("td_air.td_air_id")
+            ->select("td_air.th_trans_id")
+            ->select("DATEADD(MONTH,$jarak_periode,FORMAT(td_air.periode,'yyyy-MM-01')) as periode")
+            ->select("td_air.range_id")
+            ->select("td_air.bayar_id")
+            ->select("td_air.tanggal_bayar")
+            ->select("td_air.Meter_awal")
+            ->select("td_air.Meter_akhir")
+            ->select("td_air.nilai_admin")
+            ->select("td_air.nilai_denda")
+            ->select("td_air.nilai_pakai")
+            ->select("td_air.nilai_pipa")
+            ->select("td_air.nomor")
+            ->select("td_air.nilai_ppnair")
+            ->select("unit.id as unit_id")
+            ->select("sub_golongan.id as sub_gol_id")
+            ->select("sub_golongan.code as sub_gol_code")
+            ->select("range_air.id as range_id")
+            ->select("range_air.code as range_code")
             ->select("t_tagihan_air_detail.t_tagihan_air_id as tagihan_id")
             ->from("ems_temp.$source.td_air")
             ->join(
@@ -158,13 +105,13 @@ class m_desktop_transaksi_air extends CI_Model
             ->where("t_tagihan_air_detail.t_tagihan_air_id is null")
             ->where("td_air.nilai_pakai != 0 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0")
             ->order_by("tagihan_id")
-            ->limit("10000")
+            ->limit("1000")
             ->get()->result();
-        echo (json_encode($data));
+        return $data;
+        // echo (json_encode($data));
     }
-    public function save($project_id, $source, $denda_jenis_service, $denda_nilai_service, $tagihan_air_tmp)
+    public function save($project_id, $source, $denda_jenis_service, $denda_nilai_service, $data)
     {
-
         $username = $this->session->userdata('username');
         $password = $this->session->userdata('password');
         $user_id = $this->db->SELECT("id")
@@ -189,7 +136,7 @@ class m_desktop_transaksi_air extends CI_Model
         $tagihan_air_detail->nilai_denda_flag = 0;
         $data_tagihan->proyek_id    = $project_id;
         $i = 0;
-        foreach ($tagihan_air_tmp as $k => $v) {
+        foreach ($data as $k => $v) {
             if (!$v->tagihan_id) {
 
 
@@ -245,9 +192,6 @@ class m_desktop_transaksi_air extends CI_Model
             }
         }
         $this->db->trans_commit();
-        if ($i == 0)
-            echo (json_encode(-1));
-        else
-            echo (json_encode($i));
+        return $i > 0 ? $i : '-1';
     }
 }

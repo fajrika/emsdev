@@ -27,15 +27,13 @@ class m_desktop_unit extends CI_Model
         ");
         return $query->result_array();
     }
-    public function save($project_id,$data_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
-        // var_dump($formula_air);
-        // var_dump($formula_bangunan);
-        // var_dump($formula_kavling);
-        
-        
+    public function save($project_id, $data_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
+
+
 
         $dataRangeAirTMP = $this->db
-                            ->select("
+            ->select("
                                     '$project_id' as project_id,
                                     '$source' as source_table,
                                     '1' as active,
@@ -64,21 +62,25 @@ class m_desktop_unit extends CI_Model
                                     range_r6,
                                     range_rp6	
                                 ")
-                            ->from("ems_temp.$source.m_range")
-                            ->join("ems_temp.$source.m_custwtp",
-                                    "m_custwtp.rangeair_id = m_range.range_id")
-                            // ->where_in('m_custwtp.cust_id',$data_id)
-                            ->join('range_air',
-                                    "range_air.source_table = '$source'
+            ->from("ems_temp.$source.m_range")
+            ->join(
+                "ems_temp.$source.m_custwtp",
+                "m_custwtp.rangeair_id = m_range.range_id"
+            )
+            // ->where_in('m_custwtp.cust_id',$data_id)
+            ->join(
+                'range_air',
+                "range_air.source_table = '$source'
                                     AND range_air.source_id = m_range.range_id
                                     AND range_air.project_id = '$project_id'",
-                                    "LEFT")
-                            ->where("range_air.id is null")
-                            ->distinct()
-                            ->get()->result();
+                "LEFT"
+            )
+            ->where("range_air.id is null")
+            ->distinct()
+            ->get()->result();
 
         $dataRangeAir = [];
-        foreach ($dataRangeAirTMP  as $k=> $v) {
+        foreach ($dataRangeAirTMP  as $k => $v) {
             $this->db->trans_start();
             $dataRangeAir = [];
             $dataRangeAir = [
@@ -92,18 +94,18 @@ class m_desktop_unit extends CI_Model
                 'active' => $v->active,
                 'delete' => $v->delete
             ];
-            
-            $this->db->insert("range_air",$dataRangeAir); 
+
+            $this->db->insert("range_air", $dataRangeAir);
             $insert_id = $this->db->insert_id();
 
             $dataRangeAirDetail = [];
-            for ($i=1; $i <= 6 ; $i++) {
-                
-                
-                if($v->{"range_l$i"}+$v->{"range_r$i"}+$v->{"range_rp$i"} == 0){
+            for ($i = 1; $i <= 6; $i++) {
+
+
+                if ($v->{"range_l$i"} + $v->{"range_r$i"} + $v->{"range_rp$i"} == 0) {
                     break;
                 }
-                $dataRangeAirDetail=[
+                $dataRangeAirDetail = [
 
                     'range_air_id'  => $insert_id,
                     'range_awal'    => $v->{"range_l$i"},
@@ -112,15 +114,13 @@ class m_desktop_unit extends CI_Model
                     'delete'        => 0
                 ];
 
-                $this->db->insert("range_air_detail",$dataRangeAirDetail); 
-
+                $this->db->insert("range_air_detail", $dataRangeAirDetail);
             }
             $this->db->trans_complete();
-
         }
-        
+
         $dataRangeLingkunganTMP = $this->db
-                            ->select("
+            ->select("
                                     '$project_id' as project_id,
                                     '$source' as source_table,
                                     '1' as active,
@@ -168,22 +168,26 @@ class m_desktop_unit extends CI_Model
                                     range_kr6,
                                     range_krp6		
                                 ")
-                            ->from("ems_temp.$source.m_rangebankav")
-                            ->join("ems_temp.$source.m_custwtp",
-                                    "m_custwtp.rangebankav_id = m_rangebankav.range_id")
-                            // ->where_in('m_custwtp.cust_id',$data_id)
-                            ->join('range_lingkungan',
-                                    "range_lingkungan.source_table = '$source'
+            ->from("ems_temp.$source.m_rangebankav")
+            ->join(
+                "ems_temp.$source.m_custwtp",
+                "m_custwtp.rangebankav_id = m_rangebankav.range_id"
+            )
+            // ->where_in('m_custwtp.cust_id',$data_id)
+            ->join(
+                'range_lingkungan',
+                "range_lingkungan.source_table = '$source'
                                     AND range_lingkungan.source_id = m_rangebankav.range_id
                                     AND range_lingkungan.project_id = '$project_id'",
-                                    "LEFT")
-                            ->where("range_lingkungan.id is null")
-                            ->distinct()
-                            ->get()->result();
-        
+                "LEFT"
+            )
+            ->where("range_lingkungan.id is null")
+            ->distinct()
+            ->get()->result();
+
 
         $dataRangeLingkungan = [];
-        foreach ($dataRangeLingkunganTMP  as $k=> $v) {
+        foreach ($dataRangeLingkunganTMP  as $k => $v) {
             $this->db->trans_start();
             $dataRangeLingkungan = [];
             $dataRangeLingkungan = [
@@ -198,20 +202,19 @@ class m_desktop_unit extends CI_Model
                 'active' => $v->active,
                 'delete' => $v->delete
             ];
-            
-            $this->db->insert("range_lingkungan",$dataRangeLingkungan); 
+
+            $this->db->insert("range_lingkungan", $dataRangeLingkungan);
             $insert_id = $this->db->insert_id();
 
             $dataRangeLingkunganDetailB = [];
             $dataRangeLingkunganDetailK = [];
-            for ($i=1; $i <= 6 ; $i++) {
-                
-                
-                if($v->{"range_bl$i"}+$v->{"range_br$i"}+$v->{"range_brp$i"} == 0){
+            for ($i = 1; $i <= 6; $i++) {
+
+
+                if ($v->{"range_bl$i"} + $v->{"range_br$i"} + $v->{"range_brp$i"} == 0) {
                     break;
-                }
-                else{   
-                    $dataRangeLingkunganDetailB=[
+                } else {
+                    $dataRangeLingkunganDetailB = [
 
                         'range_lingkungan_id'  => $insert_id,
                         'range_awal'    => $v->{"range_bl$i"},
@@ -221,11 +224,10 @@ class m_desktop_unit extends CI_Model
                         'delete'        => 0
                     ];
                 }
-                if($v->{"range_kl$i"}+$v->{"range_kr$i"}+$v->{"range_krp$i"} == 0){
+                if ($v->{"range_kl$i"} + $v->{"range_kr$i"} + $v->{"range_krp$i"} == 0) {
                     break;
-                }
-                else{
-                    $dataRangeLingkunganDetailK=[
+                } else {
+                    $dataRangeLingkunganDetailK = [
 
                         'range_lingkungan_id'  => $insert_id,
                         'range_awal'    => $v->{"range_kl$i"},
@@ -234,18 +236,16 @@ class m_desktop_unit extends CI_Model
                         'flag_jenis'    => 1,
                         'delete'        => 0
                     ];
-                    }
-                $this->db->insert("range_lingkungan_detail",$dataRangeLingkunganDetailB); 
-                $this->db->insert("range_lingkungan_detail",$dataRangeLingkunganDetailK); 
-
+                }
+                $this->db->insert("range_lingkungan_detail", $dataRangeLingkunganDetailB);
+                $this->db->insert("range_lingkungan_detail", $dataRangeLingkunganDetailK);
             }
             $this->db->trans_complete();
-
         }
-        
-        
+
+
         $dataGolongan = $this->db
-                            ->select("
+            ->select("
                                     '$project_id' as project_id,
                                     '$source' as source_table,
                                     '1' as active,
@@ -254,25 +254,29 @@ class m_desktop_unit extends CI_Model
                                     m_gol.kode as code ,
                                     m_gol.note as description
                                 ")
-                            ->from("ems_temp.$source.m_custwtp")
-                            ->join("ems_temp.$source.m_gol",
-                                    'm_gol.gol_id = m_custwtp.gol_id')
-                            ->join('jenis_golongan',
-                                    "jenis_golongan.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_gol",
+                'm_gol.gol_id = m_custwtp.gol_id'
+            )
+            ->join(
+                'jenis_golongan',
+                "jenis_golongan.source_table = '$source'
                                     AND jenis_golongan.project_id = $project_id
                                     AND jenis_golongan.source_id = m_gol.gol_id",
-                                    "LEFT")
-                            // ->where_in('m_custwtp.cust_id',$data_id)    
-                            ->where("jenis_golongan.id is null")                                
-                            ->distinct()
-                            ->get()->result();
-        
+                "LEFT"
+            )
+            // ->where_in('m_custwtp.cust_id',$data_id)    
+            ->where("jenis_golongan.id is null")
+            ->distinct()
+            ->get()->result();
+
         $this->db->trans_start();
-        if($dataGolongan)
-            $this->db->insert_batch("jenis_golongan",$dataGolongan); 
+        if ($dataGolongan)
+            $this->db->insert_batch("jenis_golongan", $dataGolongan);
         $this->db->trans_complete();
         $dataSubGolonganAirTMP = $this->db
-                            ->select("
+            ->select("
                                     '$source' as source_table,
                                     m_golsub.subgol_id as source_id,
                                     '1' as active,  
@@ -287,50 +291,58 @@ class m_desktop_unit extends CI_Model
                                     '1' as range_flag,
                                     range_air.id as range_id
                                 ")
-                            ->from("ems_temp.$source.m_custwtp")
-                            ->join("ems_temp.$source.m_golsub",
-                                    'm_golsub.subgol_id = m_custwtp.subgol_id')
-                            ->join('sub_golongan',
-                                    "sub_golongan.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_golsub",
+                'm_golsub.subgol_id = m_custwtp.subgol_id'
+            )
+            ->join(
+                'sub_golongan',
+                "sub_golongan.source_table = '$source'
                                     AND sub_golongan.source_id = m_golsub.subgol_id
                                     AND sub_golongan.code = CONCAT ( m_golsub.kode, ' Air' )",
-                                    "LEFT")
-                            ->join('jenis_golongan',
-                                    " jenis_golongan.source_id  = m_custwtp.gol_id		
+                "LEFT"
+            )
+            ->join(
+                'jenis_golongan',
+                " jenis_golongan.source_id  = m_custwtp.gol_id		
                                     AND jenis_golongan.source_table = '$source'
-                                    AND jenis_golongan.project_id = $project_id")
-                            ->join('service',
-                                    "service.service_jenis_id  = 1		
-                                    AND service.project_id = $project_id")
-                            ->join("range_air",
-                                    "range_air.source_table = '$source'
-                                    AND range_air.source_id = m_custwtp.rangeair_id")
-                            // ->where_in('m_custwtp.cust_id',$data_id)    
-                            ->where("sub_golongan.id is null")                                
-                            ->order_by("CONCAT(m_golsub.kode,' Air')")
-                            ->distinct()
-                            ->get()->result();
-        $tmp = $dataSubGolonganAirTMP?$dataSubGolonganAirTMP[0]->code:'';
+                                    AND jenis_golongan.project_id = $project_id"
+            )
+            ->join(
+                'service',
+                "service.service_jenis_id  = 1		
+                                    AND service.project_id = $project_id"
+            )
+            ->join(
+                "range_air",
+                "range_air.source_table = '$source'
+                                    AND range_air.source_id = m_custwtp.rangeair_id"
+            )
+            // ->where_in('m_custwtp.cust_id',$data_id)    
+            ->where("sub_golongan.id is null")
+            ->order_by("CONCAT(m_golsub.kode,' Air')")
+            ->distinct()
+            ->get()->result();
+        $tmp = $dataSubGolonganAirTMP ? $dataSubGolonganAirTMP[0]->code : '';
 
         $tmpIndex = 1;
         foreach ($dataSubGolonganAirTMP as $k => $v) {
-            if($k > 0)
-            {
-                if($v->code == $tmp){
+            if ($k > 0) {
+                if ($v->code == $tmp) {
                     $tmpIndex++;
-                    $v->code = $v->code." - v".$tmpIndex;
-                }else{
+                    $v->code = $v->code . " - v" . $tmpIndex;
+                } else {
                     $tmpIndex = 1;
                     $tmp = $v->code;
-
                 }
             }
             $this->db->trans_start();
-                $this->db->insert("sub_golongan",$v); 
+            $this->db->insert("sub_golongan", $v);
             $this->db->trans_complete();
         }
         $dataSubGolonganLingkunganTMP = $this->db
-                            ->select("
+            ->select("
                                     '$source' as source_table,
                                     m_golsub.subgol_id as source_id,
                                     '1' as active,
@@ -345,60 +357,68 @@ class m_desktop_unit extends CI_Model
                                     '2' as range_flag,
                                     range_lingkungan.id as range_id
                                 ")
-                            ->from("ems_temp.$source.m_custwtp")
-                            ->join("ems_temp.$source.m_golsub",
-                                    'm_golsub.subgol_id = m_custwtp.subgol_id')
-                            ->join('sub_golongan',
-                                    "sub_golongan.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_golsub",
+                'm_golsub.subgol_id = m_custwtp.subgol_id'
+            )
+            ->join(
+                'sub_golongan',
+                "sub_golongan.source_table = '$source'
                                     AND sub_golongan.source_id = m_golsub.subgol_id
                                     AND sub_golongan.code = CONCAT ( m_golsub.kode, ' Lingkungan' )
                                     ",
-                                    "LEFT")
-                            ->join('jenis_golongan',
-                                    " jenis_golongan.source_id  = m_custwtp.gol_id		
+                "LEFT"
+            )
+            ->join(
+                'jenis_golongan',
+                " jenis_golongan.source_id  = m_custwtp.gol_id		
                                     AND jenis_golongan.source_table = '$source'
-                                    AND jenis_golongan.project_id = $project_id")
-                            ->join('service',
-                                    "service.service_jenis_id  = 1		
-                                    AND service.project_id = $project_id")
-                            ->join("range_lingkungan",
-                                    "range_lingkungan.source_table = '$source'
-                                    AND range_lingkungan.source_id = m_custwtp.rangebankav_id")
-                            // ->where_in('m_custwtp.cust_id',$data_id)    
-                            ->where("sub_golongan.id is null")     
-                            ->order_by("CONCAT(m_golsub.kode,' Lingkungan')")                           
-                            ->distinct()
-                            ->get()->result();
-        $tmp = $dataSubGolonganLingkunganTMP?$dataSubGolonganLingkunganTMP[0]->code:'';
+                                    AND jenis_golongan.project_id = $project_id"
+            )
+            ->join(
+                'service',
+                "service.service_jenis_id  = 1		
+                                    AND service.project_id = $project_id"
+            )
+            ->join(
+                "range_lingkungan",
+                "range_lingkungan.source_table = '$source'
+                                    AND range_lingkungan.source_id = m_custwtp.rangebankav_id"
+            )
+            // ->where_in('m_custwtp.cust_id',$data_id)    
+            ->where("sub_golongan.id is null")
+            ->order_by("CONCAT(m_golsub.kode,' Lingkungan')")
+            ->distinct()
+            ->get()->result();
+        $tmp = $dataSubGolonganLingkunganTMP ? $dataSubGolonganLingkunganTMP[0]->code : '';
         $tmpIndex = 1;
         foreach ($dataSubGolonganLingkunganTMP as $k => $v) {
-            if($k > 0)
-            {
-                if($v->code == $tmp){
+            if ($k > 0) {
+                if ($v->code == $tmp) {
                     $tmpIndex++;
-                    $v->code = $v->code." - v".$tmpIndex;
-                }else{
+                    $v->code = $v->code . " - v" . $tmpIndex;
+                } else {
                     $tmpIndex = 1;
                     $tmp = $v->code;
-
                 }
             }
             // echo("<pre>");
             //     print_r($v);
             // echo("</pre>");
             $this->db->trans_start();
-                $this->db->insert("sub_golongan",$v); 
+            $this->db->insert("sub_golongan", $v);
             $this->db->trans_complete();
         }
-        
-        
-        if($source){
+
+
+        if ($source) {
             $this->db->trans_start();
-            
+
 
 
             $dataKawasan = $this->db
-                                ->select("
+                ->select("
                                 m_custwtp.kawasan_id as source_id,
                                 '$source' as source_table,
                                 m_kawasan.kode as code,
@@ -407,26 +427,30 @@ class m_desktop_unit extends CI_Model
                                     '1' as active,
                                     '0' as [delete],
                                     '$project_id'as project_id")
-                                ->from("ems_temp.$source.m_custwtp")
-                                ->join("ems_temp.$source.m_kawasan",
-                                        'm_kawasan.kawasan_id = m_custwtp.kawasan_id')
-                                ->join('kawasan',
-                                    "kawasan.source_table = '$source' 
+                ->from("ems_temp.$source.m_custwtp")
+                ->join(
+                    "ems_temp.$source.m_kawasan",
+                    'm_kawasan.kawasan_id = m_custwtp.kawasan_id'
+                )
+                ->join(
+                    'kawasan',
+                    "kawasan.source_table = '$source' 
                                     AND kawasan.source_id = m_custwtp.kawasan_id
                                     AND kawasan.project_id = $project_id",
-                                    "left")    
-                                ->where_in('m_custwtp.cust_id',$data_id)
-                                ->where("kawasan.id is null")                                
-                                ->distinct()
-                                ->get()->result();
+                    "left"
+                )
+                ->where_in('m_custwtp.cust_id', $data_id)
+                ->where("kawasan.id is null")
+                ->distinct()
+                ->get()->result();
 
-            if($dataKawasan)
-                $this->db->insert_batch("kawasan",$dataKawasan); 
+            if ($dataKawasan)
+                $this->db->insert_batch("kawasan", $dataKawasan);
             $this->db->trans_complete();
 
             $this->db->trans_start();
             $dataBlok = $this->db
-                                ->select("
+                ->select("
                                     kawasan.id as kawasan_id,
                                     '$source' as source_table,
                                     m_custwtp2.code as name,
@@ -434,41 +458,47 @@ class m_desktop_unit extends CI_Model
                                     '1' as active,
                                     '0' as [delete]
                                     ")
-                                ->from("ems_temp.$source.m_custwtp")
-                                ->join("(SELECT cust_id,
+                ->from("ems_temp.$source.m_custwtp")
+                ->join("(SELECT cust_id,
                                             CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok))
                                                 WHEN '' THEN '-'
                                                 ELSE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok)) 
                                                 END as code
                                         FROM ems_temp.$source.m_custwtp
-                                        ) as m_custwtp2","m_custwtp2.cust_id = m_custwtp.cust_id")
-                                ->join('project',
-                                        "project.id = $project_id")
-                                ->join('kawasan',
-                                        "kawasan.source_table = '$source'
-                                        AND kawasan.source_id = m_custwtp.kawasan_id")
-                                ->join('blok',
-                                        "blok.source_table = '$source'
+                                        ) as m_custwtp2", "m_custwtp2.cust_id = m_custwtp.cust_id")
+                ->join(
+                    'project',
+                    "project.id = $project_id"
+                )
+                ->join(
+                    'kawasan',
+                    "kawasan.source_table = '$source'
+                                        AND kawasan.source_id = m_custwtp.kawasan_id"
+                )
+                ->join(
+                    'blok',
+                    "blok.source_table = '$source'
                                         AND blok.name =	CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',m_custwtp.kode_blok)) WHEN '' THEN '-' ELSE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',m_custwtp.kode_blok)) END",
-                                        "LEFT")
-                                ->where_in('m_custwtp.cust_id',$data_id)    
-                                ->where('project.id IS NOT NULL')
-                                ->where('kawasan.id IS NOT NULL')
-                                ->where('blok.id IS NULL')
-                                
-                                ->distinct()
-                                ->get()->result();
-            
-            if($dataBlok)
-                $this->db->insert_batch("blok",$dataBlok); 
+                    "LEFT"
+                )
+                ->where_in('m_custwtp.cust_id', $data_id)
+                ->where('project.id IS NOT NULL')
+                ->where('kawasan.id IS NOT NULL')
+                ->where('blok.id IS NULL')
+
+                ->distinct()
+                ->get()->result();
+
+            if ($dataBlok)
+                $this->db->insert_batch("blok", $dataBlok);
             $this->db->trans_complete();
 
 
-            
+
 
 
             $dataCustomer = $this->db
-                                ->select("
+                ->select("
                                         '$source' as source_table,
                                         m_custwtp.cust_id as source_id,
                                         '1' as active,
@@ -488,24 +518,28 @@ class m_desktop_unit extends CI_Model
                                         m_custwtp.npwp_alamat as npwp_address,
                                         m_custwtp.catatan as description
                                     ")
-                                ->from("ems_temp.$source.m_custwtp")
-                                ->join("customer",
-                                        "customer.source_id = m_custwtp.cust_id
+                ->from("ems_temp.$source.m_custwtp")
+                ->join(
+                    "customer",
+                    "customer.source_id = m_custwtp.cust_id
                                         AND customer.source_table = '$source'",
-                                        "LEFT")
-                                ->join('project',
-                                        "project.id = $project_id")
-	                            ->where_in('m_custwtp.cust_id',$data_id)    
-                                ->where("customer.id is null")                                
-                                ->distinct()
-                                ->get()->result();
+                    "LEFT"
+                )
+                ->join(
+                    'project',
+                    "project.id = $project_id"
+                )
+                ->where_in('m_custwtp.cust_id', $data_id)
+                ->where("customer.id is null")
+                ->distinct()
+                ->get()->result();
             $this->db->trans_start();
-            if($dataCustomer)
-                $this->db->insert_batch("customer",$dataCustomer); 
+            if ($dataCustomer)
+                $this->db->insert_batch("customer", $dataCustomer);
             $this->db->trans_complete();
 
             $dataUnit = $this->db
-                                ->select("
+                ->select("
                                         $project_id as project_id,
                                         blok.id as blok_id,
                                         1 as status_tagihan,
@@ -522,8 +556,9 @@ class m_desktop_unit extends CI_Model
                                         '1' as active,
                                         '0' as [delete]
                                     ")
-                                ->from("ems_temp.$source.m_custwtp")
-                                ->join("(SELECT 
+                ->from("ems_temp.$source.m_custwtp")
+                ->join(
+                    "(SELECT 
                                             cust_id,
                                             CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok))
                                                 WHEN '' THEN '-'
@@ -535,105 +570,132 @@ class m_desktop_unit extends CI_Model
                                             END as no_unit
                                         FROM ems_temp.$source.m_custwtp
                                         ) as m_custwtp2",
-                                        "m_custwtp2.cust_id = m_custwtp.cust_id")
-                                ->join('unit',
-                                        "unit.source_id = m_custwtp.cust_id
+                    "m_custwtp2.cust_id = m_custwtp.cust_id"
+                )
+                ->join(
+                    'unit',
+                    "unit.source_id = m_custwtp.cust_id
                                         AND unit.source_table = '$source.m_custwtp'",
-                                        "LEFT")
-                                ->join('project',
-                                        "project.id = $project_id")
-                                ->join('blok',
-                                        "blok.code = m_custwtp2.code")
-                                ->join('customer',
-                                        "customer.source_table = '$source'
-                                        AND customer.source_id = m_custwtp.cust_id")
-                                ->join("jenis_golongan",
-                                        "jenis_golongan.source_table = '$source'
-                                        AND jenis_golongan.source_id = m_custwtp.gol_id")
-                                ->where_in('m_custwtp.cust_id',$data_id)    
-                                ->where("unit.id is null")                                
-                                ->distinct()
-                                ->get()->result();
-            
+                    "LEFT"
+                )
+                ->join(
+                    'project',
+                    "project.id = $project_id"
+                )
+                ->join(
+                    'blok',
+                    "blok.code = m_custwtp2.code"
+                )
+                ->join(
+                    'customer',
+                    "customer.source_table = '$source'
+                                        AND customer.source_id = m_custwtp.cust_id"
+                )
+                ->join(
+                    "jenis_golongan",
+                    "jenis_golongan.source_table = '$source'
+                                        AND jenis_golongan.source_id = m_custwtp.gol_id"
+                )
+                ->where_in('m_custwtp.cust_id', $data_id)
+                ->where("unit.id is null")
+                ->distinct()
+                ->get()->result();
+
             $this->db->trans_start();
-            if($dataUnit)
-                $this->db->insert_batch("unit",$dataUnit); 
+            if ($dataUnit)
+                $this->db->insert_batch("unit", $dataUnit);
             $this->db->trans_complete();
             $dataUnitAir = $this->db
-                                ->select("
+                ->select("
                                         unit.id as unit_id,
                                         m_custwtp.flag_air as aktif,
                                         m_custwtp.nomor_meter as no_seri_meter,
                                         sub_golongan.id as sub_gol_id
                                     ")
-                                ->from("ems_temp.$source.m_custwtp")
-                                ->join("customer",
-                                        "customer.source_id = m_custwtp.cust_id
-                                        AND customer.source_table = '$source'")
-                                ->join("unit",
-                                        "unit.source_id = m_custwtp.cust_id
-                                        AND unit.source_table = '$source.m_custwtp'")
-                                ->join("unit_air",
-                                        "unit_air.unit_id = unit.id",
-                                        "LEFT")
-                                ->join("range_air",
-                                        "range_air.source_table = 'iplk_clbcm'
-                                        AND range_air.source_id = m_custwtp.rangeair_id")
-                                ->join('sub_golongan',
-                                        "sub_golongan.source_table = '$source'
+                ->from("ems_temp.$source.m_custwtp")
+                ->join(
+                    "customer",
+                    "customer.source_id = m_custwtp.cust_id
+                                        AND customer.source_table = '$source'"
+                )
+                ->join(
+                    "unit",
+                    "unit.source_id = m_custwtp.cust_id
+                                        AND unit.source_table = '$source.m_custwtp'"
+                )
+                ->join(
+                    "unit_air",
+                    "unit_air.unit_id = unit.id",
+                    "LEFT"
+                )
+                ->join(
+                    "range_air",
+                    "range_air.source_table = 'iplk_clbcm'
+                                        AND range_air.source_id = m_custwtp.rangeair_id"
+                )
+                ->join(
+                    'sub_golongan',
+                    "sub_golongan.source_table = '$source'
                                         AND sub_golongan.source_id = m_custwtp.subgol_id
-                                        AND sub_golongan.range_id = range_air.id")
-                                ->where_in('m_custwtp.cust_id',$data_id)    
-                                ->where("customer.id is not null")                                
-                                ->where("unit_air.id is null")                                
-                                ->distinct()
-                                ->get()->result();
-            
+                                        AND sub_golongan.range_id = range_air.id"
+                )
+                ->where_in('m_custwtp.cust_id', $data_id)
+                ->where("customer.id is not null")
+                ->where("unit_air.id is null")
+                ->distinct()
+                ->get()->result();
+
             $this->db->trans_start();
-            if($dataUnitAir)
-                $this->db->insert_batch("unit_air",$dataUnitAir); 
+            if ($dataUnitAir)
+                $this->db->insert_batch("unit_air", $dataUnitAir);
             $this->db->trans_complete();
 
             $dataUnitLingkungan = $this->db
-                                ->select("
+                ->select("
                                         unit.id as unit_id,
                                         1 as aktif,
                                         sub_golongan.id as sub_gol_id
                                     ")
-                                ->from("ems_temp.$source.m_custwtp")
-                                ->join("unit",
-                                        "unit.source_table = '$source.m_custwtp'
-                                        AND unit.source_id = m_custwtp.cust_id")
-                                ->join("range_lingkungan",
-                                        "ON range_lingkungan.source_table = '$source'
+                ->from("ems_temp.$source.m_custwtp")
+                ->join(
+                    "unit",
+                    "unit.source_table = '$source.m_custwtp'
+                                        AND unit.source_id = m_custwtp.cust_id"
+                )
+                ->join(
+                    "range_lingkungan",
+                    "ON range_lingkungan.source_table = '$source'
                                         AND range_lingkungan.source_id = m_custwtp.rangebankav_id
-                                        and range_lingkungan.project_id = unit.project_id")
-                                ->join("sub_golongan",
-                                        "sub_golongan.source_table = '$source'
+                                        and range_lingkungan.project_id = unit.project_id"
+                )
+                ->join(
+                    "sub_golongan",
+                    "sub_golongan.source_table = '$source'
                                         AND sub_golongan.source_id = m_custwtp.subgol_id
                                         AND sub_golongan.range_id = range_lingkungan.id
                                         AND sub_golongan.range_flag = 2
                                         AND sub_golongan.jenis_golongan_id = m_custwtp.gol_id",
-                                        "LEFT")
-                                ->where_in('m_custwtp.cust_id',$data_id)    
-                                ->distinct()
-                                ->get()->result();
+                    "LEFT"
+                )
+                ->where_in('m_custwtp.cust_id', $data_id)
+                ->distinct()
+                ->get()->result();
             $this->db->trans_start();
-            if($dataUnitLingkungan)
-                $this->db->insert_batch("unit_lingkungan",$dataUnitLingkungan); 
+            if ($dataUnitLingkungan)
+                $this->db->insert_batch("unit_lingkungan", $dataUnitLingkungan);
             $this->db->trans_complete();
             $data = [];
             return  [
-                        "success" => true,
-                        "message" => "Berhasil, Jumlah data di input:".count($data)
-                    ];
+                "success" => true,
+                "message" => "Berhasil, Jumlah data di input:" . count($data)
+            ];
         }
     }
-    public function get_ajax_desktop_unit_by_source($source,$project_id)
-    {   
+    public function get_ajax_desktop_unit_by_source($source, $project_id)
+    {
         if ($source) {
-            $data=$this->db
-                    ->select("
+            $data = $this->db
+                ->select("
                         m_custwtp.cust_id as id,
                         m_kawasan.nama as kawasan,
                         m_custwtp2.blok,
@@ -641,8 +703,9 @@ class m_desktop_unit extends CI_Model
                         m_custwtp.nama as pemilik,
                         customer.id as customer_id
                     ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("(SELECT 
+                ->from("ems_temp.$source.m_custwtp")
+                ->join(
+                    "(SELECT 
                                 cust_id,    
                                 CASE CHARINDEX('/',kode_blok)
                                     WHEN 0 THEN kode_blok 
@@ -653,35 +716,44 @@ class m_desktop_unit extends CI_Model
                                     ELSE SUBSTRING (kode_blok,CHARINDEX( '/', kode_blok ) + 1,LEN( kode_blok ))
                                 END as no_unit
                                 FROM ems_temp.$source.m_custwtp) as m_custwtp2",
-                            "m_custwtp.cust_id = m_custwtp2.cust_id")
-                    ->join("ems_temp.$source.m_kawasan",
-                            'm_kawasan.kawasan_id = m_custwtp.kawasan_id')
-                    ->join('customer',
-                            "customer.source_table = '$source' 
-                            AND customer.source_id = m_custwtp.cust_id",                            
-                            "LEFT")
-                            // AND customer.project_id = $project_id", //kalau ada, project lain bisa mengambil 1 source yg sama
+                    "m_custwtp.cust_id = m_custwtp2.cust_id"
+                )
+                ->join(
+                    "ems_temp.$source.m_kawasan",
+                    'm_kawasan.kawasan_id = m_custwtp.kawasan_id'
+                )
+                ->join(
+                    'customer',
+                    "customer.source_table = '$source' 
+                            AND customer.source_id = m_custwtp.cust_id",
+                    "LEFT"
+                )
+                // AND customer.project_id = $project_id", //kalau ada, project lain bisa mengambil 1 source yg sama
 
-                    ->join("ems_temp.$source.m_range",
-                            "m_range.range_id = m_custwtp.rangeair_id","LEFT")
-                    // ->join("ems_temp.$source.m_rangebankav",
-                    //         "m_rangebankav.range_id = m_custwtp.rangebankav_id")
-                    ->where("customer.id is null")
-                    ->where("(m_custwtp.flag_id != 9
+                ->join(
+                    "ems_temp.$source.m_range",
+                    "m_range.range_id = m_custwtp.rangeair_id",
+                    "LEFT"
+                )
+                // ->join("ems_temp.$source.m_rangebankav",
+                //         "m_rangebankav.range_id = m_custwtp.rangebankav_id")
+                ->where("customer.id is null")
+                ->where("(m_custwtp.flag_id != 9
                             AND m_custwtp.flag_id != 0)")
-                    ->order_by("m_custwtp2.no_unit","ASC")
-                    ->order_by("m_custwtp2.blok","ASC")
-                    ->order_by("m_kawasan.nama","ASC")
-                    ->limit(950)
-                    ->get()->result();
+                ->order_by("m_custwtp2.no_unit", "ASC")
+                ->order_by("m_custwtp2.blok", "ASC")
+                ->order_by("m_kawasan.nama", "ASC")
+                ->limit(950)
+                ->get()->result();
             return $data;
         }
         return 0;
     }
-    public function get_range_lingkungan($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_range_lingkungan($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('range_lingkungan')->count_all_results();
         $range_lingkungan_tmp = $this->db
-                    ->select("
+            ->select("
                         m_custwtp.rangebankav_id as range_id,
                         m_custwtp.nilai_aman,
                         m_custwtp.nilai_sampah,
@@ -728,15 +800,17 @@ class m_desktop_unit extends CI_Model
                         m_rangebankav.range_kr6,
                         m_rangebankav.range_krp6
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("ems_temp.$source.m_rangebankav",
-                            "m_rangebankav.range_id = m_custwtp.rangebankav_id",
-                            "LEFT")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->where("(rangeair_id !=0 OR rangebankav_id != 0)")
-                    ->order_by("m_custwtp.rangebankav_id,m_custwtp.nilai_aman,m_custwtp.nilai_sampah")
-                    ->distinct()
-                    ->get()->result();
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_rangebankav",
+                "m_rangebankav.range_id = m_custwtp.rangebankav_id",
+                "LEFT"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->where("(rangeair_id !=0 OR rangebankav_id != 0)")
+            ->order_by("m_custwtp.rangebankav_id,m_custwtp.nilai_aman,m_custwtp.nilai_sampah")
+            ->distinct()
+            ->get()->result();
         $versi = 0;
 
         $range_lingkungan = (object)[];
@@ -744,22 +818,22 @@ class m_desktop_unit extends CI_Model
         $range_lingkungan->active           = 1;
         $range_lingkungan->delete           = 0;
         $range_lingkungan->source_table     = $source;
-        
-        for ($i=0; $i < count($range_lingkungan_tmp); $i++) { 
+
+        for ($i = 0; $i < count($range_lingkungan_tmp); $i++) {
             $range_lingkungan->formula_bangunan = $formula_bangunan;
             $range_lingkungan->formula_kavling  = $formula_kavling;
 
-            if($range_lingkungan_tmp[$i]->range_fix > 0){
+            if ($range_lingkungan_tmp[$i]->range_fix > 0) {
                 $range_lingkungan->formula_bangunan = 0;
                 $range_lingkungan->formula_kavling  = 0;
                 $range_lingkungan->kavling_fix = $range_lingkungan_tmp[$i]->range_fix;
             }
-            if($range_lingkungan_tmp[$i]->range_id == 0){
+            if ($range_lingkungan_tmp[$i]->range_id == 0) {
                 $versi++;
                 $range_lingkungan->name         = "Lingkungan Create V - $versi";
                 $range_lingkungan->code         = "LCV-$versi";
                 $range_lingkungan->description  = "Lingkungan Create Version - $versi";
-            }else{
+            } else {
                 $range_lingkungan->name         = $range_lingkungan_tmp[$i]->nama;
                 $range_lingkungan->code         = $range_lingkungan_tmp[$i]->kode;
                 $range_lingkungan->description  = $range_lingkungan_tmp[$i]->note;
@@ -767,29 +841,29 @@ class m_desktop_unit extends CI_Model
             $range_lingkungan->source_id    = $range_lingkungan_tmp[$i]->range_id;
             $range_lingkungan->keamanan     = $range_lingkungan_tmp[$i]->nilai_aman;
             $range_lingkungan->kebersihan   = $range_lingkungan_tmp[$i]->nilai_sampah;
-                
-            
+
+
             $double = $this->db->select("id")
-                                ->from("range_lingkungan")
-                                ->where("project_id",$range_lingkungan->project_id)
-                                ->where("keamanan",$range_lingkungan->keamanan)
-                                ->where("kebersihan",$range_lingkungan->kebersihan)
-                                ->where("source_table",$source)
-                                ->where("source_id",$range_lingkungan_tmp[$i]->range_id)
-                                ->get()->num_rows();
-            if ($double == 0){
-                $this->db->insert("range_lingkungan",$range_lingkungan);
+                ->from("range_lingkungan")
+                ->where("project_id", $range_lingkungan->project_id)
+                ->where("keamanan", $range_lingkungan->keamanan)
+                ->where("kebersihan", $range_lingkungan->kebersihan)
+                ->where("source_table", $source)
+                ->where("source_id", $range_lingkungan_tmp[$i]->range_id)
+                ->get()->num_rows();
+            if ($double == 0) {
+                $this->db->insert("range_lingkungan", $range_lingkungan);
                 $insert_id = $this->db->insert_id();
 
-                $range_lingkungan_detail_B = (object)[]; 
-                $range_lingkungan_detail_K = (object)[]; 
-                for ($j=1; $j <= 6; $j++) { 
-                    $cek_bangunan   = $range_lingkungan_tmp[$i]->{"range_bl$j"}+$range_lingkungan_tmp[$i]->{"range_br$j"}+$range_lingkungan_tmp[$i]->{"range_brp$j"};
-                    $cek_kavling    = $range_lingkungan_tmp[$i]->{"range_kl$j"}+$range_lingkungan_tmp[$i]->{"range_kr$j"}+$range_lingkungan_tmp[$i]->{"range_krp$j"};
-                    if($cek_bangunan+$cek_kavling == 0){
+                $range_lingkungan_detail_B = (object)[];
+                $range_lingkungan_detail_K = (object)[];
+                for ($j = 1; $j <= 6; $j++) {
+                    $cek_bangunan   = $range_lingkungan_tmp[$i]->{"range_bl$j"} + $range_lingkungan_tmp[$i]->{"range_br$j"} + $range_lingkungan_tmp[$i]->{"range_brp$j"};
+                    $cek_kavling    = $range_lingkungan_tmp[$i]->{"range_kl$j"} + $range_lingkungan_tmp[$i]->{"range_kr$j"} + $range_lingkungan_tmp[$i]->{"range_krp$j"};
+                    if ($cek_bangunan + $cek_kavling == 0) {
                         break;
                     }
-                    if($cek_bangunan != 0){
+                    if ($cek_bangunan != 0) {
                         $range_lingkungan_detail_B = [
                             'range_lingkungan_id'   => $insert_id,
                             'range_awal'            => $range_lingkungan_tmp[$i]->{"range_bl$j"},
@@ -798,9 +872,9 @@ class m_desktop_unit extends CI_Model
                             'flag_jenis'            => 0,
                             'delete'                => 0
                         ];
-                        $this->db->insert("range_lingkungan_detail",$range_lingkungan_detail_B);
+                        $this->db->insert("range_lingkungan_detail", $range_lingkungan_detail_B);
                     }
-                    if($cek_kavling != 0){
+                    if ($cek_kavling != 0) {
                         $range_lingkungan_detail_K = [
                             'range_lingkungan_id'   => $insert_id,
                             'range_awal'            => $range_lingkungan_tmp[$i]->{"range_kl$j"},
@@ -809,19 +883,19 @@ class m_desktop_unit extends CI_Model
                             'flag_jenis'            => 1,
                             'delete'                => 0
                         ];
-                        $this->db->insert("range_lingkungan_detail",$range_lingkungan_detail_K);
+                        $this->db->insert("range_lingkungan_detail", $range_lingkungan_detail_K);
                     }
                 }
             }
-                
         }
-        return $this->db->from('range_lingkungan')->count_all_results()-$jumlah_awal;
+        return $this->db->from('range_lingkungan')->count_all_results() - $jumlah_awal;
     }
-    public function get_range_air($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_range_air($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('range_air')->count_all_results();
 
         $range_air_tmp = $this->db
-                    ->select("
+            ->select("
                         m_custwtp.rangeair_id as range_id,
                         m_range.kode,
                         m_range.nama,
@@ -847,108 +921,111 @@ class m_desktop_unit extends CI_Model
                         m_range.range_r6,
                         m_range.range_rp6
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("ems_temp.$source.m_range",
-                            "m_range.range_id = m_custwtp.rangeair_id",
-                            "LEFT")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->where("rangeair_id!=0")
-                    ->order_by("m_custwtp.rangeair_id")
-                    ->distinct()
-                    ->get()->result();
-        
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_range",
+                "m_range.range_id = m_custwtp.rangeair_id",
+                "LEFT"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->where("rangeair_id!=0")
+            ->order_by("m_custwtp.rangeair_id")
+            ->distinct()
+            ->get()->result();
+
         $range_air = (object)[];
         $range_air->project_id      = $project_id;
         $range_air->active          = 1;
         $range_air->delete          = 0;
         $range_air->formula         = $formula_air;
         $range_air->source_table    = $source;
-        
-        for ($i=0; $i < count($range_air_tmp); $i++) { 
+
+        for ($i = 0; $i < count($range_air_tmp); $i++) {
             $range_air->name        = $range_air_tmp[$i]->nama;
             $range_air->code        = $range_air_tmp[$i]->kode;
             $range_air->description = $range_air_tmp[$i]->note;
             $range_air->source_id   = $range_air_tmp[$i]->range_id;
-                
+
             $double = $this->db->select("id")
-                                ->from("range_air")
-                                ->where("project_id",$range_air->project_id)
-                                ->where("source_table",$source)
-                                ->where("source_id",$range_air_tmp[$i]->range_id)
-                                ->get()->num_rows();
-        
-            if ($double == 0){
-                $this->db->insert("range_air",$range_air);
+                ->from("range_air")
+                ->where("project_id", $range_air->project_id)
+                ->where("source_table", $source)
+                ->where("source_id", $range_air_tmp[$i]->range_id)
+                ->get()->num_rows();
+
+            if ($double == 0) {
+                $this->db->insert("range_air", $range_air);
                 $insert_id = $this->db->insert_id();
 
-                $range_air_detail = (object)[]; 
-                for ($j=1; $j <= 6; $j++) { 
-                    $cek = $range_air_tmp[$i]->{"range_l$j"}+$range_air_tmp[$i]->{"range_r$j"}+$range_air_tmp[$i]->{"range_rp$j"};
-                    if($cek == 0)   break;
-                    if($cek != 0){
-                        $range_air_detail=[
+                $range_air_detail = (object)[];
+                for ($j = 1; $j <= 6; $j++) {
+                    $cek = $range_air_tmp[$i]->{"range_l$j"} + $range_air_tmp[$i]->{"range_r$j"} + $range_air_tmp[$i]->{"range_rp$j"};
+                    if ($cek == 0)   break;
+                    if ($cek != 0) {
+                        $range_air_detail = [
                             'range_air_id'  => $insert_id,
                             'range_awal'    => $range_air_tmp[$i]->{"range_l$j"},
                             'range_akhir'   => $range_air_tmp[$i]->{"range_r$j"},
                             'harga'         => $range_air_tmp[$i]->{"range_rp$j"},
                             'delete'        => 0
                         ];
-                        $this->db->insert("range_air_detail",$range_air_detail);
+                        $this->db->insert("range_air_detail", $range_air_detail);
                     }
                 }
             }
-                
         }
-        return $this->db->from('range_air')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('range_air')->count_all_results() - $jumlah_awal;
     }
-    public function get_golongan($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_golongan($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('jenis_golongan')->count_all_results();
 
         $golongan_tmp = $this->db
-                    ->select("
+            ->select("
                             m_custwtp.gol_id,
                             m_gol.kode,
                             m_gol.note            
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("ems_temp.$source.m_gol",
-                            "m_gol.gol_id = m_custwtp.gol_id",
-                            "LEFT")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->where("(rangeair_id!=0 or rangebankav_id!=0)")
-                    ->order_by("m_custwtp.gol_id")
-                    ->distinct()
-                    ->get()->result();
-        
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_gol",
+                "m_gol.gol_id = m_custwtp.gol_id",
+                "LEFT"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->where("(rangeair_id!=0 or rangebankav_id!=0)")
+            ->order_by("m_custwtp.gol_id")
+            ->distinct()
+            ->get()->result();
+
         $golongan = (object)[];
         $golongan->project_id   = $project_id;
         $golongan->active       = 1;
         $golongan->delete       = 0;
         $golongan->source_table = $source;
         foreach ($golongan_tmp as $v) {
-            
+
             $double = $this->db->select("id")
-                                ->from("jenis_golongan")
-                                ->where("project_id",$golongan->project_id)
-                                ->where("source_table",$golongan->source_table)
-                                ->where("source_id",$v->gol_id)
-                                ->get()->num_rows();
-            if($double == 0){
+                ->from("jenis_golongan")
+                ->where("project_id", $golongan->project_id)
+                ->where("source_table", $golongan->source_table)
+                ->where("source_id", $v->gol_id)
+                ->get()->num_rows();
+            if ($double == 0) {
                 $golongan->code         = $v->kode;
                 $golongan->description  = $v->note;
-                $golongan->source_id    = $v->gol_id;   
-                $this->db->insert("jenis_golongan",$golongan);
+                $golongan->source_id    = $v->gol_id;
+                $this->db->insert("jenis_golongan", $golongan);
             }
         }
-        return $this->db->from('jenis_golongan')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('jenis_golongan')->count_all_results() - $jumlah_awal;
     }
-    public function get_sub_golongan_lingkungan($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_sub_golongan_lingkungan($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('sub_golongan')->count_all_results();
 
         $sub_golongan_lingkungan_tmp = $this->db
-                                        ->select("
+            ->select("
                                                 m_custwtp.gol_id,
                                                 m_custwtp.subgol_id,
                                                 jenis_golongan.id as golongan_id,
@@ -962,29 +1039,37 @@ class m_desktop_unit extends CI_Model
                                                 m_custwtp.nilai_sampah,
                                                 isnull(range_lingkungan.id,0) as range_lingkungan_id
                                             ")
-                                        ->from("ems_temp.$source.m_custwtp")
-                                        ->join("ems_temp.$source.m_golsub",
-                                                "m_golsub.subgol_id = m_custwtp.subgol_id",
-                                                "LEFT")
-                                        ->join("range_lingkungan",
-                                                "range_lingkungan.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_golsub",
+                "m_golsub.subgol_id = m_custwtp.subgol_id",
+                "LEFT"
+            )
+            ->join(
+                "range_lingkungan",
+                "range_lingkungan.source_table = '$source'
                                                 AND range_lingkungan.source_id = m_custwtp.rangebankav_id
                                                 AND range_lingkungan.keamanan = m_custwtp.nilai_aman
                                                 AND range_lingkungan.kebersihan = m_custwtp.nilai_sampah",
-                                                "LEFT")
-                                        ->join("jenis_golongan",
-                                                "jenis_golongan.source_table = '$source'
+                "LEFT"
+            )
+            ->join(
+                "jenis_golongan",
+                "jenis_golongan.source_table = '$source'
                                                 AND jenis_golongan.source_id = m_custwtp.gol_id
-                                                ")
-                                        ->join("service", 
-                                                "service.project_id = $project_id
+                                                "
+            )
+            ->join(
+                "service",
+                "service.project_id = $project_id
                                                 AND service.service_jenis_id = 1
-                                                ")
-                                        ->where_not_in("m_custwtp.flag_id",[0,9])
-                                        ->where("(rangeair_id!=0 or rangebankav_id!=0)")
-                                        ->order_by("subgol_id")
-                                        ->distinct()
-                                        ->get()->result();
+                                                "
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->where("(rangeair_id!=0 or rangebankav_id!=0)")
+            ->order_by("subgol_id")
+            ->distinct()
+            ->get()->result();
 
         $sub_golongan_lingkungan                = (object)[];
         $sub_golongan_lingkungan->active        = 1;
@@ -992,19 +1077,21 @@ class m_desktop_unit extends CI_Model
         $sub_golongan_lingkungan->source_table  = $source;
         foreach ($sub_golongan_lingkungan_tmp as $v) {
             $double = $this->db->select("sub_golongan.id")
-                                ->from("sub_golongan")
-                                ->join("jenis_golongan",
-                                        "jenis_golongan.id = sub_golongan.jenis_golongan_id")
-                                ->where("jenis_golongan.project_id",$project_id)
-                                ->where("sub_golongan.source_table",$sub_golongan_lingkungan->source_table)
-                                ->where("sub_golongan.source_id",$v->subgol_id)
-                                ->where("sub_golongan.range_flag",1)
-                                ->where("sub_golongan.range_id",$v->range_lingkungan_id)
-                                ->get()->num_rows();
-            if($double == 0){
+                ->from("sub_golongan")
+                ->join(
+                    "jenis_golongan",
+                    "jenis_golongan.id = sub_golongan.jenis_golongan_id"
+                )
+                ->where("jenis_golongan.project_id", $project_id)
+                ->where("sub_golongan.source_table", $sub_golongan_lingkungan->source_table)
+                ->where("sub_golongan.source_id", $v->subgol_id)
+                ->where("sub_golongan.range_flag", 1)
+                ->where("sub_golongan.range_id", $v->range_lingkungan_id)
+                ->get()->num_rows();
+            if ($double == 0) {
                 $sub_golongan_lingkungan->code              = $v->kode;
                 $sub_golongan_lingkungan->jenis_golongan_id = $v->golongan_id;
-                $sub_golongan_lingkungan->name              = "IPL - ".$v->nama;
+                $sub_golongan_lingkungan->name              = "IPL - " . $v->nama;
                 $sub_golongan_lingkungan->minimum_pemakaian = $v->nilai_min;
                 $sub_golongan_lingkungan->minimum_rp        = $v->nilai_min_rp;
                 $sub_golongan_lingkungan->administrasi      = $v->nilai_admin;
@@ -1012,17 +1099,17 @@ class m_desktop_unit extends CI_Model
                 $sub_golongan_lingkungan->range_flag        = 1;
                 $sub_golongan_lingkungan->range_id          = $v->range_lingkungan_id;
                 $sub_golongan_lingkungan->source_id         = $v->subgol_id;
-                $this->db->insert("sub_golongan",$sub_golongan_lingkungan);
+                $this->db->insert("sub_golongan", $sub_golongan_lingkungan);
             }
         }
-        return $this->db->from('sub_golongan')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('sub_golongan')->count_all_results() - $jumlah_awal;
     }
-    public function get_sub_golongan_air($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_sub_golongan_air($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('sub_golongan')->count_all_results();
 
         $sub_golongan_air_tmp = $this->db
-                                        ->select("
+            ->select("
                                                 m_custwtp.gol_id,
                                                 m_custwtp.subgol_id,
                                                 jenis_golongan.id as golongan_id,
@@ -1037,27 +1124,35 @@ class m_desktop_unit extends CI_Model
                                                 isnull(range_air.id,0) as range_air_id,
                                                 m_golsub.nilai_pipa
                                             ")
-                                        ->from("ems_temp.$source.m_custwtp")
-                                        ->join("ems_temp.$source.m_golsub",
-                                                "m_golsub.subgol_id = m_custwtp.subgol_id",
-                                                "LEFT")
-                                        ->join("range_air",
-                                                "range_air.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "ems_temp.$source.m_golsub",
+                "m_golsub.subgol_id = m_custwtp.subgol_id",
+                "LEFT"
+            )
+            ->join(
+                "range_air",
+                "range_air.source_table = '$source'
                                                 AND range_air.source_id = m_custwtp.rangeair_id",
-                                                "LEFT")
-                                        ->join("jenis_golongan",
-                                                "jenis_golongan.source_table = '$source'
+                "LEFT"
+            )
+            ->join(
+                "jenis_golongan",
+                "jenis_golongan.source_table = '$source'
                                                 AND jenis_golongan.source_id = m_custwtp.gol_id
-                                                ")
-                                        ->join("service", 
-                                                "service.project_id = $project_id
+                                                "
+            )
+            ->join(
+                "service",
+                "service.project_id = $project_id
                                                 AND service.service_jenis_id = 2
-                                                ")
-                                        ->where_not_in("m_custwtp.flag_id",[0,9])
-                                        ->where("(rangeair_id!=0 or rangebankav_id!=0)")
-                                        ->order_by("subgol_id")
-                                        ->distinct()
-                                        ->get()->result();
+                                                "
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->where("(rangeair_id!=0 or rangebankav_id!=0)")
+            ->order_by("subgol_id")
+            ->distinct()
+            ->get()->result();
 
         $sub_golongan_air               = (object)[];
         $pemeliharaan_air               = (object)[];
@@ -1066,29 +1161,31 @@ class m_desktop_unit extends CI_Model
         $sub_golongan_air->source_table = $source;
         $pemeliharaan_air->active       = 1;
         $pemeliharaan_air->delete       = 0;
-        $pemeliharaan_air->source_table = $source.".m_golsub";
+        $pemeliharaan_air->source_table = $source . ".m_golsub";
         foreach ($sub_golongan_air_tmp as $v) {
             $double = $this->db->select("sub_golongan.id")
-                                ->from("sub_golongan")
-                                ->join("jenis_golongan",
-                                        "jenis_golongan.id = sub_golongan.jenis_golongan_id")
-                                ->where("jenis_golongan.project_id",$project_id)
-                                ->where("sub_golongan.source_table",$sub_golongan_air->source_table)
-                                ->where("sub_golongan.source_id",$v->subgol_id)
-                                ->where("sub_golongan.range_flag",2)
-                                ->where("sub_golongan.range_id",$v->range_air_id)
-                                ->get()->num_rows();
-            if($double == 0){
+                ->from("sub_golongan")
+                ->join(
+                    "jenis_golongan",
+                    "jenis_golongan.id = sub_golongan.jenis_golongan_id"
+                )
+                ->where("jenis_golongan.project_id", $project_id)
+                ->where("sub_golongan.source_table", $sub_golongan_air->source_table)
+                ->where("sub_golongan.source_id", $v->subgol_id)
+                ->where("sub_golongan.range_flag", 2)
+                ->where("sub_golongan.range_id", $v->range_air_id)
+                ->get()->num_rows();
+            if ($double == 0) {
                 $pemeliharaan_air->project_id       = $project_id;
-                $pemeliharaan_air->code             = "pa_".$v->nama;
-                $pemeliharaan_air->name             = "PA ".$v->nama;
+                $pemeliharaan_air->code             = "pa_" . $v->nama;
+                $pemeliharaan_air->name             = "PA " . $v->nama;
                 $pemeliharaan_air->nilai            = $v->nilai_pipa;
                 $pemeliharaan_air->source_id        = $v->subgol_id;
-                $this->db->insert("pemeliharaan_air",$pemeliharaan_air);
+                $this->db->insert("pemeliharaan_air", $pemeliharaan_air);
 
                 $sub_golongan_air->code              = $v->kode;
                 $sub_golongan_air->jenis_golongan_id = $v->golongan_id;
-                $sub_golongan_air->name              = "Air - ".$v->nama;
+                $sub_golongan_air->name              = "Air - " . $v->nama;
                 $sub_golongan_air->minimum_pemakaian = $v->nilai_min;
                 $sub_golongan_air->minimum_rp        = $v->nilai_min_rp;
                 $sub_golongan_air->administrasi      = $v->nilai_admin;
@@ -1096,28 +1193,28 @@ class m_desktop_unit extends CI_Model
                 $sub_golongan_air->range_flag        = 2;
                 $sub_golongan_air->range_id          = $v->range_air_id;
                 $sub_golongan_air->source_id         = $v->subgol_id;
-                    
-                $this->db->insert("sub_golongan",$sub_golongan_air);
+
+                $this->db->insert("sub_golongan", $sub_golongan_air);
             }
         }
-        return $this->db->from('sub_golongan')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('sub_golongan')->count_all_results() - $jumlah_awal;
     }
-    public function get_kawasan($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_kawasan($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('kawasan')->count_all_results();
 
         $kawasan_tmp = $this->db
-                    ->select("
+            ->select("
                             m_kawasan.kawasan_id,
                             m_kawasan.kode,
                             m_kawasan.note,
                             m_kawasan.nama             
                         ")
-                    ->from("ems_temp.$source.m_kawasan")
-                    ->order_by("m_kawasan.kawasan_id")
-                    ->distinct()
-                    ->get()->result();
-                    
+            ->from("ems_temp.$source.m_kawasan")
+            ->order_by("m_kawasan.kawasan_id")
+            ->distinct()
+            ->get()->result();
+
         $kawasan = (object)[];
         $kawasan->project_id   = $project_id;
         $kawasan->active       = 1;
@@ -1128,38 +1225,37 @@ class m_desktop_unit extends CI_Model
         $kawasan->description  = "unit tanpa kawasan";
         $kawasan->source_id    = 0;
         $double = $this->db->select("id")
-                                ->from("kawasan")
-                                ->where("project_id",$kawasan->project_id)
-                                ->where("source_table",$kawasan->source_table)
-                                ->where("source_id",0)
-                                ->get()->num_rows();
-        if($double == 0)    $this->db->insert("kawasan",$kawasan);
+            ->from("kawasan")
+            ->where("project_id", $kawasan->project_id)
+            ->where("source_table", $kawasan->source_table)
+            ->where("source_id", 0)
+            ->get()->num_rows();
+        if ($double == 0)    $this->db->insert("kawasan", $kawasan);
         foreach ($kawasan_tmp as $v) {
-    
+
             $double = $this->db->select("id")
-                                ->from("kawasan")
-                                ->where("project_id",$kawasan->project_id)
-                                ->where("source_table",$kawasan->source_table)
-                                ->where("source_id",$v->kawasan_id)
-                                ->get()->num_rows();
-            if($double == 0){
+                ->from("kawasan")
+                ->where("project_id", $kawasan->project_id)
+                ->where("source_table", $kawasan->source_table)
+                ->where("source_id", $v->kawasan_id)
+                ->get()->num_rows();
+            if ($double == 0) {
                 $kawasan->name         = $v->nama;
                 $kawasan->code         = $v->kode;
                 $kawasan->description  = $v->note;
                 $kawasan->source_id    = $v->kawasan_id;
-            
-                $this->db->insert("kawasan",$kawasan);
+
+                $this->db->insert("kawasan", $kawasan);
             }
         }
-        return $this->db->from('kawasan')->count_all_results()-$jumlah_awal;
-
-
+        return $this->db->from('kawasan')->count_all_results() - $jumlah_awal;
     }
-    public function get_blok($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_blok($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('blok')->count_all_results();
 
         $blok_tmp = $this->db
-                    ->select("
+            ->select("
                             CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok))
                                 WHEN '' THEN 'Ciputra'
                                 ELSE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok)) 
@@ -1167,15 +1263,17 @@ class m_desktop_unit extends CI_Model
                             m_custwtp.kawasan_id,
                             kawasan.id
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("kawasan",
-                            "kawasan.source_table = '$source'
-                            AND kawasan.source_id = m_custwtp.kawasan_id")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->order_by("nama")
-                    ->distinct()
-                    ->get()->result();
-        
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "kawasan",
+                "kawasan.source_table = '$source'
+                            AND kawasan.source_id = m_custwtp.kawasan_id"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->order_by("nama")
+            ->distinct()
+            ->get()->result();
+
         $blok = (object)[];
         $blok->active       = 1;
         $blok->delete       = 0;
@@ -1183,32 +1281,34 @@ class m_desktop_unit extends CI_Model
 
         $blok->source_id    = 0;
         foreach ($blok_tmp as $v) {
-    
+
             $double = $this->db->select("blok.id")
-                                ->from("blok")
-                                ->join("kawasan",
-                                        "kawasan.id = blok.kawasan_id")
-                                ->where("kawasan.project_id",$project_id)
-                                ->where("blok.source_table",$blok->source_table)
-                                ->where("blok.source_id",$v->kawasan_id)
-                                ->where("blok.name",$v->nama)
-                                ->get()->num_rows();
-            if($double == 0){
+                ->from("blok")
+                ->join(
+                    "kawasan",
+                    "kawasan.id = blok.kawasan_id"
+                )
+                ->where("kawasan.project_id", $project_id)
+                ->where("blok.source_table", $blok->source_table)
+                ->where("blok.source_id", $v->kawasan_id)
+                ->where("blok.name", $v->nama)
+                ->get()->num_rows();
+            if ($double == 0) {
                 $blok->name         = $v->nama;
                 $blok->kawasan_id   = $v->id;
                 $blok->code         = $v->nama;
                 $blok->source_id    = $v->kawasan_id;
-                $this->db->insert("blok",$blok);
+                $this->db->insert("blok", $blok);
             }
         }
-        return $this->db->from('blok')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('blok')->count_all_results() - $jumlah_awal;
     }
-    public function get_customer($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_customer($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('customer')->count_all_results();
 
         $customer_tmp = $this->db
-                    ->select("
+            ->select("
                             m_custwtp.cust_id,
                             m_custwtp.nama,
                             m_custwtp.alamat,
@@ -1221,12 +1321,12 @@ class m_desktop_unit extends CI_Model
                             m_custwtp.npwp_alamat,
                             m_custwtp.catatan
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
+            ->from("ems_temp.$source.m_custwtp")
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
 
-                    ->order_by("cust_id")
-                    ->distinct()
-                    ->get()->result();
+            ->order_by("cust_id")
+            ->distinct()
+            ->get()->result();
 
         $customer = (object)[];
         $customer->active       = 1;
@@ -1235,21 +1335,21 @@ class m_desktop_unit extends CI_Model
         $customer->project_id   = $project_id;
         $customer->unit         = 1;
         $project_code          = $this->db->select("code")
-                                    ->from("project")
-                                    ->where("id",$project_id)
-                                    ->get()->row()->code;
+            ->from("project")
+            ->where("id", $project_id)
+            ->get()->row()->code;
         foreach ($customer_tmp as $v) {
-            
-            $double = $this->db ->select("id")
-                                ->from("customer")
-                                ->where("project_id",$project_id)
-                                ->where("source_table",$customer->source_table)
-                                ->where("source_id",$v->cust_id)
-                                ->get()->num_rows();
-            
-            if($double == 0){
 
-                $customer->code         = "CUST/$project_code/".date("Y")."/$v->cust_id";
+            $double = $this->db->select("id")
+                ->from("customer")
+                ->where("project_id", $project_id)
+                ->where("source_table", $customer->source_table)
+                ->where("source_id", $v->cust_id)
+                ->get()->num_rows();
+
+            if ($double == 0) {
+
+                $customer->code         = "CUST/$project_code/" . date("Y") . "/$v->cust_id";
                 $customer->name         = $v->nama;
                 $customer->address      = $v->alamat;
                 $customer->email        = $v->email;
@@ -1261,18 +1361,17 @@ class m_desktop_unit extends CI_Model
                 $customer->npwp_address = $v->npwp_alamat;
                 $customer->description  = $v->catatan;
                 $customer->source_id    = $v->cust_id;
-                $this->db->insert("customer",$customer);
-
+                $this->db->insert("customer", $customer);
             }
         }
-        return $this->db->from('customer')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('customer')->count_all_results() - $jumlah_awal;
     }
-    public function get_unit($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_unit($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('unit')->count_all_results();
 
         $unit_tmp = $this->db
-                    ->select("
+            ->select("
                             m_custwtp.cust_id,
                             blok.id as blok_id,
                             CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok))
@@ -1286,23 +1385,29 @@ class m_desktop_unit extends CI_Model
                             m_custwtp.tanggal_bangun,
                             jenis_golongan.id as golongan_id
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("blok",
-                            "blok.code = CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok)) WHEN '' THEN 'Ciputra' ELSE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok)) END
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "blok",
+                "blok.code = CASE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok)) WHEN '' THEN 'Ciputra' ELSE SUBSTRING(m_custwtp.kode_blok,0,CHARINDEX('/',  m_custwtp.kode_blok)) END
                             AND blok.source_table = '$source'
-                            AND blok.source_id = m_custwtp.kawasan_id")
-                    ->join("customer",
-                            "customer.source_table = '$source'
-                            AND customer.source_id = m_custwtp.cust_id")
-                    ->join("jenis_golongan",
-                            "jenis_golongan.source_table = '$source'
-                            AND jenis_golongan.source_id = m_custwtp.gol_id")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->order_by("cust_id")
-                    ->distinct()
-                    ->get()->result();
-        
-        
+                            AND blok.source_id = m_custwtp.kawasan_id"
+            )
+            ->join(
+                "customer",
+                "customer.source_table = '$source'
+                            AND customer.source_id = m_custwtp.cust_id"
+            )
+            ->join(
+                "jenis_golongan",
+                "jenis_golongan.source_table = '$source'
+                            AND jenis_golongan.source_id = m_custwtp.gol_id"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->order_by("cust_id")
+            ->distinct()
+            ->get()->result();
+
+
         $unit = (object)[];
         $unit->active           = 1;
         $unit->delete           = 0;
@@ -1313,12 +1418,12 @@ class m_desktop_unit extends CI_Model
 
         foreach ($unit_tmp as $v) {
             $double = $this->db->select("id")
-            ->from("unit")
-            ->where("project_id",$project_id)
-            ->where("source_table",$unit->source_table)
-            ->where("source_id",$v->cust_id)                                
-            ->get()->num_rows();
-            if($double == 0) {
+                ->from("unit")
+                ->where("project_id", $project_id)
+                ->where("source_table", $unit->source_table)
+                ->where("source_id", $v->cust_id)
+                ->get()->num_rows();
+            if ($double == 0) {
                 $unit->blok_id              = $v->blok_id;
                 $unit->no_unit              = $v->no_unit;
                 $unit->pemilik_customer_id  = $v->customer_id;
@@ -1329,147 +1434,154 @@ class m_desktop_unit extends CI_Model
                 $unit->tgl_bangun           = $v->tanggal_bangun;
                 $unit->gol_id               = $v->golongan_id;
                 $unit->source_id            = $v->cust_id;
-                $this->db->insert("unit",$unit);
-
+                $this->db->insert("unit", $unit);
             }
         }
         $va = $this->db
-                    ->select("
+            ->select("
                         unit.id as unit_id,
                         SUBSTRING(CONVERT(varchar(6), YEAR(unit.tgl_st)),3,2) as tahun")
-                    ->from("unit")             
-                    ->where("project_id",$project_id)
-                    ->where("virtual_account is null")
-                    ->order_by("unit.id,tahun")
-                    ->get()->result();
+            ->from("unit")
+            ->where("project_id", $project_id)
+            ->where("virtual_account is null")
+            ->order_by("unit.id,tahun")
+            ->get()->result();
         $j = 1;
         $va[0]->no = '000001';
-        for ($i=1; $i < count($va); $i++) { 
-            if($va[$i]->tahun == $va[$i-1]->tahun)    {
+        for ($i = 1; $i < count($va); $i++) {
+            if ($va[$i]->tahun == $va[$i - 1]->tahun) {
                 $j++;
-                $va[$i]->no = str_pad($j,6,"0",STR_PAD_LEFT);
-            }else{
+                $va[$i]->no = str_pad($j, 6, "0", STR_PAD_LEFT);
+            } else {
                 $j = 1;
-                $va[$i]->no = str_pad($j,6,"0",STR_PAD_LEFT);
+                $va[$i]->no = str_pad($j, 6, "0", STR_PAD_LEFT);
             }
         }
         $tmp = [];
         foreach ($va as $k => $v) {
-            $tmp = $v->tahun.$v->no;
-            
+            $tmp = $v->tahun . $v->no;
+
             $this->db->set('virtual_account', $tmp, FALSE);
             $this->db->where('id', $v->unit_id);
             $this->db->update('unit');
         }
-        return $this->db->from('unit')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('unit')->count_all_results() - $jumlah_awal;
     }
-    public function get_unit_lingkungan($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_unit_lingkungan($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('unit_lingkungan')->count_all_results();
 
 
         $unit_lingkungan_tmp = $this->db
-                    ->select("
+            ->select("
                             cust_id,
                             tanggal_link,
                             sub_golongan.id as sub_gol_id,
                             unit.id as unit_id
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("unit",
-                            "unit.source_table = '$source'
-                            AND unit.source_id = m_custwtp.cust_id")
-                    ->join("range_lingkungan",
-                            "range_lingkungan.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "unit",
+                "unit.source_table = '$source'
+                            AND unit.source_id = m_custwtp.cust_id"
+            )
+            ->join(
+                "range_lingkungan",
+                "range_lingkungan.source_table = '$source'
                             AND range_lingkungan.source_id = m_custwtp.rangebankav_id
                             AND range_lingkungan.keamanan = m_custwtp.nilai_aman
-                            AND range_lingkungan.kebersihan = m_custwtp.nilai_sampah")
-                    ->join("sub_golongan",
-                            "sub_golongan.source_table = '$source'
+                            AND range_lingkungan.kebersihan = m_custwtp.nilai_sampah"
+            )
+            ->join(
+                "sub_golongan",
+                "sub_golongan.source_table = '$source'
                             AND sub_golongan.source_id = m_custwtp.subgol_id
                             AND sub_golongan.range_flag = 1
-                            AND sub_golongan.range_id = range_lingkungan.id")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->order_by("cust_id")
-                    ->distinct()
-                    ->get()->result();
-        
-        
+                            AND sub_golongan.range_id = range_lingkungan.id"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->order_by("cust_id")
+            ->distinct()
+            ->get()->result();
+
+
         $unit_lingkungan = (object)[];
         $unit_lingkungan->aktif            = 1;
 
         foreach ($unit_lingkungan_tmp as $v) {
             $double = $this->db->select("id")
-            ->from("unit_lingkungan")
-            ->where("unit_id",$v->unit_id)
-            ->where("sub_gol_id",$v->sub_gol_id)
-            ->get()->num_rows();
+                ->from("unit_lingkungan")
+                ->where("unit_id", $v->unit_id)
+                ->where("sub_gol_id", $v->sub_gol_id)
+                ->get()->num_rows();
 
-            if($double == 0) {
+            if ($double == 0) {
                 $unit_lingkungan->unit_id               = $v->unit_id;
                 $unit_lingkungan->tgl_aktif             = $v->tanggal_link;
                 $unit_lingkungan->sub_gol_id            = $v->sub_gol_id;
                 // $unit_lingkungan->tgl_mandiri           = $v->tgl_mandiri;
-                
-                $this->db->insert("unit_lingkungan",$unit_lingkungan);
 
+                $this->db->insert("unit_lingkungan", $unit_lingkungan);
             }
         }
-        return $this->db->from('unit_lingkungan')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('unit_lingkungan')->count_all_results() - $jumlah_awal;
     }
-    public function get_unit_air($project_id,$source,$formula_air,$formula_bangunan,$formula_kavling){
+    public function get_unit_air($project_id, $source, $formula_air, $formula_bangunan, $formula_kavling)
+    {
         $jumlah_awal = $this->db->from('unit_air')->count_all_results();
 
 
         $unit_air_tmp = $this->db
-                    ->select("
+            ->select("
                             cust_id,
                             tanggal_pasang,
                             sub_golongan.id as sub_gol_id,
                             unit.id as unit_id,
                             m_custwtp.nomor_meter
                         ")
-                    ->from("ems_temp.$source.m_custwtp")
-                    ->join("unit",
-                            "unit.source_table = '$source'
-                            AND unit.source_id = m_custwtp.cust_id")
-                    ->join("range_air",
-                            "range_air.source_table = '$source'
-                            AND range_air.source_id = m_custwtp.rangeair_id")
-                    ->join("sub_golongan",
-                            "sub_golongan.source_table = '$source'
+            ->from("ems_temp.$source.m_custwtp")
+            ->join(
+                "unit",
+                "unit.source_table = '$source'
+                            AND unit.source_id = m_custwtp.cust_id"
+            )
+            ->join(
+                "range_air",
+                "range_air.source_table = '$source'
+                            AND range_air.source_id = m_custwtp.rangeair_id"
+            )
+            ->join(
+                "sub_golongan",
+                "sub_golongan.source_table = '$source'
                             AND sub_golongan.source_id = m_custwtp.subgol_id
                             AND sub_golongan.range_flag = 2
-                            AND sub_golongan.range_id = range_air.id")
-                    ->where_not_in("m_custwtp.flag_id",[0,9])
-                    ->order_by("cust_id")
-                    ->distinct()
-                    ->get()->result();
-        
-        
+                            AND sub_golongan.range_id = range_air.id"
+            )
+            ->where_not_in("m_custwtp.flag_id", [0, 9])
+            ->order_by("cust_id")
+            ->distinct()
+            ->get()->result();
+
+
         $unit_air = (object)[];
         $unit_air->aktif            = 1;
 
         foreach ($unit_air_tmp as $v) {
             $double = $this->db->select("id")
-            ->from("unit_air")
-            ->where("unit_id",$v->unit_id)
-            ->where("sub_gol_id",$v->sub_gol_id)
-            ->get()->num_rows();
+                ->from("unit_air")
+                ->where("unit_id", $v->unit_id)
+                ->where("sub_gol_id", $v->sub_gol_id)
+                ->get()->num_rows();
 
-            if($double == 0) {
+            if ($double == 0) {
                 $unit_air->unit_id               = $v->unit_id;
                 $unit_air->tgl_aktif             = $v->tanggal_pasang;
                 $unit_air->sub_gol_id            = $v->sub_gol_id;
                 $unit_air->no_seri_meter           = $v->nomor_meter;
-                
-                $this->db->insert("unit_air",$unit_air);
 
+                $this->db->insert("unit_air", $unit_air);
             }
-            
         }
-        return $this->db->from('unit_air')->count_all_results()-$jumlah_awal;
-
+        return $this->db->from('unit_air')->count_all_results() - $jumlah_awal;
     }
 }

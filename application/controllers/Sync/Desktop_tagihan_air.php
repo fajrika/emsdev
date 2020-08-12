@@ -52,50 +52,35 @@ class Desktop_Tagihan_Air extends Element
     }
     public function telahDiMigrasi()
     {
-
-        $this->m_desktop_transaksi_air->telahDiMigrasi(
-            $this->input->post("project_id"),
-            $this->input->post("source"),
-            $this->input->post("denda_jenis_service"),
-            $this->input->post("denda_nilai_service"),
-            $this->input->post("jarak_periode")
-        );
-        // $this->m_desktop_transaksi_air->save2($this->input->get("project_id"),$this->input->get("source"),1);
-        // print_r($this->input->get('data_id'));        
+        header('Content-Type: application/json');
+        $result = $this->m_desktop_transaksi_air->telahDiMigrasi($this->input->post("source"));
+        echo (json_encode($result));
     }
     public function belumDiMigrasi()
     {
-        $this->m_desktop_transaksi_air->belumDiMigrasi(
-            $this->input->post("project_id"),
-            $this->input->post("source"),
-            $this->input->post("denda_jenis_service"),
-            $this->input->post("denda_nilai_service"),
-            $this->input->post("jarak_periode")
-        );
-        // $this->m_desktop_transaksi_air->save2($this->input->get("project_id"),$this->input->get("source"),1);
-        // print_r($this->input->get('data_id'));        
+        header('Content-Type: application/json');
+        $result = $this->m_desktop_transaksi_air->belumDiMigrasi($this->input->post("source"));
+        echo (json_encode($result));
     }
     public function save()
     {
-        $this->m_desktop_transaksi_air->save(
+        header('Content-Type: application/json');
+        $result = $this->m_desktop_transaksi_air->save(
             $this->input->post("project_id"),
             $this->input->post("source"),
             $this->input->post("denda_jenis_service"),
             $this->input->post("denda_nilai_service"),
-            $this->input->post("data")
+            json_decode($this->input->post("data"))
         );
-        // $this->m_desktop_transaksi_air->save2($this->input->get("project_id"),$this->input->get("source"),1);
-        // print_r($this->input->get('data_id'));        
-    }
-    public function progress()
-    {
-        $this->m_desktop_transaksi_air->progress($this->input->post("project_id"));
+        echo (json_encode($result));
     }
     public function getDataBeforeMigrate()
     {
-        $this->m_desktop_transaksi_air->getDataBeforeMigrate(
+        header('Content-Type: application/json');
+        $result = $this->m_desktop_transaksi_air->getDataBeforeMigrate(
             $this->input->post("source"),
             $this->input->post("jarak_periode")
         );
+        echo (json_encode($result));
     }
 }
