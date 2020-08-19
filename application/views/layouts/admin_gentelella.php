@@ -34,7 +34,7 @@
     <!-- <link href="<?= base_url("css/custom.min.css") ?>" rel="stylesheet"> -->
     <link href="<?= base_url("assets/gentelella/build/css/custom.min.css") ?>" rel="stylesheet">
     <link href="<?= base_url("assets/gentelella/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css") ?>" rel="stylesheet">
-    
+
     <style type="text/css">
         @keyframes lds-double-ring {
             0% {
@@ -309,7 +309,7 @@
                                                         echo ("/$level4[url]");
                                                         echo ("'>");
                                                         echo ($level4['name1']);
-                                                        echo ("</>");
+                                                        echo ("</a>");
                                                         echo ("</li>");
                                                     }
                                                 }

@@ -11,10 +11,10 @@ class m_desktop_transaksi_air extends CI_Model
             ->from("ems_temp.$source.td_air")
             ->join(
                 "t_tagihan_air_detail",
-                "t_tagihan_air_detail.source_table = 'ems_cgc_sh1_20200804'
+                "t_tagihan_air_detail.source_table = '$source'
                     AND t_tagihan_air_detail.source_id = td_air.td_air_id"
             )
-            ->where("td_air.nilai_pakai != 0")
+            ->where("td_air.nilai_total != 0")
             ->or_where("(td_air.meter_akhir - td_air.meter_awal) > 0")
             ->get()->row();
         return $data->c ?? '0';
@@ -27,13 +27,12 @@ class m_desktop_transaksi_air extends CI_Model
             ->from("ems_temp.$source.td_air")
             ->join(
                 "t_tagihan_air_detail",
-                "t_tagihan_air_detail.source_table = 'ems_cgc_sh1_20200804'
+                "t_tagihan_air_detail.source_table = '$source'
                     AND t_tagihan_air_detail.source_id = td_air.td_air_id",
                 "LEFT"
             )
             ->where("t_tagihan_air_detail.id is null")
-            ->where("td_air.nilai_pakai != 0")
-            ->or_where("(td_air.meter_akhir - td_air.meter_awal) > 0")
+            ->where("(td_air.nilai_total != 0 OR (td_air.meter_akhir - td_air.meter_awal) > 0)")
             ->get()->row();
         return $data->c ?? '0';
     }
@@ -99,14 +98,15 @@ class m_desktop_transaksi_air extends CI_Model
             ->join(
                 "t_tagihan_air_detail",
                 "t_tagihan_air_detail.source_table = '$source'
-                 AND t_tagihan_air_detail.id = td_air.td_air_id",
+                 AND t_tagihan_air_detail.source_id = td_air.td_air_id",
                 "LEFT"
             )
             ->where("t_tagihan_air_detail.t_tagihan_air_id is null")
-            ->where("td_air.nilai_pakai != 0 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0")
+            ->where("(td_air.nilai_total != 0 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0) OR")
             ->order_by("tagihan_id")
             ->limit("1000")
             ->get()->result();
+        // var_dump($this->db->last_query());
         return $data;
         // echo (json_encode($data));
     }
@@ -192,6 +192,6 @@ class m_desktop_transaksi_air extends CI_Model
             }
         }
         $this->db->trans_commit();
-        return $i > 0 ? $i : '-1';
+        return $i > 0 ? $i : -1;
     }
 }

@@ -32,7 +32,7 @@ class Desktop_Tagihan_Air extends Element
         $project = $this->m_core->project();
 
         $this->theme("layouts/admin_gentelella");
-        $this->title_submenu("Builder > Prototipe V 1.0");
+        $this->title_submenu("Builder > Migrate Tagihan Air");
         $this->css("sync/desktop_tagihan_air/indexCSS");
         $this->js("sync/desktop_tagihan_air/indexJS");
 

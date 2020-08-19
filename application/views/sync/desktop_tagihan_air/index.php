@@ -3,6 +3,10 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title text-justify">Process Migration</h5>
+                <div style="display: inline;">
+                    <p>Waktu Mulai : <span id="waktu_mulai_migration" style="float: right;"> </span></p>
+                    <p>Timer : <span id="timer" style="float: right;"></span></p>
+                </div>
             </div>
             <div class="modal-body">
                 <div class="progress">
@@ -46,10 +50,10 @@
                     </div>
                 </div>
             </div>
-            <div class="modal-footer col-md-12" style="justify-content: flex-start">
+            <div id="modal-footer" class="modal-footer col-md-12" style="justify-content: flex-start">
                 <!-- <h6 class="col-lg-8 col-md-8 col-sm-8 justify-content-center align-self-center" style="color: red;">Error, koneksi Terputus silahkan di reload</h6>
                 <button class="btn btn-success">Reload</button> -->
-                <button type="button" class="btn btn-secondary offset-md-10" data-dismiss="modal" disabled="">Close</button>
+                <button id="modal-btn-close" type="button" class="btn btn-secondary offset-md-10" data-dismiss="modal" disabled="">Close</button>
             </div>
         </div>
     </div>

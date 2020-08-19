@@ -34,13 +34,14 @@ class P_pembayaran extends CI_Controller
 		$this->load->view('core/body_footer');
 		$this->load->view('core/footer');
 	}
-	function add_unit_virtual($unit_virtual_id = 0){
+	function add_unit_virtual($unit_virtual_id = 0)
+	{
 		$this->load->model('Setting/m_parameter_project');
 		$project = $this->m_core->project();
 		$max_backdate_pembayaran = $this->m_parameter_project->get($project->id, "max_backdate_pembayaran");
 		$backdate = date('Y-m-d', strtotime(date("Y-m-d") . "-" . ($max_backdate_pembayaran) . " days"));
 		$cara_pembayaran = $this->db
-								->select("
+			->select("
 										case 
 											when isnull(bank_id,0) = 0 THEN
 												cara_pembayaran.id
@@ -50,14 +51,14 @@ class P_pembayaran extends CI_Controller
 										cara_pembayaran_jenis.code,
 										cara_pembayaran_jenis.name,
 										sum(biaya_admin) as biaya_admin")
-								->from("cara_pembayaran")
-								->join(
-									'cara_pembayaran_jenis',
-									"cara_pembayaran_jenis.id = cara_pembayaran.jenis_cara_pembayaran_id"
-								)
-								->where("delete", 0)
-								->where("project_id", $project->id)
-								->group_by("case 
+			->from("cara_pembayaran")
+			->join(
+				'cara_pembayaran_jenis',
+				"cara_pembayaran_jenis.id = cara_pembayaran.jenis_cara_pembayaran_id"
+			)
+			->where("delete", 0)
+			->where("project_id", $project->id)
+			->group_by("case 
 										when isnull(bank_id,0) = 0 THEN
 											cara_pembayaran.id
 										else jenis_cara_pembayaran_id 
@@ -65,9 +66,9 @@ class P_pembayaran extends CI_Controller
 										jenis_cara_pembayaran_id,
 										cara_pembayaran_jenis.code,
 										cara_pembayaran_jenis.name")
-								->distinct()
+			->distinct()
 
-								->get()->result();
+			->get()->result();
 		$this->load->view('core/header');
 		$this->load->model('alert');
 		$this->alert->css();
@@ -89,15 +90,17 @@ class P_pembayaran extends CI_Controller
 		$unit = (object) [];
 		$unit_virtual = (object)[];
 
-		if($unit_virtual_id != 0){
-			$unit_virtual = 
+		if ($unit_virtual_id != 0) {
+			$unit_virtual =
 				$this->db
-					->select("unit_virtual.id, concat(customer.name,'-',unit_virtual.unit) as text")
-					->from("unit_virtual")
-					->join("customer",
-							"customer.id = unit_virtual.customer_id")
-					->where("unit_virtual.id",$unit_virtual_id)
-					->get()->row();
+				->select("unit_virtual.id, concat(customer.name,'-',unit_virtual.unit) as text")
+				->from("unit_virtual")
+				->join(
+					"customer",
+					"customer.id = unit_virtual.customer_id"
+				)
+				->where("unit_virtual.id", $unit_virtual_id)
+				->get()->row();
 		}
 
 		$this->load->view('core/side_bar', ['menu' => $GLOBALS['menu']]);
@@ -114,47 +117,55 @@ class P_pembayaran extends CI_Controller
 		$this->load->view('core/body_footer');
 		$this->load->view('core/footer');
 	}
-	public function ajax_get_cara_pembayaran_jenis(){
+	public function ajax_get_cara_pembayaran_jenis()
+	{
 		$data = $this->input->get('date');
-		$datas = 
+		$datas =
 			$this->db
-				->distinct()
-				->select("
+			->distinct()
+			->select("
 							cara_pembayaran_jenis.id,
 							cara_pembayaran_jenis.bank,
 							CONCAT(cara_pembayaran_jenis.code, ' - ',cara_pembayaran_jenis.name) as text
 						")
-				->from("cara_pembayaran")
-				->join("cara_pembayaran_jenis",
-						"cara_pembayaran_jenis.id = cara_pembayaran.jenis_cara_pembayaran_id")
-				->where("cara_pembayaran.project_id", $GLOBALS['project']->id)
-				->where("CONCAT(cara_pembayaran_jenis.code, ' - ',cara_pembayaran_jenis.name) like '%$data%'")
-				->limit(10)
-				->get()->result();
-				
+			->from("cara_pembayaran")
+			->join(
+				"cara_pembayaran_jenis",
+				"cara_pembayaran_jenis.id = cara_pembayaran.jenis_cara_pembayaran_id"
+			)
+			->where("cara_pembayaran.project_id", $GLOBALS['project']->id)
+			->where("CONCAT(cara_pembayaran_jenis.code, ' - ',cara_pembayaran_jenis.name) like '%$data%'")
+			->limit(10)
+			->get()->result();
+
 		echo json_encode($datas);
 	}
-	public function ajax_get_cara_pembayaran_bank($id){
+	public function ajax_get_cara_pembayaran_bank($id)
+	{
 		$data = $this->input->get('data');
 		$datas =
 			$this->db
-				->distinct()
-				->select("
+			->distinct()
+			->select("
 							cara_pembayaran.id,
 							concat(bank.name, ' (', cara_pembayaran.name, ')') as text
 						")
-				->from("cara_pembayaran")
-				->join("cara_pembayaran_jenis",
-						"cara_pembayaran_jenis.id = cara_pembayaran.jenis_cara_pembayaran_id")
-				->join("bank",
-						"bank.id = cara_pembayaran.bank_id",
-						"LEFT")
-				->where("cara_pembayaran.project_id", $GLOBALS['project']->id)
-				->where('cara_pembayaran_jenis.id',$id)
-				->where("concat(bank.name, ' (', cara_pembayaran.name, ')') like '%$data%'")
-				->limit(10)
-				->get()->result();
-				
+			->from("cara_pembayaran")
+			->join(
+				"cara_pembayaran_jenis",
+				"cara_pembayaran_jenis.id = cara_pembayaran.jenis_cara_pembayaran_id"
+			)
+			->join(
+				"bank",
+				"bank.id = cara_pembayaran.bank_id",
+				"LEFT"
+			)
+			->where("cara_pembayaran.project_id", $GLOBALS['project']->id)
+			->where('cara_pembayaran_jenis.id', $id)
+			->where("concat(bank.name, ' (', cara_pembayaran.name, ')') like '%$data%'")
+			->limit(10)
+			->get()->result();
+
 		echo json_encode($datas);
 		die;
 	}
@@ -527,6 +538,26 @@ class P_pembayaran extends CI_Controller
 		$diskon = $this->input->post("diskon");
 		$mulai_diskon = $this->input->post("mulai_diskon");
 
+		// $diskon = $diskon 
+		// var_dump($diskon);
+		// $ppn_flag = $this->db
+		// 	->select("ppn_flag")
+		// 	->from("service")
+		// 	->where("project_id", $project->id)
+		// 	->where("service_jenis_id", 1)
+		// 	->get()->row();
+
+		// $ppn_flag = $ppn_flag ? $ppn_flag->ppn_flag : 0;
+		// // var_dump($ppn_flag);
+
+		// if ($ppn_flag == 1)
+		// 	$diskon = $diskon / 1.1;
+
+		// var_dump($diskon);
+
+
+		// die;
+
 		$user_id = $this->db->select("id")
 			->from("user")
 			->where("username", $this->session->userdata["username"])
@@ -539,14 +570,16 @@ class P_pembayaran extends CI_Controller
 	public function ajax_get_unit_virtual()
 	{
 		$data = $this->input->get("data");
-		$units = 
+		$units =
 			$this->db
-				->select("unit_virtual.id, concat(customer.name,'-',unit_virtual.unit) as text")
-				->from("unit_virtual")
-				->join("customer",
-						"customer.id = unit_virtual.customer_id")
-				->where("concat(customer.name,'-',unit_virtual.unit) like '%$data%'")
-				->get()->result();
+			->select("unit_virtual.id, concat(customer.name,'-',unit_virtual.unit) as text")
+			->from("unit_virtual")
+			->join(
+				"customer",
+				"customer.id = unit_virtual.customer_id"
+			)
+			->where("concat(customer.name,'-',unit_virtual.unit) like '%$data%'")
+			->get()->result();
 		echo json_encode($units);
 
 		// echo (json_encode($this->m_pembayaran->ajax_get_unit_virtual($data)));
