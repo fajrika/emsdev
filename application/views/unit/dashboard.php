@@ -423,8 +423,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <?php else: ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
-                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Cetak Kwitansi (Beta)</button>
-                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Cetak Kwitansi</button>
+                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi</button>
+                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi</button>
                                 </div>
                             </div>
                         </div>
@@ -570,6 +570,38 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
 
                                         <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
                                             <button id="cetak-kwitansi-multiple" class="btn btn-primary" disabled>Cetak Multiple</button>
+                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="x_content">
+                            <div class="modal fade" id="modal_cetak_kwitansi_new" data-backdrop="static" data-keyboard="false" style="width:100vw">
+                                <div class="modal-dialog" style="width: fit-content">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" style="text-align:center;">Cetak Kwitansi<span class="grt"></span></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table id="table-kwitansi" class="table table-striped jambo_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Kode Service</th>
+                                                        <th>Nama Service</th>
+                                                        <th>Tgl Bayar</th>
+                                                        <th>Cetak</th>
+                                                        <th class='input_kwitansi'>No. Kwitansi</th>
+                                                        <th class='input_kwitansi'>Save</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody-kwitansi">
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
                                             <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
                                         </div>
                                     </div>
@@ -1005,8 +1037,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 })
                             }
 
-                            $(document).ready(function() {
-
+                            $(document).ready(function(){
                                 $("body").on("click", ".btn-void_pembayaran", function() {
                                     $("#modal-void-description").modal("show");
                                     $("#description").attr('pembayaran_id', $(this).val());
