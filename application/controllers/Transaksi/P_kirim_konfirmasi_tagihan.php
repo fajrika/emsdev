@@ -697,8 +697,8 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         require_once 'vendor/MPDF/vendor/autoload.php';
         $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4']);
         // $mpdf = new \Mpdf\Mpdf(['mode'=>'utf-8', 'format'=>'A4', 'orientation' => 'L']);
-        ini_set('max_execution_time', '300'); 
-        ini_set("pcre.backtrack_limit", -1);
+        ini_set('max_execution_time', '300');
+        ini_set("pcre.backtrack_limit", "9000000");
         ob_start();
         ?>
         <!DOCTYPE html>
