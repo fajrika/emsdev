@@ -419,8 +419,12 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 <div class="x_content">
                                     <button id="redirect-delete-tagihan" onclick="" class="btn btn-primary col-md-2" style="margin-left:4.1%">Delete Tagihan</button>
                                     <?php if ($project->id == 13) : ?>
-                                    <button id="redirect-ubah-tagihan" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Ubah Tagihan</button>
+                                        <button id="redirect-ubah-tagihan" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Ubah Tagihan</button>
+                                    <?php else: ?>
+                                        <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
+                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Cetak Kwitansi (Beta)</button>
+                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Cetak Kwitansi</button>
                                 </div>
                             </div>
                         </div>
@@ -595,6 +599,38 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 </thead>
                                                 <tbody id="tbody-void_pembayaran">
                                                 </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="x_content">
+                            <div class="modal fade" id="modal_history_cetak_kwitansi" data-backdrop="static" data-keyboard="false" style="width:100vw">
+                                <div class="modal-dialog" style="width: fit-content">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" style="text-align:center;">History Cetak Kwitansi<span class="grt"></span></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table id="table-history-kwitansi" class="table table-striped jambo_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Kode Service</th>
+                                                        <th>Nama Service</th>
+                                                        <th>Tgl Bayar</th>
+                                                        <th>Cetak</th>
+                                                        <th class='input_kwitansi'>No. Kwitansi</th>
+                                                        <th class='input_kwitansi'>Save</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody-history-kwitansi"></tbody>
                                             </table>
                                         </div>
 
