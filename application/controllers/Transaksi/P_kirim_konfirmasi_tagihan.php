@@ -694,12 +694,6 @@ class P_kirim_konfirmasi_tagihan  extends CI_Controller
         echo json_encode($json_data);
     }
 
-    /**
-    | -----------------------------------------------------------------------
-    | Process print pdf by mpdf
-    | Jakarta, 2020-07-08
-    |
-     */
     public function print_pdf($type = NULL, $params = NULL)
     {
         require_once 'vendor/MPDF/vendor/autoload.php';
