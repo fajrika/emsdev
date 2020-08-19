@@ -579,25 +579,24 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
 
                         <div class="x_content">
                             <div class="modal fade" id="modal_cetak_kwitansi_new" data-backdrop="static" data-keyboard="false" style="width:100vw">
-                                <div class="modal-dialog" style="width: fit-content">
+                                <div class="modal-dialog" style="width: 70vw;">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             <h4 class="modal-title" style="text-align:center;">Cetak Kwitansi<span class="grt"></span></h4>
                                         </div>
                                         <div class="modal-body">
-                                            <table id="table-kwitansi" class="table table-striped jambo_table">
+                                            <table id="table-new-kwitansi" class="table table-striped jambo_table">
                                                 <thead>
                                                     <tr>
                                                         <th>Kode Service</th>
                                                         <th>Nama Service</th>
                                                         <th>Tgl Bayar</th>
-                                                        <th>Cetak</th>
-                                                        <th class='input_kwitansi'>No. Kwitansi</th>
-                                                        <th class='input_kwitansi'>Save</th>
+                                                        <th>Total Bayar</th>
+                                                        <th>No. Kwitansi</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="tbody-kwitansi">
+                                                <tbody id="tbody-new-kwitansi">
                                                 </tbody>
                                             </table>
                                         </div>
@@ -1265,6 +1264,18 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                     str += "</tr>"
                                                     $("#tbody-kwitansi").append(str);
                                                 });
+
+                                                $.each(data.kwitansi_new, function(key, value) {
+                                                    var variable  = "<tr>";
+                                                        variable += "   <td>"+value.code_service+"</td>";
+                                                        variable += "   <td>"+value.name_service+"</td>";
+                                                        variable += "   <td>"+value.tgl_bayar+"</td>";
+                                                        variable += "   <td>"+formatC(value.bayar)+"</td>";
+                                                        variable += "   <td>"+value.no_kwitansi+"</td>";
+                                                        variable += "</tr>"
+                                                    $("#tbody-new-kwitansi").append(variable);
+                                                });
+
                                                 $.each(data.kwitansi_deposit, function(key, value) {
                                                     var str = "<tr>";
                                                     str += "<td></td>";

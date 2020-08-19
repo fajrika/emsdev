@@ -339,15 +339,15 @@ class p_unit extends CI_Controller
             ->get()->result();
 
 
-        $query = $this->db
+            $query = $this->db
             ->query("SELECT
                     t_pembayaran.id AS pembayaran_id,
-                    t_pembayaran.tgl_bayar,
+                    FORMAT(t_pembayaran.tgl_bayar, 'dd-MM-yyyy hh:mm:ss') AS tgl_bayar,
                     service_jenis.id AS service_jenis_id,
                     service_jenis.code_default AS code_service,
                     service_jenis.name_default AS name_service,
                     SUM(ISNULL(t_pembayaran_detail.bayar, t_pembayaran_detail.bayar_deposit)) AS bayar,
-                    t_pembayaran.no_kwitansi 
+                    ISNULL(t_pembayaran.no_kwitansi, '') AS no_kwitansi
                 FROM t_pembayaran
                 INNER JOIN t_pembayaran_detail 
                     ON t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id
@@ -486,14 +486,15 @@ class p_unit extends CI_Controller
 		$unit->jumlah_nilai_pemutihan_denda	= $jumlah_nilai_pemutihan_denda;
 		$unit->jumlah_total 				= $jumlah_total;
 
-		$unit->tagihan_air = $tagihan_air;
-		$unit->tagihan_lingkungan = $tagihan_lingkungan;
-		$unit->kwitansi 				= $kwitansi_per_service;
-		$unit->kwitansi_deposit 		= $kwitansi_deposit;
+		$unit->tagihan_air                  = $tagihan_air;
+		$unit->tagihan_lingkungan           = $tagihan_lingkungan;
+		$unit->kwitansi 				    = $kwitansi_per_service;
+        $unit->kwitansi_new                 = $kwitansi_all_service;
+		$unit->kwitansi_deposit 		    = $kwitansi_deposit;
 		
-		$unit->pemilik					= $pemilik;
-		$unit->penghuni					= $penghuni;
-		$unit->void_pembayaran 			= $void_pembayaran;
+		$unit->pemilik					    = $pemilik;
+		$unit->penghuni					    = $penghuni;
+		$unit->void_pembayaran 			    = $void_pembayaran;
 		echo json_encode($unit);
 		// echo json_encode($tagihan_air);
 		// echo("<pre>");
