@@ -2,8 +2,8 @@
   "canvas": {
     "width": 4000,
     "height": 4000,
-    "scrollTop": 1646.4000244140625,
-    "scrollLeft": 721.2000122070312,
+    "scrollTop": 467,
+    "scrollLeft": 778,
     "show": {
       "tableComment": true,
       "columnComment": true,
@@ -64,29 +64,6 @@
             "id": "a16812b2-13fa-e90e-8a77-d6f3370cf11d"
           },
           {
-            "name": "uuid",
-            "comment": "no_registrasi",
-            "dataType": "uniqueidentifier",
-            "default": "newid()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 76,
-              "widthDataType": 90,
-              "widthDefault": 60
-            },
-            "id": "d0d26c8f-9c84-c51e-5719-61268ffc7d88"
-          },
-          {
             "name": "periode_tagihan",
             "comment": "",
             "dataType": "date",
@@ -141,7 +118,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -156,84 +133,38 @@
             "id": "59c97c78-5ea9-9363-8340-68eafb8b55c2"
           },
           {
-            "name": "air",
-            "comment": "Cummulative Tunggakan",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 146,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "fbb93089-62c5-d8ea-0e6f-4294d6c65b05"
-          },
-          {
-            "name": "lingkungan",
-            "comment": "Cummulative Tunggakan",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 65,
-              "widthComment": 146,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "598fb86f-539b-2775-1c48-be766ce89615"
-          },
-          {
-            "name": "tvi",
+            "name": "unit_virtual_id",
             "comment": "",
-            "dataType": "int",
-            "default": "0",
+            "dataType": "bigint",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 60,
+              "widthName": 82,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "3cfbb1e2-a332-65c8-f59d-cc0b8b01722f"
+            "id": "850ee274-262f-1c6d-f73d-3e9356c8e32b"
           },
           {
             "name": "total",
             "comment": "",
             "dataType": "int",
-            "default": "0",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -248,10 +179,56 @@
             "id": "de4bc123-96fc-a8bc-1aed-e20ef23e8e56"
           },
           {
+            "name": "lingkungan",
+            "comment": "Cummulative Tunggakan",
+            "dataType": "int",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 65,
+              "widthComment": 146,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "598fb86f-539b-2775-1c48-be766ce89615"
+          },
+          {
+            "name": "air",
+            "comment": "Cummulative Tunggakan",
+            "dataType": "int",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 146,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "fbb93089-62c5-d8ea-0e6f-4294d6c65b05"
+          },
+          {
             "name": "status_tagihan",
-            "comment": "0,1,2,3/4",
+            "comment": "",
             "dataType": "tinyint",
-            "default": "0",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
@@ -273,11 +250,11 @@
         ],
         "ui": {
           "active": false,
-          "left": 832.4999701301274,
-          "top": 701.405555013332,
-          "zIndex": 3967,
+          "left": 52,
+          "top": 776.8000045490274,
+          "zIndex": 1994,
           "widthName": 60,
-          "widthComment": 94
+          "widthComment": 95
         },
         "id": "36a5bc45-f82a-a97a-2d0e-7ed317f12fe8"
       },
@@ -307,29 +284,6 @@
               "widthDefault": 60
             },
             "id": "9d44a0fe-3d8f-443a-0abd-c0bb50574af1"
-          },
-          {
-            "name": "uuid",
-            "comment": "no_registrasi",
-            "dataType": "uniqueidentifier",
-            "default": "newid()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 76,
-              "widthDataType": 90,
-              "widthDefault": 60
-            },
-            "id": "43a025fc-9630-f03e-6058-a26cc6242f98"
           },
           {
             "name": "t_tagihan_id",
@@ -399,6 +353,29 @@
               "widthDefault": 60
             },
             "id": "e6bb6d8c-2fed-5bd8-5bdb-a11bf8778b46"
+          },
+          {
+            "name": "unit_virtual_id",
+            "comment": "",
+            "dataType": "bigint",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 82,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "c7911433-cf19-a900-9ad1-699d3206758b"
           },
           {
             "name": "periode_tagihan",
@@ -539,29 +516,6 @@
             "id": "71d95302-54ec-32f7-4911-9afd1ca7d902"
           },
           {
-            "name": "diskon_id",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "0c103189-a56e-4cee-742d-93b42dc2c036"
-          },
-          {
             "name": "nilai_diskon",
             "comment": "Terisi saat pembayaran",
             "dataType": "int",
@@ -585,30 +539,7 @@
             "id": "f18c5e7a-435e-1ebf-37f9-67767dc49c80"
           },
           {
-            "name": "diskon_request_id",
-            "comment": "",
-            "dataType": "bigint",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 108,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "5484ce67-6a1b-e49b-c758-e095e84a799c"
-          },
-          {
-            "name": "nilai_diskon_request",
+            "name": "diskon_id",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -623,35 +554,12 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 121,
+              "widthName": 60,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "3c250db8-28fe-91b4-edd0-aa27c8f03115"
-          },
-          {
-            "name": "pemutihan_id",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 80,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "fed2f31d-704b-be08-c805-971c14d6c551"
+            "id": "0c103189-a56e-4cee-742d-93b42dc2c036"
           },
           {
             "name": "nilai_pemutihan_pokok",
@@ -698,6 +606,29 @@
               "widthDefault": 60
             },
             "id": "2336bc22-233c-29cd-d89b-50d58cd9021c"
+          },
+          {
+            "name": "pemutihan_id",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "fed2f31d-704b-be08-c805-971c14d6c551"
           },
           {
             "name": "source_table",
@@ -794,9 +725,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1523.883367474749,
-          "top": 1019.5277775263337,
-          "zIndex": 3985,
+          "left": 766.2000403690379,
+          "top": 1222.0000065803522,
+          "zIndex": 1999,
           "widthName": 126,
           "widthComment": 60
         },
@@ -828,29 +759,6 @@
               "widthDefault": 60
             },
             "id": "9d0e76d2-f17b-5415-8a6d-b629be043d5b"
-          },
-          {
-            "name": "uuid",
-            "comment": "no_registrasi",
-            "dataType": "uniqueidentifier",
-            "default": "newid()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 76,
-              "widthDataType": 90,
-              "widthDefault": 60
-            },
-            "id": "9723e94d-a953-7b3e-1a49-4076263fdec2"
           },
           {
             "name": "t_tagihan_id",
@@ -920,6 +828,29 @@
               "widthDefault": 60
             },
             "id": "ea100cc5-8f72-cae2-837d-e57e5aeb9841"
+          },
+          {
+            "name": "unit_virtual_id",
+            "comment": "",
+            "dataType": "bigint",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 82,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "6b3ae26f-aed1-4748-2b98-e80b72418e2f"
           },
           {
             "name": "periode_tagihan",
@@ -1060,29 +991,6 @@
             "id": "bd0178e3-439d-fef1-2766-776d401a491a"
           },
           {
-            "name": "diskon_id",
-            "comment": "Terisi saat pembayaran",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 137,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "1d95c5b8-23c6-5403-15d0-b4b9ee12fe24"
-          },
-          {
             "name": "nilai_diskon",
             "comment": "Terisi saat pembayaran",
             "dataType": "int",
@@ -1106,30 +1014,7 @@
             "id": "684cf52c-4f96-0b19-377f-c99c40db5c11"
           },
           {
-            "name": "diskon_request_id",
-            "comment": "",
-            "dataType": "bigint",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 108,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "0b98cde0-c3fb-6dfb-47ba-d211d045958c"
-          },
-          {
-            "name": "nilai_diskon_request",
+            "name": "diskon_id",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -1144,39 +1029,16 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 121,
+              "widthName": 60,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "0880fccf-676b-56f5-cac8-326671481cd8"
-          },
-          {
-            "name": "pemutihan_id",
-            "comment": "",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 80,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "a1c150f9-cd39-55a0-6fe5-1f463dfcc524"
+            "id": "1d95c5b8-23c6-5403-15d0-b4b9ee12fe24"
           },
           {
             "name": "nilai_pemutihan_pokok",
-            "comment": "Terisi saat Approve pemutihan",
+            "comment": "",
             "dataType": "int",
             "default": "0",
             "option": {
@@ -1191,7 +1053,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 135,
-              "widthComment": 177,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
@@ -1199,7 +1061,7 @@
           },
           {
             "name": "nilai_pemutihan_denda",
-            "comment": "Terisi saat Approve pemutihan",
+            "comment": "",
             "dataType": "int",
             "default": "0",
             "option": {
@@ -1214,11 +1076,34 @@
               "fk": false,
               "pfk": false,
               "widthName": 136,
-              "widthComment": 177,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
             "id": "8e6ac0fc-31b0-33e7-a2d6-5590e52b4407"
+          },
+          {
+            "name": "pemutihan_id",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 80,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "a1c150f9-cd39-55a0-6fe5-1f463dfcc524"
           },
           {
             "name": "source_table",
@@ -1315,9 +1200,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 1526.4222458533907,
-          "top": 237.14445515641455,
-          "zIndex": 3983,
+          "left": 766.8000117015847,
+          "top": 236,
+          "zIndex": 2000,
           "widthName": 77,
           "widthComment": 60
         },
@@ -1374,29 +1259,6 @@
             "id": "d7f02dce-67e2-b296-7fb0-e3fed1808404"
           },
           {
-            "name": "meter_pakai",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 74,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "5011cf49-a081-7035-fdf2-3c410687ed79"
-          },
-          {
             "name": "nilai_pakai",
             "comment": "",
             "dataType": "int",
@@ -1441,6 +1303,52 @@
               "widthDefault": 60
             },
             "id": "bc46c2e9-4db2-efa9-df58-60378ea67db5"
+          },
+          {
+            "name": "nilai_admin",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 68,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "7daee1e8-8e20-023c-cf96-e00b211bc04b"
+          },
+          {
+            "name": "nilai_ppn_admin",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 97,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "c4341181-e6cf-b472-7361-d750f525e1b8"
           },
           {
             "name": "ppn_persen",
@@ -1625,13 +1533,36 @@
               "widthDefault": 60
             },
             "id": "8dfbb470-4a5b-5fb6-9f93-0a188152046c"
+          },
+          {
+            "name": "pemakaian",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 66,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "5011cf49-a081-7035-fdf2-3c410687ed79"
           }
         ],
         "ui": {
           "active": false,
-          "left": 2324.6722368252763,
-          "top": 329.29445262237857,
-          "zIndex": 3991,
+          "left": 1605,
+          "top": 48,
+          "zIndex": 1719,
           "widthName": 115,
           "widthComment": 60
         },
@@ -1778,6 +1709,52 @@
               "widthDefault": 60
             },
             "id": "e25d51ea-9307-604d-4a1e-f3a749536a3d"
+          },
+          {
+            "name": "nilai_admin",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 68,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "17450717-0d20-59ef-8a6d-0f8f7796bdb6"
+          },
+          {
+            "name": "nilai_ppn_admin",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 97,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "11b22489-63d0-e66b-0bef-8fbe7e13f01e"
           },
           {
             "name": "ppn_persen",
@@ -2035,9 +2012,9 @@
         ],
         "ui": {
           "active": false,
-          "left": 2349.155557955816,
-          "top": 1071.6833207637744,
-          "zIndex": 3993,
+          "left": 1607,
+          "top": 980,
+          "zIndex": 1810,
           "widthName": 164,
           "widthComment": 60
         },
@@ -2071,29 +2048,6 @@
             "id": "8a317ff3-b260-3d9e-c625-c9fbaceba754"
           },
           {
-            "name": "uuid",
-            "comment": "no_registrasi",
-            "dataType": "uniqueidentifier",
-            "default": "newid()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 76,
-              "widthDataType": 90,
-              "widthDefault": 60
-            },
-            "id": "9ceb4d72-148c-8a8e-2449-5b48ede278ea"
-          },
-          {
             "name": "project_id",
             "comment": "",
             "dataType": "int",
@@ -2120,12 +2074,12 @@
             "name": "unit_id",
             "comment": "",
             "dataType": "bigint",
-            "default": "",
+            "default": "0",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -2143,12 +2097,12 @@
             "name": "unit_virtual_id",
             "comment": "",
             "dataType": "bigint",
-            "default": "",
+            "default": "0",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
@@ -2186,29 +2140,6 @@
             "id": "54a66597-8472-d438-ada0-6cb9d646ed38"
           },
           {
-            "name": "jenis_cara_pembayaran_id",
-            "comment": "",
-            "dataType": "tinyint",
-            "default": "1",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 158,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "2e6092c1-68e7-6f74-5250-6ea71cc95126"
-          },
-          {
             "name": "no_kwitansi_global",
             "comment": "",
             "dataType": "varchar(255)",
@@ -2230,6 +2161,29 @@
               "widthDefault": 60
             },
             "id": "61f3b95a-7c5d-83a5-9d57-c5ea4828b9bd"
+          },
+          {
+            "name": "no_kwitansi_project",
+            "comment": "",
+            "dataType": "varchar(255)",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 116,
+              "widthComment": 60,
+              "widthDataType": 76,
+              "widthDefault": 60
+            },
+            "id": "7374c9d1-7a2b-9277-db8a-eddbde92d083"
           },
           {
             "name": "tgl_bayar",
@@ -2417,7 +2371,7 @@
           },
           {
             "name": "created_by",
-            "comment": "0: system",
+            "comment": "",
             "dataType": "int",
             "default": "0",
             "option": {
@@ -2431,19 +2385,19 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 67,
+              "widthName": 66,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "c647409c-9125-3152-9fe3-c64a735f5a4d"
+            "id": "2e6092c1-68e7-6f74-5250-6ea71cc95126"
           }
         ],
         "ui": {
           "active": false,
-          "left": 33.072223870798595,
-          "top": 2385.7277605874883,
-          "zIndex": 4004,
+          "left": 88,
+          "top": 2316,
+          "zIndex": 1837,
           "widthName": 85,
           "widthComment": 60
         },
@@ -2485,7 +2439,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -2500,7 +2454,7 @@
             "id": "77aec61d-f932-7949-7a13-f2f27eedf1cc"
           },
           {
-            "name": "service_id",
+            "name": "service_jenis_id",
             "comment": "",
             "dataType": "int",
             "default": "",
@@ -2508,30 +2462,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "efcb8042-98fd-dbb6-3645-5d9700f804c1"
-          },
-          {
-            "name": "service_jenis_id",
-            "comment": "",
-            "dataType": "tinyint",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -2554,7 +2485,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -2569,9 +2500,9 @@
             "id": "30be2c12-dba4-7805-cb78-d6bf52a02c5a"
           },
           {
-            "name": "no_kwitansi_project",
-            "comment": "Sementara",
-            "dataType": "varchar(255)",
+            "name": "diskon_id",
+            "comment": "",
+            "dataType": "int",
             "default": "",
             "option": {
               "autoIncrement": false,
@@ -2584,12 +2515,12 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 116,
-              "widthComment": 66,
-              "widthDataType": 76,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "7374c9d1-7a2b-9277-db8a-eddbde92d083"
+            "id": "31f4ddbe-0078-5a80-e2d1-df3a8950f762"
           },
           {
             "name": "nilai_bayar",
@@ -2613,113 +2544,21 @@
               "widthDefault": 60
             },
             "id": "696add0f-ec41-71a6-6431-86cccdc8f193"
-          },
-          {
-            "name": "diskon_id",
-            "comment": "Terisi saat pembayaran",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 137,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "4be1be3d-b98e-3dae-cc38-0f6050045a30"
-          },
-          {
-            "name": "nilai_diskon",
-            "comment": "Terisi saat pembayaran",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 70,
-              "widthComment": 136,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "03f16ead-450c-0382-9510-2cc538805d96"
-          },
-          {
-            "name": "diskon_request_id",
-            "comment": "",
-            "dataType": "bigint",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 108,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "71d565c4-77cd-95c5-526c-6d211320724d"
-          },
-          {
-            "name": "nilai_diskon_request",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 121,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "f8eb812d-a394-0372-79e9-a535523425ae"
           }
         ],
         "ui": {
           "active": false,
-          "left": 810.8555576625574,
-          "top": 2447.527765963034,
-          "zIndex": 4008,
+          "left": 741,
+          "top": 2419,
+          "zIndex": 1827,
           "widthName": 123,
           "widthComment": 60
         },
         "id": "68020fce-2283-430e-4e5e-e96b9723a4ed"
       },
       {
-        "name": "snapshot_tagihan_air",
-        "comment": "unuk record log tagihan perbulan",
+        "name": "snapshot_tagihan_lingkungan",
+        "comment": "",
         "columns": [
           {
             "name": "id",
@@ -2742,33 +2581,10 @@
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "d73e037d-02db-4a3f-3bcd-689b7e059a96"
+            "id": "f486ed51-09af-51ed-f691-f9653d1495af"
           },
           {
-            "name": "uuid",
-            "comment": "no_registrasi",
-            "dataType": "uniqueidentifier",
-            "default": "newid()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 76,
-              "widthDataType": 90,
-              "widthDefault": 60
-            },
-            "id": "880bc471-185a-c37f-238f-8e8555e67461"
-          },
-          {
-            "name": "t_tagihan_id",
+            "name": "t_tagihan_lingkungan_id",
             "comment": "",
             "dataType": "bigint",
             "default": "",
@@ -2776,19 +2592,517 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": false
+              "notNull": true
             },
             "ui": {
               "active": false,
               "pk": false,
               "fk": true,
               "pfk": false,
-              "widthName": 73,
+              "widthName": 143,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "7d592dfb-fc9c-967a-4231-2497aef45967"
+            "id": "c77d1b55-d7a9-75de-7384-08b4a68c8d89"
+          },
+          {
+            "name": "project_id",
+            "comment": "",
+            "dataType": "int",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "dce84f6f-c14a-cfd2-bb5b-53313bc6493e"
+          },
+          {
+            "name": "unit_id",
+            "comment": "",
+            "dataType": "bigint",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "21ea61f9-4f68-47db-838a-df777dd86b26"
+          },
+          {
+            "name": "unit_virtual_id",
+            "comment": "",
+            "dataType": "bigint",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 82,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "0cdd6c95-d08d-b1d5-0604-1cb202b0a0af"
+          },
+          {
+            "name": "current_month",
+            "comment": "1-12",
+            "dataType": "tinyint",
+            "default": "1",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 86,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "47351a67-b3db-0917-fc14-f189b7602941"
+          },
+          {
+            "name": "periode_tagihan",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 95,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "0b2af134-487d-831a-9493-ab84da8403f4"
+          },
+          {
+            "name": "tagihan",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "95b633ac-73b6-6531-984d-59539ff17fdb"
+          },
+          {
+            "name": "ppn",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "8dd0138e-fac9-fd73-c318-c3d05eb8c46d"
+          },
+          {
+            "name": "terbayar_cash_basic",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 122,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "f6eed999-46b9-15e8-850b-46339a325017"
+          },
+          {
+            "name": "terbayar_accrual",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 99,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "02ceb4e5-5d6e-ba1b-6894-f61392c8f9df"
+          },
+          {
+            "name": "sisa_ppn",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "9500cfa7-ae50-3b63-3942-af12bf627637"
+          },
+          {
+            "name": "denda_bulan_lalu",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 105,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "6252583d-ac9c-443f-2cf6-4f3933099390"
+          },
+          {
+            "name": "sisa_tagihan",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 75,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "91cfd6bd-f206-b120-8333-74eb2bf3db05"
+          },
+          {
+            "name": "denda_bulan_ini",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 97,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "d1761981-06ea-8136-2ed3-e5d87c255815"
+          },
+          {
+            "name": "total_tunggakan",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 95,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "1b511bb3-9a9e-95a7-d8b6-97a7afe81e90"
+          },
+          {
+            "name": "cummulative_terbayar",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 130,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "56c8a1a0-f722-46d2-4e62-c431a8c0c5b0"
+          },
+          {
+            "name": "cummulative_tunggakan",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 143,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "7e40280b-50df-c7cb-f015-1556b07cc703"
+          },
+          {
+            "name": "aging",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "ce349b1b-eceb-4dd2-32ca-62642620981f"
+          },
+          {
+            "name": "create_at",
+            "comment": "",
+            "dataType": "datetime2",
+            "default": "GETDATE()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 71
+            },
+            "id": "8b2b21ca-354f-0b28-5998-d33248535616"
+          },
+          {
+            "name": "update_at",
+            "comment": "",
+            "dataType": "datetime2",
+            "default": "GETDATE()",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 71
+            },
+            "id": "7424e4c4-db18-c352-0ef5-fc996c8e6693"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1611,
+          "top": 1531,
+          "zIndex": 1842,
+          "widthName": 175,
+          "widthComment": 60
+        },
+        "id": "2bebd338-641a-b08c-b156-f8d852377d27"
+      },
+      {
+        "name": "snapshot_tagihan_air",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "bigint",
+            "default": "",
+            "option": {
+              "autoIncrement": true,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "d73e037d-02db-4a3f-3bcd-689b7e059a96"
+          },
+          {
+            "name": "t_tagihan_air_id",
+            "comment": "",
+            "dataType": "bigint",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": true,
+              "pfk": false,
+              "widthName": 95,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "1ace37d8-776e-46f6-fbbc-4d47fd5e9184"
           },
           {
             "name": "unit_id",
@@ -2814,10 +3128,10 @@
             "id": "bf55bb1a-9234-c153-e35e-9b46ea436e09"
           },
           {
-            "name": "project_id",
+            "name": "unit_virtual_id",
             "comment": "",
-            "dataType": "int",
-            "default": "",
+            "dataType": "bigint",
+            "default": "0",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
@@ -2829,16 +3143,16 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 60,
+              "widthName": 82,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "2ecaebac-b408-fbc8-4c4d-d4772b58528a"
+            "id": "f3803ab9-6b2e-cb5c-edbf-a4c8e301c300"
           },
           {
             "name": "current_month",
-            "comment": "t_tagihan.periode_tagihan",
+            "comment": "1-12",
             "dataType": "tinyint",
             "default": "1",
             "option": {
@@ -2853,80 +3167,11 @@
               "fk": false,
               "pfk": false,
               "widthName": 86,
-              "widthComment": 153,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
             "id": "a7df8d1a-59cd-5da5-1d14-4a3883cbe5bf"
-          },
-          {
-            "name": "config_denda_jenis",
-            "comment": "3: Persen",
-            "dataType": "tinyint",
-            "default": "3",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 114,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "d3cfcd96-9a5d-511c-3e2e-db4e922806c6"
-          },
-          {
-            "name": "config_nilai_denda",
-            "comment": "",
-            "dataType": "int",
-            "default": "3",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 110,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "0c80872a-a1ed-6c11-b607-4aba0e96a862"
-          },
-          {
-            "name": "config_ppn_persen",
-            "comment": "",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 112,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "42f2cf8b-742e-ae77-a0c0-ac61bebfda96"
           },
           {
             "name": "periode_tagihan",
@@ -2952,7 +3197,7 @@
             "id": "22e17ce4-ddff-4a33-ec09-3d28fcd7c43b"
           },
           {
-            "name": "nilai_tagihan",
+            "name": "tagihan",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -2967,7 +3212,7 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 75,
+              "widthName": 60,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
@@ -2975,7 +3220,7 @@
             "id": "c8e68285-9345-c115-56a8-2166e3a4db05"
           },
           {
-            "name": "nilai_ppn",
+            "name": "ppn",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -2998,7 +3243,7 @@
             "id": "a549dbd4-fe21-3d0d-7081-fc5399892fe1"
           },
           {
-            "name": "terbayar_cash_basis",
+            "name": "terbayar_cash_basic",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -3044,7 +3289,7 @@
             "id": "fceaba5a-ada8-440a-fc80-6bac7d43ad3d"
           },
           {
-            "name": "denda_bulan_ini",
+            "name": "sisa_ppn",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -3059,12 +3304,35 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 97,
+              "widthName": 60,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "6999b5ff-d7fa-0155-02f1-a28fc59ef593"
+            "id": "8b488a0d-3923-0305-efda-9e084a7ce538"
+          },
+          {
+            "name": "denda_bulan_lalu",
+            "comment": "",
+            "dataType": "int",
+            "default": "0",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": true
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 105,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "2c5ae14b-2cfa-ae28-db15-b263ef578422"
           },
           {
             "name": "sisa_tagihan",
@@ -3090,7 +3358,7 @@
             "id": "c29e8a34-d9c4-8e97-4eb2-3dfa698e4bfa"
           },
           {
-            "name": "sisa_ppn",
+            "name": "denda_bulan_ini",
             "comment": "",
             "dataType": "int",
             "default": "0",
@@ -3105,35 +3373,12 @@
               "pk": false,
               "fk": false,
               "pfk": false,
-              "widthName": 60,
+              "widthName": 97,
               "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
-            "id": "8b488a0d-3923-0305-efda-9e084a7ce538"
-          },
-          {
-            "name": "denda_bulan_kedepan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 135,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "2c5ae14b-2cfa-ae28-db15-b263ef578422"
+            "id": "6999b5ff-d7fa-0155-02f1-a28fc59ef593"
           },
           {
             "name": "total_tunggakan",
@@ -3276,16 +3521,238 @@
         ],
         "ui": {
           "active": false,
-          "left": 41.43895128466288,
-          "top": 352.916671120456,
-          "zIndex": 3979,
+          "left": 1604,
+          "top": 465,
+          "zIndex": 1753,
           "widthName": 126,
-          "widthComment": 192
+          "widthComment": 60
         },
         "id": "943aab47-f6bb-f73e-0372-331774d0773c"
       },
       {
         "name": "t_tagihan_layanan_lain",
+        "comment": "",
+        "columns": [
+          {
+            "name": "id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "d4e8f102-1b5a-ab42-a67a-4c8224dd956b"
+          },
+          {
+            "name": "uuid",
+            "comment": "no_tagihan",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 66,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "332e0166-1c58-a005-96ae-054890ccd8c1"
+          },
+          {
+            "name": "project_id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "2e900275-5589-3881-4dee-73845672d093"
+          },
+          {
+            "name": "unit_id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "51f33aaa-bebd-616e-2257-99e2000f3aa5"
+          },
+          {
+            "name": "unit_virtual_id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 82,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "80ab8426-98f3-9b3b-fb76-513ff089dd77"
+          },
+          {
+            "name": "t_layanan_lain_registrasi_id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 163,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "22d47c1a-6b9e-1e27-0798-fd2251079afb"
+          },
+          {
+            "name": "total_nilai",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 60,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "806a747a-bcf4-78a0-4fe7-25c4731c494d"
+          },
+          {
+            "name": "status_tagihan",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 87,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "fac106a5-3fd0-be6b-60f2-3339cd054e20"
+          },
+          {
+            "name": "t_tagihan_id",
+            "comment": "",
+            "dataType": "",
+            "default": "",
+            "option": {
+              "autoIncrement": false,
+              "primaryKey": false,
+              "unique": false,
+              "notNull": false
+            },
+            "ui": {
+              "active": false,
+              "pk": false,
+              "fk": false,
+              "pfk": false,
+              "widthName": 73,
+              "widthComment": 60,
+              "widthDataType": 60,
+              "widthDefault": 60
+            },
+            "id": "3778c64e-2fa4-6a64-d720-12e4fe60ffe0"
+          }
+        ],
+        "ui": {
+          "active": false,
+          "left": 1,
+          "top": 1037,
+          "zIndex": 1998,
+          "widthName": 136,
+          "widthComment": 60
+        },
+        "id": "fefcfe8c-6a5f-09b4-9bd5-09e09d4a34de"
+      },
+      {
+        "name": "t_layanan_lain_registrasi",
         "comment": "",
         "columns": [
           {
@@ -3318,13 +3785,13 @@
             "default": "newid()",
             "option": {
               "autoIncrement": false,
-              "primaryKey": true,
+              "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
-              "pk": true,
+              "pk": false,
               "fk": false,
               "pfk": false,
               "widthName": 60,
@@ -3343,7 +3810,7 @@
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -3405,14 +3872,14 @@
           },
           {
             "name": "status",
-            "comment": "1: Regis, 2: Exp, 3: Terbayar",
+            "comment": "",
             "dataType": "tinyint",
-            "default": "0",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -3420,7 +3887,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 60,
-              "widthComment": 166,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
@@ -3428,14 +3895,14 @@
           },
           {
             "name": "duedate",
-            "comment": "default 7 hari dari hari ini",
+            "comment": "",
             "dataType": "date",
-            "default": "DATEADD(DAY,7,CONVERT(date, getdate()))",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -3443,385 +3910,17 @@
               "fk": false,
               "pfk": false,
               "widthName": 60,
-              "widthComment": 145,
+              "widthComment": 60,
               "widthDataType": 60,
-              "widthDefault": 267
+              "widthDefault": 60
             },
             "id": "361cc938-712b-4191-e5fb-4f17ead94834"
-          },
-          {
-            "name": "service_id",
-            "comment": "",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 61,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "c0f86e54-e6dc-12af-b1fa-390102379d70"
-          },
-          {
-            "name": "paket_service_id",
-            "comment": "",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 99,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "d654dafd-fb5f-229a-a3bc-ea34710706c0"
-          },
-          {
-            "name": "status_berlangganan",
-            "comment": "1: Langganan, 0: Tidak",
-            "dataType": "bit",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 123,
-              "widthComment": 134,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "70b76744-786b-e371-8cd5-e4c5bd925050"
-          },
-          {
-            "name": "periode_awal",
-            "comment": "",
-            "dataType": "date",
-            "default": "GETDATE()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 79,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 72
-            },
-            "id": "9a30b489-0526-158d-4a7e-d050c21aecb5"
-          },
-          {
-            "name": "periode_akhir",
-            "comment": "",
-            "dataType": "date",
-            "default": "GETDATE()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 81,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 72
-            },
-            "id": "d38392cd-b337-c6e1-66eb-fc7a408df857"
-          },
-          {
-            "name": "kuantitas",
-            "comment": "",
-            "dataType": "smallint",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "b5a13841-1ddc-679a-bd51-148860eb64d4"
-          },
-          {
-            "name": "nilai_satuan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 72,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "3cc2db03-07d9-5b14-33af-a1717c9e6a8f"
-          },
-          {
-            "name": "satuan",
-            "comment": "",
-            "dataType": "varchar(255)",
-            "default": "''",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 75,
-              "widthDefault": 60
-            },
-            "id": "3ec7e744-290f-d2f4-1cb2-c46d72f223af"
-          },
-          {
-            "name": "nilai_registrasi",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 85,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "00ccf307-f380-1a1c-707b-d0288aefbcc6"
-          },
-          {
-            "name": "nilai_pemasangan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 108,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "532e6dc5-8f75-dd3a-350b-8758c508f18b"
-          },
-          {
-            "name": "nilai_ppn",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "7658ff54-2bf1-1972-e66a-f43a0cdd29e2"
-          },
-          {
-            "name": "paket_service_name",
-            "comment": "",
-            "dataType": "varchar(255)",
-            "default": "''",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 122,
-              "widthComment": 60,
-              "widthDataType": 75,
-              "widthDefault": 60
-            },
-            "id": "eef6c1dc-6dfc-1ab4-a6fb-e0c8ec1eeb4a"
-          },
-          {
-            "name": "minimal_langganan",
-            "comment": "maks 255 periode",
-            "dataType": "tinyint",
-            "default": "1",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 115,
-              "widthComment": 105,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "aba66d6c-905a-4654-1c28-f4b62ec9aa98"
-          },
-          {
-            "name": "ppn_persen",
-            "comment": "0-100",
-            "dataType": "tinyint",
-            "default": "10",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 70,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "19395e29-bf0c-7917-d6b9-6c1bd7ba47ea"
-          },
-          {
-            "name": "jumlah_periode",
-            "comment": "",
-            "dataType": "smallint",
-            "default": "1",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 91,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "d35ecf25-7207-85fd-e80e-b05ce8af0598"
-          },
-          {
-            "name": "tipe_periode",
-            "comment": "1: hari, 2: bulan, 3: tahun",
-            "dataType": "tinyint",
-            "default": "2",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 74,
-              "widthComment": 146,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "b0f2d8e3-58bf-d038-f0f0-d68147c3277f"
           },
           {
             "name": "created_at",
             "comment": "",
             "dataType": "datetime2",
-            "default": "GETDATE()",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
@@ -3836,20 +3935,20 @@
               "widthName": 63,
               "widthComment": 60,
               "widthDataType": 60,
-              "widthDefault": 72
+              "widthDefault": 60
             },
             "id": "0136886c-865b-c22c-ea37-ac265cfab141"
           },
           {
             "name": "created_by",
-            "comment": "0: system, >0 : user_id",
+            "comment": "",
             "dataType": "int",
-            "default": "0",
+            "default": "",
             "option": {
               "autoIncrement": false,
               "primaryKey": false,
               "unique": false,
-              "notNull": true
+              "notNull": false
             },
             "ui": {
               "active": false,
@@ -3857,7 +3956,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 66,
-              "widthComment": 133,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
@@ -3888,7 +3987,7 @@
           },
           {
             "name": "deleted_by",
-            "comment": "0: system, >0 : user_id",
+            "comment": "",
             "dataType": "int",
             "default": "",
             "option": {
@@ -3903,7 +4002,7 @@
               "fk": false,
               "pfk": false,
               "widthName": 66,
-              "widthComment": 133,
+              "widthComment": 60,
               "widthDataType": 60,
               "widthDefault": 60
             },
@@ -3912,808 +4011,16 @@
         ],
         "ui": {
           "active": false,
-          "left": 694.6944641420137,
-          "top": 1353.5222091552114,
-          "zIndex": 3999,
-          "widthName": 136,
+          "left": 163,
+          "top": 1209,
+          "zIndex": 1992,
+          "widthName": 146,
           "widthComment": 60
         },
         "id": "9b7f8287-d553-1120-ee23-be3c93214ca6"
-      },
-      {
-        "name": "snapshot_tagihan_lingkungan",
-        "comment": "unuk record log tagihan perbulan",
-        "columns": [
-          {
-            "name": "id",
-            "comment": "",
-            "dataType": "bigint",
-            "default": "",
-            "option": {
-              "autoIncrement": true,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "e2a9bebd-a84f-ef18-038c-ea2a2eae8441"
-          },
-          {
-            "name": "uuid",
-            "comment": "no_registrasi",
-            "dataType": "uniqueidentifier",
-            "default": "newid()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": true,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": true,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 76,
-              "widthDataType": 90,
-              "widthDefault": 60
-            },
-            "id": "302688c7-9379-b948-0182-058c043168da"
-          },
-          {
-            "name": "t_tagihan_id",
-            "comment": "",
-            "dataType": "bigint",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": true,
-              "pfk": false,
-              "widthName": 73,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "d6fb1c7f-8841-5738-2d29-f24e034ee574"
-          },
-          {
-            "name": "unit_id",
-            "comment": "",
-            "dataType": "bigint",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "52942035-d798-06cf-48d4-6d116ee8da67"
-          },
-          {
-            "name": "project_id",
-            "comment": "",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "253d0128-8b47-60b4-add8-1040f503f4a3"
-          },
-          {
-            "name": "current_month",
-            "comment": "t_tagihan.periode_tagihan",
-            "dataType": "tinyint",
-            "default": "1",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 86,
-              "widthComment": 153,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "1ea75f05-ac82-1217-ceaf-911cf6df03e1"
-          },
-          {
-            "name": "config_denda_jenis",
-            "comment": "3: Persen",
-            "dataType": "tinyint",
-            "default": "3",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 114,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "9ec8bd35-1279-75d5-f93d-3c5da68af117"
-          },
-          {
-            "name": "config_nilai_denda",
-            "comment": "",
-            "dataType": "int",
-            "default": "3",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 110,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "34691df1-6e34-ed8b-fd68-c27de68bb47f"
-          },
-          {
-            "name": "config_ppn_persen",
-            "comment": "",
-            "dataType": "int",
-            "default": "",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": false
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 112,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "7a34a4a1-5a65-39dd-ebba-11e6b8184028"
-          },
-          {
-            "name": "periode_tagihan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 95,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "9d9e7251-acd3-9598-c971-8f456343ee8f"
-          },
-          {
-            "name": "nilai_tagihan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 75,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "ad26eb69-4b94-0334-b52b-4e857055cb13"
-          },
-          {
-            "name": "nilai_ppn",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "bc0fb133-c980-3592-745d-5e30ca1b4b66"
-          },
-          {
-            "name": "terbayar_cash_basis",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 122,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "adc8c3ce-9eed-66d9-5760-67de209c10dc"
-          },
-          {
-            "name": "terbayar_accrual",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 99,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "0e41e1da-e93a-17fc-d16d-3acae4a54bd5"
-          },
-          {
-            "name": "denda_bulan_ini",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 97,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "99eb9d5b-929a-de6c-5ce6-f9e8ed03ecfc"
-          },
-          {
-            "name": "sisa_tagihan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 75,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "2f7879cd-217f-b4c4-1239-9ac21ac6a91b"
-          },
-          {
-            "name": "sisa_ppn",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "3b442948-cfb9-bcf1-0c89-54173dec68c4"
-          },
-          {
-            "name": "denda_bulan_kedepan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 135,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "2450aae3-fcb3-9cea-398e-8e577f93807c"
-          },
-          {
-            "name": "total_tunggakan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 95,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "75a4a71f-b151-f70c-c116-08b75dfb6e2b"
-          },
-          {
-            "name": "cummulative_terbayar",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 130,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "9b14b255-70a3-f7af-c816-30a803f74a08"
-          },
-          {
-            "name": "cummulative_tunggakan",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 143,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "ffbeb5e3-5cc3-7b49-7db0-484ed3cf837f"
-          },
-          {
-            "name": "aging",
-            "comment": "",
-            "dataType": "int",
-            "default": "0",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 60
-            },
-            "id": "e90bb8d1-6e83-ad40-99cd-8674b9cd8f81"
-          },
-          {
-            "name": "create_at",
-            "comment": "",
-            "dataType": "datetime2",
-            "default": "GETDATE()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 71
-            },
-            "id": "31e82bde-4894-ebed-90e1-8ed101c991b9"
-          },
-          {
-            "name": "update_at",
-            "comment": "",
-            "dataType": "datetime2",
-            "default": "GETDATE()",
-            "option": {
-              "autoIncrement": false,
-              "primaryKey": false,
-              "unique": false,
-              "notNull": true
-            },
-            "ui": {
-              "active": false,
-              "pk": false,
-              "fk": false,
-              "pfk": false,
-              "widthName": 60,
-              "widthComment": 60,
-              "widthDataType": 60,
-              "widthDefault": 71
-            },
-            "id": "76ec63b0-ff5a-7765-0038-602e8c3e7c9e"
-          }
-        ],
-        "ui": {
-          "active": false,
-          "left": 39.4444428770637,
-          "top": 1031.5277557660024,
-          "zIndex": 3981,
-          "widthName": 175,
-          "widthComment": 192
-        },
-        "id": "2a9f7407-a0e9-f3f3-9e0c-65168d71356d"
       }
     ],
-    "indexes": [
-      {
-        "name": "index_t_tagihan_lingkungan_1",
-        "columns": [
-          {
-            "id": "c684fe8e-611f-93d6-f919-28f9ee166f4a",
-            "orderType": "DESC"
-          },
-          {
-            "id": "8af90cf9-1e10-ab18-0b77-ef3b329dd94b",
-            "orderType": "ASC"
-          },
-          {
-            "id": "e6bb6d8c-2fed-5bd8-5bdb-a11bf8778b46",
-            "orderType": "ASC"
-          },
-          {
-            "id": "bc164928-5669-5f38-2855-1519f760e3a6",
-            "orderType": "DESC"
-          },
-          {
-            "id": "2264827f-c54f-4921-32ee-3df360d5da62",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "ec017f42-3027-4d3f-7d25-32bea2a4e9ee",
-        "tableId": "6fee0e64-0c4f-e180-1030-63487b5b22e9"
-      },
-      {
-        "name": "index_t_tagihan_1",
-        "columns": [
-          {
-            "id": "59c97c78-5ea9-9363-8340-68eafb8b55c2",
-            "orderType": "ASC"
-          },
-          {
-            "id": "ebc599e5-2b7d-54a8-dc6b-4bbd93bfae52",
-            "orderType": "ASC"
-          },
-          {
-            "id": "2fb65f05-b150-a07e-b961-0ac7882e8a8a",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "e9dd9df0-ed21-7744-e3de-63303418c188",
-        "tableId": "36a5bc45-f82a-a97a-2d0e-7ed317f12fe8"
-      },
-      {
-        "name": "index_snapshot_tagihan_air_1",
-        "columns": [
-          {
-            "id": "7d592dfb-fc9c-967a-4231-2497aef45967",
-            "orderType": "DESC"
-          },
-          {
-            "id": "bf55bb1a-9234-c153-e35e-9b46ea436e09",
-            "orderType": "ASC"
-          },
-          {
-            "id": "2ecaebac-b408-fbc8-4c4d-d4772b58528a",
-            "orderType": "ASC"
-          },
-          {
-            "id": "a7df8d1a-59cd-5da5-1d14-4a3883cbe5bf",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "f6aee457-bec4-b970-c180-c5cdf1e29fa9",
-        "tableId": "943aab47-f6bb-f73e-0372-331774d0773c"
-      },
-      {
-        "name": "index_snapshot_tagihan_lingkungan_1",
-        "columns": [
-          {
-            "id": "d6fb1c7f-8841-5738-2d29-f24e034ee574",
-            "orderType": "DESC"
-          },
-          {
-            "id": "52942035-d798-06cf-48d4-6d116ee8da67",
-            "orderType": "ASC"
-          },
-          {
-            "id": "253d0128-8b47-60b4-add8-1040f503f4a3",
-            "orderType": "ASC"
-          },
-          {
-            "id": "1ea75f05-ac82-1217-ceaf-911cf6df03e1",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "770982ba-b373-fbc0-b92c-6343ae5a8f71",
-        "tableId": "2a9f7407-a0e9-f3f3-9e0c-65168d71356d"
-      },
-      {
-        "name": "index_t_tagihan_air_1",
-        "columns": [
-          {
-            "id": "aa2bc624-0339-5524-e4ee-336ed054df55",
-            "orderType": "DESC"
-          },
-          {
-            "id": "1faa46fe-cd8f-bb2c-71b0-78bf0ec0d6a8",
-            "orderType": "DESC"
-          },
-          {
-            "id": "ea100cc5-8f72-cae2-837d-e57e5aeb9841",
-            "orderType": "ASC"
-          },
-          {
-            "id": "c47a32f6-cf5d-a120-0761-57bbbe12039a",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "4261f7cc-6fe5-a17b-7471-3dae5cc16b2b",
-        "tableId": "074da7f0-90b5-338f-74c4-29336bea82ac"
-      },
-      {
-        "name": "t_tagihan_air_detail",
-        "columns": [
-          {
-            "id": "d7f02dce-67e2-b296-7fb0-e3fed1808404",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "c8ccdee9-b963-2eb7-c5bc-e1fcda47168f",
-        "tableId": "0ef56669-5326-353b-cf02-7b79eec58982"
-      },
-      {
-        "name": "index_t_tagihan_lingkungan_detail_1",
-        "columns": [
-          {
-            "id": "6dd39098-7998-a629-b54d-3fe483ce8264",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "769918a5-ad21-e507-90cd-ff4410a43a34",
-        "tableId": "6ac6f7f2-1372-dcbb-a39b-4c1f82d4b8ef"
-      },
-      {
-        "name": "index_t_tagihan_layanan_lain_1",
-        "columns": [
-          {
-            "id": "47d117b9-6543-6f13-d045-eec8bcd3a856",
-            "orderType": "ASC"
-          },
-          {
-            "id": "5e35fbc2-af3d-a6b7-3c7b-c6413329caa5",
-            "orderType": "ASC"
-          },
-          {
-            "id": "4fbb57ae-f26e-a258-cfb9-a0f8252eceeb",
-            "orderType": "ASC"
-          },
-          {
-            "id": "361cc938-712b-4191-e5fb-4f17ead94834",
-            "orderType": "DESC"
-          },
-          {
-            "id": "d654dafd-fb5f-229a-a3bc-ea34710706c0",
-            "orderType": "ASC"
-          }
-        ],
-        "unique": false,
-        "id": "12702c02-52bf-cc60-1f6f-aae903b1d9e9",
-        "tableId": "9b7f8287-d553-1120-ee23-be3c93214ca6"
-      },
-      {
-        "name": "index_t_pembayaran_1",
-        "columns": [
-          {
-            "id": "6f84ed5e-0a09-80c5-0851-82abbd7d586b",
-            "orderType": "ASC"
-          },
-          {
-            "id": "d2cc624c-a856-e3eb-81de-dfda52d060d8",
-            "orderType": "ASC"
-          },
-          {
-            "id": "f6349372-bfc7-6a5d-d58b-5f9fcd673330",
-            "orderType": "ASC"
-          },
-          {
-            "id": "2e6092c1-68e7-6f74-5250-6ea71cc95126",
-            "orderType": "ASC"
-          },
-          {
-            "id": "80a82747-617a-8f84-f2dd-29b982b630ce",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "22e21958-700b-2cbd-2318-0985ef74414b",
-        "tableId": "7e69d759-2674-086b-39fd-da5472515137"
-      },
-      {
-        "name": "index_t_pembayaran_detail_1",
-        "columns": [
-          {
-            "id": "77aec61d-f932-7949-7a13-f2f27eedf1cc",
-            "orderType": "DESC"
-          },
-          {
-            "id": "efcb8042-98fd-dbb6-3645-5d9700f804c1",
-            "orderType": "ASC"
-          },
-          {
-            "id": "b27e61b2-5a31-d888-f736-0f3923bdcdd2",
-            "orderType": "ASC"
-          },
-          {
-            "id": "30be2c12-dba4-7805-cb78-d6bf52a02c5a",
-            "orderType": "DESC"
-          }
-        ],
-        "unique": false,
-        "id": "6349df2b-2471-876c-5aef-9a6425853486",
-        "tableId": "68020fce-2283-430e-4e5e-e96b9723a4ed"
-      }
-    ]
+    "indexes": []
   },
   "memo": {
     "memos": []
@@ -4727,8 +4034,8 @@
           "columnIds": [
             "a16812b2-13fa-e90e-8a77-d6f3370cf11d"
           ],
-          "x": 1378.4999701301274,
-          "y": 906.905555013332,
+          "x": 568,
+          "y": 966.9250045490274,
           "direction": "right"
         },
         "end": {
@@ -4736,9 +4043,9 @@
           "columnIds": [
             "c684fe8e-611f-93d6-f919-28f9ee166f4a"
           ],
-          "x": 1523.883367474749,
-          "y": 1279.5277775263337,
-          "direction": "left"
+          "x": 1052.2000403690379,
+          "y": 1222.0000065803522,
+          "direction": "top"
         },
         "id": "8875eda1-7d69-09d2-7f0e-b1889bda0daa",
         "relationshipType": "One"
@@ -4750,8 +4057,8 @@
           "columnIds": [
             "a16812b2-13fa-e90e-8a77-d6f3370cf11d"
           ],
-          "x": 1378.4999701301274,
-          "y": 769.905555013332,
+          "x": 568,
+          "y": 840.1750045490274,
           "direction": "right"
         },
         "end": {
@@ -4759,8 +4066,8 @@
           "columnIds": [
             "aa2bc624-0339-5524-e4ee-336ed054df55"
           ],
-          "x": 1526.4222458533907,
-          "y": 497.14445515641455,
+          "x": 766.8000117015847,
+          "y": 475.5,
           "direction": "left"
         },
         "id": "752335e8-601a-96f3-5c3d-0c77da70725f",
@@ -4773,8 +4080,8 @@
           "columnIds": [
             "9d0e76d2-f17b-5415-8a6d-b629be043d5b"
           ],
-          "x": 2154.4222458533905,
-          "y": 497.14445515641455,
+          "x": 1349.8000117015847,
+          "y": 355.75,
           "direction": "right"
         },
         "end": {
@@ -4782,8 +4089,8 @@
           "columnIds": [
             "d7f02dce-67e2-b296-7fb0-e3fed1808404"
           ],
-          "x": 2324.6722368252763,
-          "y": 497.04445262237857,
+          "x": 1605,
+          "y": 236.25,
           "direction": "left"
         },
         "id": "aaa599a1-abc2-3170-ad81-98dc6406fb43",
@@ -4796,8 +4103,8 @@
           "columnIds": [
             "9d44a0fe-3d8f-443a-0abd-c0bb50574af1"
           ],
-          "x": 2110.8833674747493,
-          "y": 1279.5277775263337,
+          "x": 1338.2000403690379,
+          "y": 1341.7500065803522,
           "direction": "right"
         },
         "end": {
@@ -4805,8 +4112,8 @@
           "columnIds": [
             "6dd39098-7998-a629-b54d-3fe483ce8264"
           ],
-          "x": 2349.155557955816,
-          "y": 1280.4333207637744,
+          "x": 1607,
+          "y": 1209.25,
           "direction": "left"
         },
         "id": "5a8983a8-2729-cf4f-47a3-0b5856dbda97",
@@ -4819,8 +4126,8 @@
           "columnIds": [
             "8a317ff3-b260-3d9e-c625-c9fbaceba754"
           ],
-          "x": 582.0722238707986,
-          "y": 2594.4777605874883,
+          "x": 592,
+          "y": 2514.5,
           "direction": "right"
         },
         "end": {
@@ -4828,8 +4135,8 @@
           "columnIds": [
             "77aec61d-f932-7949-7a13-f2f27eedf1cc"
           ],
-          "x": 810.8555576625574,
-          "y": 2594.777765963034,
+          "x": 741,
+          "y": 2515,
           "direction": "left"
         },
         "id": "f2c9a21e-eb09-d942-a9f1-62c2ef5494cb",
@@ -4838,47 +4145,47 @@
       {
         "identification": false,
         "start": {
-          "tableId": "36a5bc45-f82a-a97a-2d0e-7ed317f12fe8",
+          "tableId": "074da7f0-90b5-338f-74c4-29336bea82ac",
           "columnIds": [
-            "a16812b2-13fa-e90e-8a77-d6f3370cf11d"
+            "9d0e76d2-f17b-5415-8a6d-b629be043d5b"
           ],
-          "x": 832.4999701301274,
-          "y": 769.905555013332,
-          "direction": "left"
+          "x": 1349.8000117015847,
+          "y": 595.25,
+          "direction": "right"
         },
         "end": {
           "tableId": "943aab47-f6bb-f73e-0372-331774d0773c",
           "columnIds": [
-            "7d592dfb-fc9c-967a-4231-2497aef45967"
+            "1ace37d8-776e-46f6-fbbc-4d47fd5e9184"
           ],
-          "x": 652.4389512846628,
-          "y": 633.4166711204559,
-          "direction": "right"
+          "x": 1604,
+          "y": 704.5,
+          "direction": "left"
         },
-        "id": "fc1adca6-add5-0a67-f2ed-8407277a611b",
+        "id": "b7677027-3ea1-d78a-d8fd-cfe2f858cf38",
         "relationshipType": "ZeroOneN"
       },
       {
         "identification": false,
         "start": {
-          "tableId": "36a5bc45-f82a-a97a-2d0e-7ed317f12fe8",
+          "tableId": "6fee0e64-0c4f-e180-1030-63487b5b22e9",
           "columnIds": [
-            "a16812b2-13fa-e90e-8a77-d6f3370cf11d"
+            "9d44a0fe-3d8f-443a-0abd-c0bb50574af1"
           ],
-          "x": 832.4999701301274,
-          "y": 906.905555013332,
-          "direction": "left"
-        },
-        "end": {
-          "tableId": "2a9f7407-a0e9-f3f3-9e0c-65168d71356d",
-          "columnIds": [
-            "d6fb1c7f-8841-5738-2d29-f24e034ee574"
-          ],
-          "x": 650.4444428770637,
-          "y": 1312.0277557660024,
+          "x": 1338.2000403690379,
+          "y": 1581.2500065803522,
           "direction": "right"
         },
-        "id": "7ded19a8-3cb8-a7e2-9788-b9d0f7565108",
+        "end": {
+          "tableId": "2bebd338-641a-b08c-b156-f8d852377d27",
+          "columnIds": [
+            "c77d1b55-d7a9-75de-7384-08b4a68c8d89"
+          ],
+          "x": 1611,
+          "y": 1780.75,
+          "direction": "left"
+        },
+        "id": "9edcaa50-5d32-7bf3-4689-8926d9b3bab9",
         "relationshipType": "ZeroOneN"
       }
     ]
