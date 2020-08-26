@@ -104,17 +104,17 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
         display: none
     }
 
-    .dataTables_info {
+    /*.dataTables_info {
         display: none
-    }
+    }*/
 
     #DataTables_Table_1 thead {
         display: none
     }
 
-    .dataTables_paginate {
+    /*.dataTables_paginate {
         display: none
-    }
+    }*/
 
     .modal-content {
         height: inherit
@@ -423,8 +423,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <?php else: ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
-                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi</button>
-                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi</button>
+                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button>
+                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi (Beta)</button>
                                 </div>
                             </div>
                         </div>
@@ -594,6 +594,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                         <th>Tgl Bayar</th>
                                                         <th>Total Bayar</th>
                                                         <th>No. Kwitansi</th>
+                                                        <th>Cetak</th>
+                                                        <th>Cetak Ke-</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody id="tbody-new-kwitansi">
@@ -1272,6 +1274,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                         variable += "   <td>"+value.tgl_bayar+"</td>";
                                                         variable += "   <td>"+formatC(value.bayar)+"</td>";
                                                         variable += "   <td>"+value.no_kwitansi+"</td>";
+                                                        variable += "   <td><a class='btn btn-primary' id='show-kwitansi' data-pembayaran_id='"+value.pembayaran_id+"' data-code_service='"+value.service_jenis_id+"'>Cetak</a></td>";
+                                                        variable += "   <td align='center'>"+value.count_print_kwitansi+"</td>";
                                                         variable += "</tr>"
                                                     $("#tbody-new-kwitansi").append(variable);
                                                 });
@@ -1363,6 +1367,15 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 //         }
                                                 //     ]
                                                 // });
+
+                                                $('#table-new-kwitansi').DataTable({
+                                                    "serverSide": false,
+                                                    "stateSave" : false,
+                                                    "bAutoWidth": true,
+                                                    "bPaginate": true,
+                                                    "bInfo": true
+                                                });
+
                                                 tableICheck();
 
                                             }
@@ -1408,6 +1421,16 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                             }
                                         });
                                     }
+                                });
+
+                                $(document).on('click', '#show-kwitansi', function(e){
+                                    e.preventDefault();
+                                    var print_ke = $(this).parent().parent().find('td:nth-child(7)').text();
+                                    alert(print_ke);
+                                    // var variables  = '?pembayaran_id=' + $(this).data('pembayaran_id');
+                                    //     variables += '&code_service=' + $(this).data('code_service');
+                                    // var link_url   = "<?=site_url('/Cetakan/kwitansi_new/gabungan/'); ?>"+variables;
+                                    // window.open(link_url);
                                 });
 
                                 // $("body").on("click", ".btn-void_pembayaran", function() {
@@ -1460,6 +1483,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 $(".tableDT4").dataTable({
                                     "order": []
                                 });
+
+                                
 
 
                                 $("#unit").select2({

@@ -347,7 +347,8 @@ class p_unit extends CI_Controller
                     service_jenis.code_default AS code_service,
                     service_jenis.name_default AS name_service,
                     SUM(ISNULL(t_pembayaran_detail.bayar, t_pembayaran_detail.bayar_deposit)) AS bayar,
-                    ISNULL(t_pembayaran.no_kwitansi, '') AS no_kwitansi
+                    ISNULL(t_pembayaran.no_kwitansi, '') AS no_kwitansi,
+                    t_pembayaran.count_print_kwitansi 
                 FROM t_pembayaran
                 INNER JOIN t_pembayaran_detail 
                     ON t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id
@@ -364,7 +365,8 @@ class p_unit extends CI_Controller
                     t_pembayaran.tgl_bayar ,
                     service_jenis.code_default, 
                     service_jenis.name_default,
-                    t_pembayaran.no_kwitansi 
+                    t_pembayaran.no_kwitansi,
+                    t_pembayaran.count_print_kwitansi
                 ORDER BY t_pembayaran.id
             ");
         $query = $query->result();
@@ -379,11 +381,11 @@ class p_unit extends CI_Controller
                 $tmp = [];
                 foreach ($query as $k => $v) {
                     if ($v->pembayaran_id == $kwitansi_all_service[$j]->pembayaran_id) {
-                        if (!in_array($v->service_jenis_id, $tmp)) {
+                        if (! in_array($v->service_jenis_id, $tmp)) {
                             array_push($tmp, $v->service_jenis_id);
-                            $kwitansi_all_service[$j]->service_jenis_id = $kwitansi_all_service[$j]->service_jenis_id . ", " . $v->service_jenis_id;
-                            $kwitansi_all_service[$j]->code_service = $kwitansi_all_service[$j]->code_service . ", " . $v->code_service;
-                            $kwitansi_all_service[$j]->name_service = $kwitansi_all_service[$j]->name_service . ", " . $v->name_service;
+                            $kwitansi_all_service[$j]->service_jenis_id = $kwitansi_all_service[$j]->service_jenis_id.','.$v->service_jenis_id;
+                            $kwitansi_all_service[$j]->code_service = $kwitansi_all_service[$j]->code_service.', '.$v->code_service;
+                            $kwitansi_all_service[$j]->name_service = $kwitansi_all_service[$j]->name_service.', '.$v->name_service;
                         }
                         $kwitansi_all_service[$j]->bayar = $kwitansi_all_service[$j]->bayar + $v->bayar;
                         unset($query[$k]);
@@ -393,7 +395,7 @@ class p_unit extends CI_Controller
             }
         }
 
-        // print_r($kwitansi_all_service);exit();
+        // echo"<pre>";print_r($kwitansi_all_service);exit();
 
 		$kwitansi_deposit = $this->db
 			->select("
