@@ -998,6 +998,25 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                             </div>
                         </div>
 
+
+                        <div class="x_content">
+                            <div class="modal" id="modal_desc" data-backdrop="static" data-keyboard="false" style="width:100vw">
+                                <div class="modal-dialog" style="width: 20vw;">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title">Konfirmasi<span class="grt"></span></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <label>Alasan Cetak Ulang</label>
+                                            <textarea class="form-control" id="cetak_desc" name="cetak_desc" rows="6" placeholder="...." autofocus style="resize: vertical;"></textarea>
+                                        </div>
+                                        <div class="modal-footer" id="modal-footer-desc" style="margin:0px; border-top:0px;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <script>
                             function modal_iframe($url1, $url2 = null, $title = null) {
                                 $("#iframe-modal-body").html("<iframe id='modal-iframe-id' src='' frameborder='0' style='width: 100%; height:100%'></iframe>");
@@ -1425,12 +1444,55 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
 
                                 $(document).on('click', '#show-kwitansi', function(e){
                                     e.preventDefault();
-                                    var print_ke = $(this).parent().parent().find('td:nth-child(7)').text();
-                                    alert(print_ke);
-                                    // var variables  = '?pembayaran_id=' + $(this).data('pembayaran_id');
-                                    //     variables += '&code_service=' + $(this).data('code_service');
-                                    // var link_url   = "<?=site_url('/Cetakan/kwitansi_new/gabungan/'); ?>"+variables;
-                                    // window.open(link_url);
+                                    var print_ke      = $(this).parent().parent().find('td:nth-child(7)').text();
+                                    var index_ke      = $(this).parent().parent().index();
+                                    var pembayaran_id = $(this).data('pembayaran_id');
+                                    var code_service  = $(this).data('code_service');
+
+                                    if (print_ke > 0) {
+                                        var btn_save  = "<a href='#' class='btn btn-primary' id='save-desc' data-pembayaran_id='"+pembayaran_id+"' data-code_service='"+code_service+"' data-index_ke='"+index_ke+"' data-print_ke='"+print_ke+"'>Cetak</a>";
+                                        var btn_close = "<button type='button' class='btn btn-info' data-dismiss='modal' id='delete_cancel_link'>Close</button>";
+                                        $('#modal-footer-desc').html(btn_save + btn_close);
+                                        $('#modal_desc').modal('show');
+                                    } else {
+                                        var variables  = '?pembayaran_id=' + pembayaran_id;
+                                            variables += '&code_service=' + code_service;
+                                        var link_url   = "<?=site_url('/Cetakan/kwitansi_new/gabungan/'); ?>"+variables;
+                                        window.open(link_url);
+                                    }
+                                });
+
+                                $(document).on('click', '#save-desc', function(e){
+                                    e.preventDefault();
+                                    var keterangan = $('#cetak_desc').val();
+                                    var index_ke   = $(this).data('index_ke');
+                                    var print_ke   = $(this).data('print_ke') + 1;
+                                    if (keterangan == '') 
+                                    {
+                                        alert('Alasan cetak masih kosong');
+                                    }
+                                    else
+                                    {
+                                        $.ajax({
+                                            url: "<?=site_url('cetakan/Kwitansi_new/kwitansi_request/');?>",
+                                            cache: false,
+                                            type: "POST",
+                                            data: {
+                                                pembayaran_id: $(this).data('pembayaran_id'),
+                                                code_service: $(this).data('code_service'),
+                                                description: keterangan
+                                            },
+                                            dataType: "json",
+                                            success: function(data) {
+                                                if (data.status==1) {
+                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').text(print_ke);
+                                                    $('#modal_desc').modal('hide');
+                                                    $('#cetak_desc').val('');
+                                                    window.open(data.link_print);
+                                                }
+                                            }
+                                        });
+                                    }
                                 });
 
                                 // $("body").on("click", ".btn-void_pembayaran", function() {
