@@ -336,7 +336,67 @@ class p_unit extends CI_Controller
 												isnull(kwitansi_referensi.no_referensi,0)
 												")
 			->where("isnull(t_pembayaran.is_void,0)",0)
-			->get()->result();
+            ->get()->result();
+
+
+            $query = $this->db
+            ->query("SELECT
+                    t_pembayaran.id AS pembayaran_id,
+                    FORMAT(t_pembayaran.tgl_bayar, 'dd-MM-yyyy hh:mm:ss') AS tgl_bayar,
+                    service_jenis.id AS service_jenis_id,
+                    service_jenis.code_default AS code_service,
+                    service_jenis.name_default AS name_service,
+                    SUM(ISNULL(t_pembayaran_detail.bayar, t_pembayaran_detail.bayar_deposit)) AS bayar,
+                    ISNULL(t_pembayaran.no_kwitansi, '') AS no_kwitansi,
+                    t_pembayaran.count_print_kwitansi 
+                FROM t_pembayaran
+                INNER JOIN t_pembayaran_detail 
+                    ON t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id
+                INNER JOIN service 
+                    ON service.id = t_pembayaran_detail.service_id
+                INNER JOIN service_jenis 
+                    ON service_jenis.id = service.service_jenis_id
+                WHERE 1=1
+                    AND t_pembayaran.unit_id = '".$unit_id."'
+                    AND ISNULL(t_pembayaran.is_void, 0) = 0
+                GROUP BY
+                    t_pembayaran.id,
+                    service_jenis.id,
+                    t_pembayaran.tgl_bayar ,
+                    service_jenis.code_default, 
+                    service_jenis.name_default,
+                    t_pembayaran.no_kwitansi,
+                    t_pembayaran.count_print_kwitansi
+                ORDER BY t_pembayaran.id
+            ");
+        $query = $query->result();
+
+        $kwitansi_all_service = [];
+        $j = 0;
+        $c = count($query);
+        for ($i = 0; $i < $c; $i++) {
+            if (isset($query[$i])) {
+                array_push($kwitansi_all_service, $query[$i]);
+                unset($query[$i]);
+                $tmp = [];
+                foreach ($query as $k => $v) {
+                    if ($v->pembayaran_id == $kwitansi_all_service[$j]->pembayaran_id) {
+                        if (! in_array($v->service_jenis_id, $tmp)) {
+                            array_push($tmp, $v->service_jenis_id);
+                            $kwitansi_all_service[$j]->service_jenis_id = $kwitansi_all_service[$j]->service_jenis_id.','.$v->service_jenis_id;
+                            $kwitansi_all_service[$j]->code_service = $kwitansi_all_service[$j]->code_service.', '.$v->code_service;
+                            $kwitansi_all_service[$j]->name_service = $kwitansi_all_service[$j]->name_service.', '.$v->name_service;
+                        }
+                        $kwitansi_all_service[$j]->bayar = $kwitansi_all_service[$j]->bayar + $v->bayar;
+                        unset($query[$k]);
+                    }
+                }
+                $j++;
+            }
+        }
+
+        // echo"<pre>";print_r($kwitansi_all_service);exit();
+
 		$kwitansi_deposit = $this->db
 			->select("
 										t_deposit.id as deposit_id,
@@ -428,14 +488,15 @@ class p_unit extends CI_Controller
 		$unit->jumlah_nilai_pemutihan_denda	= $jumlah_nilai_pemutihan_denda;
 		$unit->jumlah_total 				= $jumlah_total;
 
-		$unit->tagihan_air = $tagihan_air;
-		$unit->tagihan_lingkungan = $tagihan_lingkungan;
-		$unit->kwitansi 				= $kwitansi_per_service;
-		$unit->kwitansi_deposit 		= $kwitansi_deposit;
+		$unit->tagihan_air                  = $tagihan_air;
+		$unit->tagihan_lingkungan           = $tagihan_lingkungan;
+		$unit->kwitansi 				    = $kwitansi_per_service;
+        $unit->kwitansi_new                 = $kwitansi_all_service;
+		$unit->kwitansi_deposit 		    = $kwitansi_deposit;
 		
-		$unit->pemilik					= $pemilik;
-		$unit->penghuni					= $penghuni;
-		$unit->void_pembayaran 			= $void_pembayaran;
+		$unit->pemilik					    = $pemilik;
+		$unit->penghuni					    = $penghuni;
+		$unit->void_pembayaran 			    = $void_pembayaran;
 		echo json_encode($unit);
 		// echo json_encode($tagihan_air);
 		// echo("<pre>");
