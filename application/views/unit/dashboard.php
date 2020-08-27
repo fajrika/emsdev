@@ -104,17 +104,17 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
         display: none
     }
 
-    /*.dataTables_info {
+    .dataTables_info {
         display: none
-    }*/
+    }
 
     #DataTables_Table_1 thead {
         display: none
     }
 
-    /*.dataTables_paginate {
+    .dataTables_paginate {
         display: none
-    }*/
+    }
 
     .modal-content {
         height: inherit
@@ -423,8 +423,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <?php else: ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
-                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button>
-                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi (Beta)</button>
+                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Cetak Kwitansi (Beta)</button>
+                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Cetak Kwitansi</button>
                                 </div>
                             </div>
                         </div>
@@ -570,39 +570,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
 
                                         <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
                                             <button id="cetak-kwitansi-multiple" class="btn btn-primary" disabled>Cetak Multiple</button>
-                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="x_content">
-                            <div class="modal fade" id="modal_cetak_kwitansi_new" data-backdrop="static" data-keyboard="false" style="width:100vw">
-                                <div class="modal-dialog" style="width: 70vw;">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                            <h4 class="modal-title" style="text-align:center;">Cetak Kwitansi<span class="grt"></span></h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <table id="table-new-kwitansi" class="table table-striped jambo_table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Kode Service</th>
-                                                        <th>Nama Service</th>
-                                                        <th>Tgl Bayar</th>
-                                                        <th>Total Bayar</th>
-                                                        <th>No. Kwitansi</th>
-                                                        <th>Cetak</th>
-                                                        <th>Cetak Ke-</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbody-new-kwitansi">
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
                                             <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
                                         </div>
                                     </div>
@@ -998,25 +965,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                             </div>
                         </div>
 
-
-                        <div class="x_content">
-                            <div class="modal" id="modal_desc" data-backdrop="static" data-keyboard="false" style="width:100vw">
-                                <div class="modal-dialog" style="width: 20vw;">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                            <h4 class="modal-title">Konfirmasi<span class="grt"></span></h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <label>Alasan Cetak Ulang</label>
-                                            <textarea class="form-control" id="cetak_desc" name="cetak_desc" rows="6" placeholder="...." autofocus style="resize: vertical;"></textarea>
-                                        </div>
-                                        <div class="modal-footer" id="modal-footer-desc" style="margin:0px; border-top:0px;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <script>
                             function modal_iframe($url1, $url2 = null, $title = null) {
                                 $("#iframe-modal-body").html("<iframe id='modal-iframe-id' src='' frameborder='0' style='width: 100%; height:100%'></iframe>");
@@ -1057,7 +1005,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 })
                             }
 
-                            $(document).ready(function(){
+                            $(document).ready(function() {
+
                                 $("body").on("click", ".btn-void_pembayaran", function() {
                                     $("#modal-void-description").modal("show");
                                     $("#description").attr('pembayaran_id', $(this).val());
@@ -1285,20 +1234,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                     str += "</tr>"
                                                     $("#tbody-kwitansi").append(str);
                                                 });
-
-                                                $.each(data.kwitansi_new, function(key, value) {
-                                                    var variable  = "<tr>";
-                                                        variable += "   <td>"+value.code_service+"</td>";
-                                                        variable += "   <td>"+value.name_service+"</td>";
-                                                        variable += "   <td>"+value.tgl_bayar+"</td>";
-                                                        variable += "   <td>"+formatC(value.bayar)+"</td>";
-                                                        variable += "   <td>"+value.no_kwitansi+"</td>";
-                                                        variable += "   <td><a class='btn btn-primary' id='show-kwitansi' data-pembayaran_id='"+value.pembayaran_id+"' data-code_service='"+value.service_jenis_id+"'>Cetak</a></td>";
-                                                        variable += "   <td align='center'>"+value.count_print_kwitansi+"</td>";
-                                                        variable += "</tr>"
-                                                    $("#tbody-new-kwitansi").append(variable);
-                                                });
-
                                                 $.each(data.kwitansi_deposit, function(key, value) {
                                                     var str = "<tr>";
                                                     str += "<td></td>";
@@ -1386,15 +1321,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 //         }
                                                 //     ]
                                                 // });
-
-                                                $('#table-new-kwitansi').DataTable({
-                                                    "serverSide": false,
-                                                    "stateSave" : false,
-                                                    "bAutoWidth": true,
-                                                    "bPaginate": true,
-                                                    "bInfo": true
-                                                });
-
                                                 tableICheck();
 
                                             }
@@ -1437,59 +1363,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 $("#read_more_unit").html("<button onclick=\"modal_iframe_large('<?= site_url() ?>/P_master_unit/edit?id=" + id + "','<?= site_url() ?>/P_master_unit/edit?id=" + id + "','Informasi Unit')\" class=\"btn btn-primary col-md-12\">Read More</button>");
                                                 $("#read_more_customer-pemilik").html("<button onclick=\"modal_iframe_large('<?= site_url() ?>/P_master_customer/edit?id=" + data.pemilik_id + "','<?= site_url() ?>/P_master_customer/edit?id=" + data.pemilik_id + "','Informasi Pemilik')\" class=\"btn btn-primary col-md-12\">Read More</button>");
                                                 $("#read_more_customer-penghuni").html("<button onclick=\"modal_iframe_large('<?= site_url() ?>/P_master_customer/edit?id=" + data.penghuni_id + "','<?= site_url() ?>/P_master_customer/edit?id=" + data.penghuni_id + "','Informasi Penghuni')\" class=\"btn btn-primary col-md-12\">Read More</button>");
-                                            }
-                                        });
-                                    }
-                                });
-
-                                $(document).on('click', '#show-kwitansi', function(e){
-                                    e.preventDefault();
-                                    var print_ke      = $(this).parent().parent().find('td:nth-child(7)').text();
-                                    var index_ke      = $(this).parent().parent().index();
-                                    var pembayaran_id = $(this).data('pembayaran_id');
-                                    var code_service  = $(this).data('code_service');
-
-                                    if (print_ke > 0) {
-                                        var btn_save  = "<a href='#' class='btn btn-primary' id='save-desc' data-pembayaran_id='"+pembayaran_id+"' data-code_service='"+code_service+"' data-index_ke='"+index_ke+"' data-print_ke='"+print_ke+"'>Cetak</a>";
-                                        var btn_close = "<button type='button' class='btn btn-info' data-dismiss='modal' id='delete_cancel_link'>Close</button>";
-                                        $('#modal-footer-desc').html(btn_save + btn_close);
-                                        $('#modal_desc').modal('show');
-                                    } else {
-                                        var variables  = '?pembayaran_id=' + pembayaran_id;
-                                            variables += '&code_service=' + code_service;
-                                        var link_url   = "<?=site_url('/Cetakan/kwitansi_new/gabungan/'); ?>"+variables;
-                                        window.open(link_url);
-                                    }
-                                });
-
-                                $(document).on('click', '#save-desc', function(e){
-                                    e.preventDefault();
-                                    var keterangan = $('#cetak_desc').val();
-                                    var index_ke   = $(this).data('index_ke');
-                                    var print_ke   = $(this).data('print_ke') + 1;
-                                    if (keterangan == '') 
-                                    {
-                                        alert('Alasan cetak masih kosong');
-                                    }
-                                    else
-                                    {
-                                        $.ajax({
-                                            url: "<?=site_url('cetakan/Kwitansi_new/kwitansi_request/');?>",
-                                            cache: false,
-                                            type: "POST",
-                                            data: {
-                                                pembayaran_id: $(this).data('pembayaran_id'),
-                                                code_service: $(this).data('code_service'),
-                                                description: keterangan
-                                            },
-                                            dataType: "json",
-                                            success: function(data) {
-                                                if (data.status==1) {
-                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').text(print_ke);
-                                                    $('#modal_desc').modal('hide');
-                                                    $('#cetak_desc').val('');
-                                                    window.open(data.link_print);
-                                                }
                                             }
                                         });
                                     }
@@ -1545,8 +1418,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 $(".tableDT4").dataTable({
                                     "order": []
                                 });
-
-                                
 
 
                                 $("#unit").select2({
