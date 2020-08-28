@@ -1,8 +1,10 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Kwitansi_new extends CI_Controller {
-    public function __construct(){
+class Kwitansi_new extends CI_Controller 
+{
+    public function __construct()
+    {
         parent::__construct();
         $this->load->database();
         $this->load->model('m_login');
@@ -36,8 +38,8 @@ class Kwitansi_new extends CI_Controller {
             $data = [
                 't_pembayaran_id' => $pembayaran_id,
                 'description' => $description,
-                'created_by' => $this->session->userdata('name'),
-                'created_at' => date('Y-m-d H:i:s')
+                'created_by'  => $this->session->userdata('name'),
+                'created_at'  => date('Y-m-d H:i:s')
             ];
             $this->db->insert('log_kwitansi', $data);
         }
@@ -424,323 +426,74 @@ class Kwitansi_new extends CI_Controller {
         }
     }
 
-    public function lingkungan($pembayaran_id=null){
-        $this->load->library('pdf');
-        $project = $this->m_core->project();
-
-        $this->pdf->set_option('defaultMediaType', 'all');
-        $this->pdf->set_option('isFontSubsettingEnabled', true);
-        $this->pdf->set_option('isHtml5ParserEnabled', true);
-        $this->pdf->setPaper('A4', 'potrait');
-        $this->pdf->filename = "konfirmasi_tagihan.pdf";
-        
-        $no_referensi = $this->db
-                        ->select("no_referensi")
-                        ->from("t_pembayaran_detail")
-                        ->join("kwitansi_referensi",
-                                "kwitansi_referensi.id = t_pembayaran_detail.kwitansi_referensi_id")
-                        ->where("t_pembayaran_detail.t_pembayaran_id",$pembayaran_id)
-                        ->get()->row()->no_referensi;
-        $no_referensi2 = $this->db->select("no_kwitansi")
-                                        ->from("t_pembayaran")
-                                        ->where("id",$pembayaran_id)
-                                        ->get()->row()->no_kwitansi;
-        $periode = $this->db
-                        ->select("periode")
-                        ->from("t_pembayaran_detail")
-                        ->join("t_tagihan_lingkungan",
-                                "t_tagihan_lingkungan.id = t_pembayaran_detail.tagihan_service_id")
-                        ->where("t_pembayaran_detail.t_pembayaran_id",$pembayaran_id)
-                        ->order_by("periode")
-                        ->get()->result();
-        
-        $unit = $this->db
-                        ->select("
-                            unit.no_unit,
-                            blok.name as blok,
-                            kawasan.name as kawasan,
-                            customer.name as pemilik    
-                        ")
-                        ->from("t_pembayaran")
-                        ->join("unit",
-                                "unit.id = t_pembayaran.unit_id")
-                        ->join("blok",
-                                "blok.id = unit.blok_id")
-                        ->join("kawasan",
-                                "kawasan.id = blok.kawasan_id")
-                        ->join("customer",
-                                "customer.id = unit.pemilik_customer_id")
-                        ->where("t_pembayaran.id",$pembayaran_id)
-                        ->get()->row();
-
-        $tagihan = $this->db
-                        ->select(" 
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull
-                                        (t_pembayaran_detail.bayar,t_pembayaran_detail.bayar_deposit)-(nilai_denda+nilai_penalti)
-                                )AS money), 1), '.00', '') as tagihan,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_denda,0)+isnull(t_pembayaran_detail.nilai_penalti,0))AS money), 1), '.00', '') as denda,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar_deposit,0))AS money), 1), '.00', '') as deposit,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_diskon,0))AS money), 1), '.00', '') as diskon,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar-t_pembayaran_detail.nilai_diskon,t_pembayaran_detail.bayar_deposit-t_pembayaran_detail.nilai_diskon))AS money), 1), '.00', '') as total")
-                        ->from("t_pembayaran_detail")
-                        ->join("t_tagihan_lingkungan",
-                                "t_tagihan_lingkungan.id = t_pembayaran_detail.tagihan_service_id")
-                        ->where("t_pembayaran_id",$pembayaran_id)
-                        ->get()->row();
-        $periode_first  = $this->bln_indo(substr($periode[0]->periode,5,2))." ".substr($periode[0]->periode,0,4);
-        $periode_last  = $this->bln_indo(substr(end($periode)->periode,5,2))." ".substr(end($periode)->periode,0,4);
-        $terbilang = $this->terbilang(str_replace(",","",$tagihan->total));
-        
-        // $this->pdf->load_view("proyek/cetakan/kwitansi_lingkungan");
-        $tanggal = (date("d")." ".$this->bln_indo(date("m"))." ".date("Y"));
-        if($project->id == 13){
-                $periode_first  = substr($this->bln_indo(substr($periode[0]->periode,5,2)),0,3)." ".substr($periode[0]->periode,0,4);
-                $periode_last   = substr($this->bln_indo(substr(end($periode)->periode,5,2)),0,3)." ".substr(end($periode)->periode,0,4);
-                $tanggal = (date("d")." ".substr($this->bln_indo(date("m")),0,3)." ".date("Y"));
-        
-                $this->pdf->load_view("proyek/cetakan/kwitansi_lingkungan_citraIndahCity",[
-                                "periode_last"  => $periode_last,
-                                "periode_first" => $periode_first,
-                                "tagihan"       => $tagihan,
-                                "terbilang"     => strtoupper($terbilang),
-                                "tanggal"       => $tanggal,
-                                "unit"          => $unit,
-                                "no_referensi"  => $no_referensi
-                                ]);
-        }elseif($project->id == 2){
-                $this->pdf->load_view("proyek/cetakan/kwitansi_lingkungan",[
-                            "periode_last"  => $periode_last,
-                            "periode_first" => $periode_first,
-                            "tagihan"       => $tagihan,
-                            "terbilang"     => strtoupper($terbilang),
-                            "tanggal"       => $tanggal,
-                            "unit"          => $unit,
-                            "no_referensi"  => $no_referensi,
-                            ]);
-                            
-        }elseif($project->id == 4){
-        $this->pdf->load_view("proyek/cetakan/kwitansi_lingkungan_bizpark",[
-                        "periode_last"  => $periode_last,
-                        "periode_first" => $periode_first,
-                        "tagihan"       => $tagihan,
-                        "terbilang"     => strtoupper($terbilang),
-                        "tanggal"       => $tanggal,
-                        "unit"          => $unit,
-                        "no_referensi"  => $no_referensi,
-                        "no_referensi2"  => $no_referensi2
-
-                        ]);
-            }else{
-                $this->pdf->load_view("proyek/cetakan/kwitansi_lingkungan_full",[
-                            "periode_last"  => $periode_last,
-                            "periode_first" => $periode_first,
-                            "tagihan"       => $tagihan,
-                            "terbilang"     => strtoupper($terbilang),
-                            "tanggal"       => $tanggal,
-                            "unit"          => $unit,
-                            "no_referensi"  => $no_referensi
-                            ]);
-        }
-    }
-    public function air($pembayaran_id=null){
-        $this->load->library('pdf');
-
-        $this->pdf->set_option('defaultMediaType', 'all');
-        $this->pdf->set_option('isFontSubsettingEnabled', true);
-        $this->pdf->set_option('isHtml5ParserEnabled', true);
-        $this->pdf->setPaper('A4', 'potrait');
-        $this->pdf->filename = "konfirmasi_tagihan.pdf";
-        $meter_air_TMP = $this->db
-                                ->select("
-                                    t_pencatatan_meter_air.meter_awal,
-                                    t_pencatatan_meter_air.meter_akhir")
-                                ->from("t_pembayaran")
-                                ->join("t_pembayaran_detail",
-                                        "t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id")
-                                ->join("t_tagihan_air",
-                                        "t_tagihan_air.id = t_pembayaran_detail.tagihan_service_id")
-                                ->join("t_pencatatan_meter_air",
-                                        "t_pencatatan_meter_air.unit_id = t_tagihan_air.unit_id
-                                        AND t_pencatatan_meter_air.periode = t_tagihan_air.periode")
-                                ->where("t_pembayaran.id",$pembayaran_id)
-                                ->order_by("t_pencatatan_meter_air.periode")
-                                ->get()->result();
-        $meter = (object)[];
-        $meter->awal = $meter_air_TMP[0]->meter_awal;
-        $meter->akhir = end($meter_air_TMP)->meter_akhir;
-        $meter->pakai = $meter->akhir-$meter->awal;
-        
-        
-    
-        $no_referensi = $this->db
-                        ->select("no_referensi")
-                        ->from("t_pembayaran_detail")
-                        ->join("kwitansi_referensi",
-                                "kwitansi_referensi.id = t_pembayaran_detail.kwitansi_referensi_id")
-                        ->where("t_pembayaran_detail.t_pembayaran_id",$pembayaran_id)
-                        ->get()->row()->no_referensi;
-
-        $periode = $this->db
-                        ->select("periode")
-                        ->from("t_pembayaran_detail")
-                        ->join("t_tagihan_air",
-                                "t_tagihan_air.id = t_pembayaran_detail.tagihan_service_id")
-                        ->where("t_pembayaran_detail.t_pembayaran_id",$pembayaran_id)
-                        ->order_by("periode")
-                        ->get()->result();
-        
-        $unit = $this->db
-                        ->select("
-                            unit.no_unit,
-                            blok.name as blok,
-                            kawasan.name as kawasan,
-                            customer.name as pemilik    
-                        ")
-                        ->from("t_pembayaran")
-                        ->join("unit",
-                                "unit.id = t_pembayaran.unit_id")
-                        ->join("blok",
-                                "blok.id = unit.blok_id")
-                        ->join("kawasan",
-                                "kawasan.id = blok.kawasan_id")
-                        ->join("customer",
-                                "customer.id = unit.pemilik_customer_id")
-                        ->where("t_pembayaran.id",$pembayaran_id)
-                        ->get()->row();
-
-        $tagihan = $this->db
-                                // " 
-                                // REPLACE(CONVERT(varchar, CAST(sum(isnull(
-                                //         t_pembayaran_detail.bayar-(nilai_denda+nilai_penalti),t_pembayaran_detail.bayar_deposit-(nilai_denda+nilai_penalti)))AS money), 1), '.00', '') as tagihan,
-                                // REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_denda,0)+isnull(t_pembayaran_detail.nilai_penalti,0))AS money), 1), '.00', '') as denda,
-                                // REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar_deposit,0))AS money), 1), '.00', '') as deposit,
-                                // REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_diskon,0))AS money), 1), '.00', '') as diskon,
-                                // REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar,t_pembayaran_detail.bayar_deposit))AS money), 1), '.00', '') as total"
-                        ->select(" 
-                                REPLACE(CONVERT(varchar, CAST(sum(t_pembayaran_detail.nilai_tagihan)AS money), 1), '.00', '') as tagihan,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_denda,0)+isnull(t_pembayaran_detail.nilai_penalti,0))AS money), 1), '.00', '') as denda,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar_deposit,0))AS money), 1), '.00', '') as deposit,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_diskon,0))AS money), 1), '.00', '') as diskon,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar,t_pembayaran_detail.bayar_deposit))AS money), 1), '.00', '') as total")
-                        ->from("t_pembayaran_detail")
-                        ->join("t_tagihan_air",
-                                "t_tagihan_air.id = t_pembayaran_detail.tagihan_service_id")
-                        ->where("t_pembayaran_id",$pembayaran_id)
-                        ->get()->row();
-        $periode_first  = $this->bln_indo(substr($periode[0]->periode,5,2))." ".substr($periode[0]->periode,0,4);
-        $periode_last  = $this->bln_indo(substr(end($periode)->periode,5,2))." ".substr(end($periode)->periode,0,4);
-        $terbilang = $this->terbilang(str_replace(",","",$tagihan->total));
-        
-        // $this->pdf->load_view("proyek/cetakan/kwitansi_air");
-        $tanggal = (date("d")." ".$this->bln_indo(date("m"))." ".date("Y"));
-
-        $this->pdf->load_view("proyek/cetakan/kwitansi_air",[
-                            "periode_last"  => $periode_last,
-                            "periode_first" => $periode_first,
-                            "tagihan"       => $tagihan,
-                            "terbilang"     => strtoupper($terbilang),
-                            "tanggal"       => $tanggal,
-                            "unit"          => $unit,
-                            "no_referensi"  => $no_referensi,
-                            "meter"  => $meter
-                            ]);
-    }
-
-    public function servicelain()
+    /*
+    | -------------------------------------------------------------------------------
+    | function for request data kwitansi customer
+    | 2020-08-28
+    |
+    */
+    public function request_data_kwitansi()
     {
-        $this->load->library('pdf');
+        $unit_id = $this->input->post('unit_id');
+        $query   = $this->db
+            ->query("SELECT
+                    t_pembayaran.id AS pembayaran_id,
+                    FORMAT(t_pembayaran.tgl_bayar, 'dd-MM-yyyy hh:mm:ss') AS tgl_bayar,
+                    service_jenis.id AS service_jenis_id,
+                    service_jenis.code_default AS code_service,
+                    service_jenis.name_default AS name_service,
+                    SUM(ISNULL(t_pembayaran_detail.bayar, t_pembayaran_detail.bayar_deposit)) AS bayar,
+                    ISNULL(t_pembayaran.no_kwitansi, '') AS no_kwitansi,
+                    t_pembayaran.count_print_kwitansi 
+                FROM t_pembayaran
+                INNER JOIN t_pembayaran_detail 
+                    ON t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id
+                INNER JOIN service 
+                    ON service.id = t_pembayaran_detail.service_id
+                INNER JOIN service_jenis 
+                    ON service_jenis.id = service.service_jenis_id
+                WHERE 1=1
+                    AND t_pembayaran.unit_id = '".$unit_id."'
+                    AND ISNULL(t_pembayaran.is_void, 0) = 0
+                GROUP BY
+                    t_pembayaran.id,
+                    service_jenis.id,
+                    t_pembayaran.tgl_bayar ,
+                    service_jenis.code_default, 
+                    service_jenis.name_default,
+                    t_pembayaran.no_kwitansi,
+                    t_pembayaran.count_print_kwitansi
+                ORDER BY t_pembayaran.id
+            ");
+        $query = $query->result();
 
-        $this->pdf->set_option('defaultMediaType', 'all');
-        $this->pdf->set_option('isFontSubsettingEnabled', true);
-        $this->pdf->set_option('isHtml5ParserEnabled', true);
-        $this->pdf->setPaper('A4', 'potrait');
-        $this->pdf->filename = "kwitansi_servicelain.pdf";
-            
+        $kwitansi_all_service = [];
+        $j = 0;
+        $c = count($query);
+        for ($i = 0; $i < $c; $i++) {
+            if (isset($query[$i])) {
+                array_push($kwitansi_all_service, $query[$i]);
+                unset($query[$i]);
+                $tmp = [];
+                foreach ($query as $k => $v) {
+                    if ($v->pembayaran_id == $kwitansi_all_service[$j]->pembayaran_id) {
+                        if (! in_array($v->service_jenis_id, $tmp)) {
+                            array_push($tmp, $v->service_jenis_id);
+                            $kwitansi_all_service[$j]->service_jenis_id = $kwitansi_all_service[$j]->service_jenis_id.','.$v->service_jenis_id;
+                            $kwitansi_all_service[$j]->code_service = $kwitansi_all_service[$j]->code_service.', '.$v->code_service;
+                            $kwitansi_all_service[$j]->name_service = $kwitansi_all_service[$j]->name_service.', '.$v->name_service;
+                        }
+                        $kwitansi_all_service[$j]->bayar = $kwitansi_all_service[$j]->bayar + $v->bayar;
+                        unset($query[$k]);
+                    }
+                }
+                $j++;
+            }
+        }
+
+        echo json_encode(array('data' => $kwitansi_all_service));
     }
-    public function deposit($deposit_id=null){
-        $this->load->library('pdf');
 
-        $this->pdf->set_option('defaultMediaType', 'all');
-        $this->pdf->set_option('isFontSubsettingEnabled', true);
-        $this->pdf->set_option('isHtml5ParserEnabled', true);
-        $this->pdf->setPaper('A4', 'potrait');
-        $this->pdf->filename = "konfirmasi_tagihan.pdf";
-        
-    
-        $no_referensi = $this->db
-                        ->select("no_referensi")
-                        ->from("t_deposit_detail")
-                        ->join("kwitansi_referensi",
-                                "kwitansi_referensi.id = t_deposit_detail.kwitansi_referensi_id")
-                        ->where("t_deposit_detail.t_deposit_id",$deposit_id)
-                        ->get()->row()->no_referensi;
-
-        $periode = $this->db
-                        ->select("convert(date,t_deposit_detail.tgl_document) as periode")
-                        ->from("t_deposit_detail")
-                        ->where("t_deposit_detail.t_deposit_id",$deposit_id)
-                        ->order_by("periode")
-                        ->get()->row()->periode;
-        $periode = substr($periode,8,2)."-".substr($periode,5,2)."-".substr($periode,0,4);
-        $customer = $this->db
-                        ->select("
-                            customer.name as pemilik,
-                            t_deposit_detail.description,    
-                            t_deposit_detail.nilai
-                        ")
-                        ->from("t_deposit")
-                        ->join("t_deposit_detail",
-                                "t_deposit_detail.t_deposit_id = t_deposit.id")
-                        ->join("customer",
-                                "customer.id = t_deposit.customer_id")
-                        ->where("t_deposit.id",$deposit_id)
-                        ->get()->row();
-
-        $terbilang = $this->terbilang(str_replace(",","",$customer->nilai));
-        
-        $this->pdf->load_view("proyek/cetakan/kwitansi_deposit",[
-                            "no_referensi"  => $no_referensi,
-                            "periode"       => $periode,
-                            "customer"      => $customer,
-                            "terbilang"     => strtoupper($terbilang)
-                            ]);
-    }
-    public function lingkunganA($unit_id=null,$pembayaran_id=null){
-        $periode = $this->db
-                        ->select("periode")
-                        ->from("t_pembayaran_detail")
-                        ->join("t_tagihan_lingkungan",
-                                "t_tagihan_lingkungan.id = t_pembayaran_detail.tagihan_service_id")
-                        ->where("t_pembayaran_detail.t_pembayaran_id",$pembayaran_id)
-                        ->order_by("periode")
-                        ->get()->result();
-        $tagihan = $this->db
-                        ->select(" 
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar,t_pembayaran_detail.bayar_deposit))AS money), 1), '.00', '') as tagihan,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_denda,0)+isnull(t_pembayaran_detail.nilai_penalti,0))AS money), 1), '.00', '') as denda,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar_deposit,0))AS money), 1), '.00', '') as deposit,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.nilai_diskon,0))AS money), 1), '.00', '') as diskon,
-                                REPLACE(CONVERT(varchar, CAST(sum(isnull(t_pembayaran_detail.bayar,t_pembayaran_detail.bayar_deposit)
-                                +isnull(t_pembayaran_detail.nilai_denda,0)
-                                +isnull(t_pembayaran_detail.nilai_penalti,0)
-                                -isnull(t_pembayaran_detail.nilai_diskon,0))AS money), 1), '.00', '') as total")
-                        ->from("t_pembayaran_detail")
-                        ->join("t_tagihan_lingkungan",
-                                "t_tagihan_lingkungan.id = t_pembayaran_detail.tagihan_service_id")
-                        ->where("t_pembayaran_id",$pembayaran_id)
-                        ->get()->row();
-        $periode_first  = $this->bln_indo(substr($periode[0]->periode,5,2))." ".substr($periode[0]->periode,0,4);
-        $periode_last  = $this->bln_indo(substr(end($periode)->periode,5,2))." ".substr(end($periode)->periode,0,4);
-        $terbilang = $this->terbilang(str_replace(",","",$tagihan->total));
-        
-        
-        $this->pdf->load_view("proyek/cetakan/kwitansi_lingkungan",[
-                            "periode_last"  => $periode_last,
-                            "periode_first" => $periode_first,
-                            "tagihan"       => $tagihan,
-                            "terbilang"     => strtoupper($terbilang)
-                            ]);
-    }
     function penyebut($nilai) {
 		$nilai = abs($nilai);
 		$huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");

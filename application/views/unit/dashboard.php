@@ -423,7 +423,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <?php else: ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
-                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button>
+                                    <!-- <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" id="btn-show-kwitansi" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button> -->
+                                    <button type="button" id="btn-show-kwitansi" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button>
                                     <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi (Beta)</button>
                                 </div>
                             </div>
@@ -586,7 +587,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                             <h4 class="modal-title" style="text-align:center;">Cetak Kwitansi<span class="grt"></span></h4>
                                         </div>
                                         <div class="modal-body">
-                                            <table id="table-new-kwitansi" class="table table-striped jambo_table">
+                                            <table id="table-new-kwitansi" class="table table-striped jambo_table" style="width: 100%;">
                                                 <thead>
                                                     <tr>
                                                         <th>Kode Service</th>
@@ -598,8 +599,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                         <th>Cetak Ke-</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="tbody-new-kwitansi">
-                                                </tbody>
+                                                <tbody id="tbody-new-kwitansi"></tbody>
                                             </table>
                                         </div>
                                         <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
@@ -1189,7 +1189,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 $("#tbody_tagihan").html("");
                                                 $("#tbody-kwitansi").html("");
                                                 $("#tbody-void_pembayaran").html("");
-
+                                                /*$("#table-new-kwitansi").DataTable().destroy();
+                                                $("#tbody-new-kwitansi").html("");*/
 
                                                 $("#redirect-pembayaran").attr("onclick", "modal_iframe_large('<?= site_url() ?>/Transaksi/P_pembayaran/add_modal/" + id + "','<?= site_url() ?>/Transaksi/P_pembayaran/add/" + id + "','Pembayaran')");
                                                 $("#redirect-delete-tagihan").attr("onclick", "modal_iframe_large('<?= site_url() ?>/Transaksi/P_delete_tagihan/delete/" + id + "','<?= site_url() ?>/Transaksi/P_delete_tagihan/delete/" + id + "','Delete Tagihan')");
@@ -1286,7 +1287,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                     $("#tbody-kwitansi").append(str);
                                                 });
 
-                                                $.each(data.kwitansi_new, function(key, value) {
+                                                /*$.each(data.kwitansi_new, function(key, value) {
                                                     var variable  = "<tr>";
                                                         variable += "   <td>"+value.code_service+"</td>";
                                                         variable += "   <td>"+value.name_service+"</td>";
@@ -1297,7 +1298,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                         variable += "   <td align='center'>"+value.count_print_kwitansi+"</td>";
                                                         variable += "</tr>"
                                                     $("#tbody-new-kwitansi").append(variable);
-                                                });
+                                                });*/
 
                                                 $.each(data.kwitansi_deposit, function(key, value) {
                                                     var str = "<tr>";
@@ -1387,13 +1388,13 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 //     ]
                                                 // });
 
-                                                $('#table-new-kwitansi').DataTable({
+                                                /*$('#table-new-kwitansi').DataTable({
                                                     "serverSide": false,
                                                     "stateSave" : false,
                                                     "bAutoWidth": true,
                                                     "bPaginate": true,
                                                     "bInfo": true
-                                                });
+                                                });*/
 
                                                 tableICheck();
 
@@ -1442,6 +1443,78 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     }
                                 });
 
+                                // show datatable kwitansi on click button kwitansi
+                                $(document).on('click', '#btn-show-kwitansi', function(e){
+                                    e.preventDefault();
+                                    $("#table-new-kwitansi").DataTable().destroy();
+                                    $("#tbody-new-kwitansi").html("");
+
+                                    if ($('#unit').val() == '' || $('#unit').val() == null) {
+                                        alert('Silahkan pilih unit/pemilik');
+                                    } else {
+                                        id = $("#unit").val().split('.')[1];
+                                        $('#modal_cetak_kwitansi_new').modal('show');
+                                        $('#table-new-kwitansi').DataTable({
+                                            // "serverSide": true,
+                                            "stateSave" : false,
+                                            "bAutoWidth": true,
+                                            "oLanguage": {
+                                                "sSearch": "Live Search : ",
+                                                "sLengthMenu": "_MENU_",
+                                                "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
+                                                "sInfoFiltered": "(filtered from _MAX_ total entries)",
+                                                "sZeroRecords": "<center>Data tidak ditemukan</center>",
+                                                "sEmptyTable": "No data available in table",
+                                                "sLoadingRecords": "Please wait - loading...",
+                                                "oPaginate": {
+                                                    "sPrevious": "Prev",
+                                                    "sNext": "Next"
+                                                }
+                                            },
+                                            ajax: {
+                                                url: "<?php echo site_url('Cetakan/kwitansi_new/request_data_kwitansi'); ?>",
+                                                type: "POST",
+                                                data: {unit_id: id},
+                                            },
+                                            "columns": [
+                                                { data: 'code_service', defaultContent: '-' },
+                                                { data: 'name_service' },
+                                                { data: 'tgl_bayar', defaultContent: '-' },
+                                                { data: 'bayar' },
+                                                { data: 'no_kwitansi' },
+                                                { data: 'count_print_kwitansi' },
+                                                { data: 'count_print_kwitansi' },
+                                            ],
+                                            "aaSorting": [[ 0, "asc" ]],
+                                            "columnDefs": [
+                                                {aTargets: [0], "sClass" : "column-hide"},
+                                                {targets: 'no-sort', "orderable": false},
+                                                {
+                                                    targets: 3,
+                                                    render: function (data, type, row) {
+                                                        return formatC(row['bayar']);
+                                                    }
+                                                },
+                                                {
+                                                    targets: 5,
+                                                    render: function(data, type, row) {
+                                                        return "<a class='btn btn-primary' id='show-kwitansi' data-pembayaran_id='"+row['pembayaran_id']+"' data-code_service='"+row['service_jenis_id']+"'>Cetak</a></td>";
+                                                    }
+                                                },
+                                                {
+                                                    targets: 6,
+                                                    render: function(data, type, row) {
+                                                        return "<center>"+row['count_print_kwitansi']+"</center>";
+                                                    }
+                                                }
+                                            ],
+                                            "sPaginationType": "simple_numbers",
+                                            "iDisplayLength": 10,
+                                            "aLengthMenu": [[10, 20, 50, 100, 150], [10, 20, 50, 100, 150]],
+                                        });
+                                    }
+                                });
+
                                 $(document).on('click', '#show-kwitansi', function(e){
                                     e.preventDefault();
                                     var print_ke      = $(this).parent().parent().find('td:nth-child(7)').text();
@@ -1455,13 +1528,28 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                         $('#modal-footer-desc').html(btn_save + btn_close);
                                         $('#modal_desc').modal('show');
                                     } else {
-                                        var variables  = '?pembayaran_id=' + pembayaran_id;
-                                            variables += '&code_service=' + code_service;
-                                        var link_url   = "<?=site_url('/Cetakan/kwitansi_new/gabungan/'); ?>"+variables;
-                                        window.open(link_url);
+                                        $.ajax({
+                                            url: "<?=site_url('cetakan/Kwitansi_new/kwitansi_request/');?>",
+                                            cache: false,
+                                            type: "POST",
+                                            data: {
+                                                pembayaran_id: pembayaran_id,
+                                                code_service: code_service
+                                            },
+                                            dataType: "json",
+                                            success: function(data) {
+                                                if (data.status==1) {
+                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').html("<center>"+(print_ke+1)+"</center>");
+                                                    $('#modal_desc').modal('hide');
+                                                    $('#cetak_desc').val('');
+                                                    window.open(data.link_print);
+                                                }
+                                            }
+                                        });
                                     }
                                 });
 
+                                // save cetak kwitansi more than one
                                 $(document).on('click', '#save-desc', function(e){
                                     e.preventDefault();
                                     var keterangan = $('#cetak_desc').val();
