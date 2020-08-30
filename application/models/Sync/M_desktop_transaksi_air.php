@@ -102,7 +102,7 @@ class m_desktop_transaksi_air extends CI_Model
                 "LEFT"
             )
             ->where("t_tagihan_air_detail.t_tagihan_air_id is null")
-            ->where("(td_air.nilai_total != 0 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0) OR")
+            ->where("(td_air.nilai_total != 0 OR (td_air.Meter_akhir - td_air.Meter_awal) > 0)")
             ->order_by("tagihan_id")
             ->limit("1000")
             ->get()->result();
