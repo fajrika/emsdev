@@ -423,9 +423,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <?php else: ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
-                                    <!-- <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" id="btn-show-kwitansi" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button> -->
                                     <button type="button" id="btn-show-kwitansi" class="btn btn-primary col-md-2 col-md-offset-1">Kwitansi (Beta)</button>
-                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi (Beta)</button>
+                                    <button type="button" id="btn-history-kwitansi" class="btn btn-primary col-md-2 col-md-offset-1">History Kwitansi (Beta)</button>
                                 </div>
                             </div>
                         </div>
@@ -645,30 +644,30 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
 
                         <div class="x_content">
                             <div class="modal fade" id="modal_history_cetak_kwitansi" data-backdrop="static" data-keyboard="false" style="width:100vw">
-                                <div class="modal-dialog" style="width: fit-content">
+                                <div class="modal-dialog" style="width: 70vw;">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                                             <h4 class="modal-title" style="text-align:center;">History Cetak Kwitansi<span class="grt"></span></h4>
                                         </div>
                                         <div class="modal-body">
-                                            <table id="table-history-kwitansi" class="table table-striped jambo_table">
+                                            <table id="table-history-kwitansi" class="table table-striped jambo_table" style="width: 100%;">
                                                 <thead>
                                                     <tr>
-                                                        <th>Kode Service</th>
+                                                        <th>#</th>
                                                         <th>Nama Service</th>
-                                                        <th>Tgl Bayar</th>
-                                                        <th>Cetak</th>
-                                                        <th class='input_kwitansi'>No. Kwitansi</th>
-                                                        <th class='input_kwitansi'>Save</th>
+                                                        <th>Total Bayar</th>
+                                                        <th>No. Kwitansi</th>
+                                                        <th>Tgl Cetak</th>
+                                                        <th>Keterangan</th>
+                                                        <th>Cetak Oleh</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody id="tbody-history-kwitansi"></tbody>
+                                                <tbody></tbody>
                                             </table>
                                         </div>
-
-                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
-                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
+                                        <div class="modal-footer" style="margin:0px; border-top:0px;">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal">Close</button>
                                         </div>
                                     </div>
                                 </div>
@@ -1458,19 +1457,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                             // "serverSide": true,
                                             "stateSave" : false,
                                             "bAutoWidth": true,
-                                            "oLanguage": {
-                                                "sSearch": "Live Search : ",
-                                                "sLengthMenu": "_MENU_",
-                                                "sInfo": "Showing _START_ to _END_ of _TOTAL_ entries",
-                                                "sInfoFiltered": "(filtered from _MAX_ total entries)",
-                                                "sZeroRecords": "<center>Data tidak ditemukan</center>",
-                                                "sEmptyTable": "No data available in table",
-                                                "sLoadingRecords": "Please wait - loading...",
-                                                "oPaginate": {
-                                                    "sPrevious": "Prev",
-                                                    "sNext": "Next"
-                                                }
-                                            },
                                             ajax: {
                                                 url: "<?php echo site_url('Cetakan/kwitansi_new/request_data_kwitansi'); ?>",
                                                 type: "POST",
@@ -1515,6 +1501,42 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     }
                                 });
 
+                                // show datatable history print kwitansi
+                                $(document).on('click', '#btn-history-kwitansi', function(e){
+                                    e.preventDefault();
+                                    $("#table-history-kwitansi").DataTable().destroy();
+
+                                    if ($('#unit').val() == '' || $('#unit').val() == null) {
+                                        alert('Silahkan pilih unit/pemilik');
+                                    } else {
+                                        id = $("#unit").val().split('.')[1];
+                                        $('#modal_history_cetak_kwitansi').modal('show');
+                                        $('#table-history-kwitansi').DataTable({
+                                            "serverSide": true,
+                                            "stateSave" : false,
+                                            "bAutoWidth": true,
+                                            "aaSorting": [[ 0, "desc" ]],
+                                            "columnDefs": [
+                                                {"targets": 'no-sort', "orderable": false}
+                                            ],
+                                            "sPaginationType": "simple_numbers",
+                                            "iDisplayLength": 10,
+                                            "aLengthMenu": [[10, 20, 50, 100, 150], [10, 20, 50, 100, 150]],
+                                            "ajax": {
+                                                url: "<?php echo site_url('Cetakan/kwitansi_new/request_history_kwitansi'); ?>",
+                                                type: "post",
+                                                data: {unit_id: id},
+                                                cache: false,
+                                                error: function() {
+                                                    $(".table-history-kwitansi-error").html("");
+                                                    $("#table-history-kwitansi").append('<tbody class="my-grid-error"><tr><th colspan="9"><center>No data found in the server</center></th></tr></tbody>');
+                                                    $("#table-history-kwitansi_processing").css("display","none");
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+
                                 $(document).on('click', '#show-kwitansi', function(e){
                                     e.preventDefault();
                                     var print_ke      = $(this).parent().parent().find('td:nth-child(7)').text();
@@ -1539,7 +1561,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                             dataType: "json",
                                             success: function(data) {
                                                 if (data.status==1) {
-                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').html("<center>"+(print_ke+1)+"</center>");
+                                                    count_print = parseInt(print_ke) + 1;
+                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').html("<center>"+count_print+"</center>");
                                                     $('#modal_desc').modal('hide');
                                                     $('#cetak_desc').val('');
                                                     window.open(data.link_print);
@@ -1573,7 +1596,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                             dataType: "json",
                                             success: function(data) {
                                                 if (data.status==1) {
-                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').text(print_ke);
+                                                    $('#table-new-kwitansi tbody tr:eq('+index_ke+') td:nth-child(7)').html("<center>"+print_ke+"</center>");
                                                     $('#modal_desc').modal('hide');
                                                     $('#cetak_desc').val('');
                                                     window.open(data.link_print);
@@ -1633,8 +1656,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 $(".tableDT4").dataTable({
                                     "order": []
                                 });
-
-                                
 
 
                                 $("#unit").select2({

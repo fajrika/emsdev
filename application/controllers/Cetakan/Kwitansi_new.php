@@ -28,7 +28,7 @@ class Kwitansi_new extends CI_Controller
         $pembayaran_id = $this->input->post('pembayaran_id');
         $code_service  = $this->input->post('code_service');
         $variables     = '?pembayaran_id='.$pembayaran_id;
-        $variables    .= '&code_service='.$code_service;
+        $variables    .= '&service='.$code_service;
 
         $update_count = $this->db
             ->set('count_print_kwitansi', 'count_print_kwitansi+1', FALSE)
@@ -52,7 +52,7 @@ class Kwitansi_new extends CI_Controller
 
     public function gabungan()
     {
-        if (empty($_GET['pembayaran_id']) && empty($_GET['code_service']))
+        if (empty($_GET['pembayaran_id']) && empty($_GET['service']))
         {
             exit('Pembayaran ID Kosong.');
         }
@@ -61,7 +61,7 @@ class Kwitansi_new extends CI_Controller
             $project = $this->m_core->project();
             $this->load->library('pdf');
             $pembayaran_id_tmp      = $this->input->get("pembayaran_id");
-            $code_service           = $this->input->get("code_service");
+            $code_service           = $this->input->get("service");
             $code_service           = explode(",", $code_service);
 
             $pembayaran_id          = (object)[];
@@ -492,6 +492,140 @@ class Kwitansi_new extends CI_Controller
         }
 
         echo json_encode(array('data' => $kwitansi_all_service));
+    }
+
+
+    public function request_history_kwitansi()
+    {
+        $requestData    = $_REQUEST;
+        $like_value     = $requestData['search']['value'];
+        $column_order   = $requestData['order'][0]['column'];
+        $column_dir     = $requestData['order'][0]['dir'];
+        $limit_start    = $requestData['start'];
+        $limit_length   = $requestData['length'];
+        $unit_id        = $this->input->post('unit_id');
+
+        $sql = " 
+            SELECT
+                ROW_NUMBER() OVER (ORDER BY log_kwitansi.id) AS nomor,
+                log_kwitansi.id,
+                FORMAT(log_kwitansi.created_at, 'dd-MM-yyyy hh:mm:ss') AS create_date,
+                CAST(log_kwitansi.description AS VARCHAR(MAX)) AS description,
+                log_kwitansi.created_by,
+                SUM(ISNULL(t_pembayaran_detail.bayar, t_pembayaran_detail.bayar_deposit)) AS bayar,
+                t_pembayaran.no_kwitansi,
+                (
+                    SUBSTRING((
+                        SELECT DISTINCT 
+                            ','+LEFT(service_jenis.name_default, LEN(service_jenis.name_default))
+                        FROM 
+                            t_pembayaran AS pembayaran
+                            INNER JOIN t_pembayaran_detail ON t_pembayaran_detail.t_pembayaran_id = pembayaran.id
+                            INNER JOIN service ON service.id = t_pembayaran_detail.service_id
+                            INNER JOIN service_jenis ON service_jenis.id = service.service_jenis_id
+                        WHERE 1=1
+                            AND pembayaran.unit_id = t_pembayaran.unit_id
+                            AND ISNULL(pembayaran.is_void, 0) = 0
+                            AND pembayaran.id = t_pembayaran.id
+                        FOR XML PATH ('')
+                    ), 2, 1000)
+                ) AS name_default 
+            FROM 
+                log_kwitansi 
+                INNER JOIN t_pembayaran ON log_kwitansi.t_pembayaran_id = t_pembayaran.id
+                INNER JOIN t_pembayaran_detail ON t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id
+                INNER JOIN service ON service.id = t_pembayaran_detail.service_id
+                INNER JOIN service_jenis ON service_jenis.id = service.service_jenis_id
+            WHERE 1=1
+                AND t_pembayaran.unit_id = '".$unit_id."'
+                AND ISNULL(t_pembayaran.is_void, 0) = 0
+                AND (
+                    log_kwitansi.description LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    OR log_kwitansi.created_by LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    OR FORMAT(log_kwitansi.created_at, 'dd-MM-yyyy hh:mm:ss') LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    OR (
+                        SUBSTRING((
+                            SELECT DISTINCT 
+                                ','+LEFT(service_jenis.name_default, LEN(service_jenis.name_default))
+                            FROM 
+                                t_pembayaran AS pembayaran
+                                INNER JOIN t_pembayaran_detail ON t_pembayaran_detail.t_pembayaran_id = pembayaran.id
+                                INNER JOIN service ON service.id = t_pembayaran_detail.service_id
+                                INNER JOIN service_jenis ON service_jenis.id = service.service_jenis_id
+                            WHERE 1=1
+                                AND pembayaran.unit_id = t_pembayaran.unit_id
+                                AND ISNULL(pembayaran.is_void, 0) = 0
+                                AND pembayaran.id = t_pembayaran.id
+                            FOR XML PATH ('')
+                        ), 2, 1000)
+                    ) LIKE '%".$this->db->escape_like_str($like_value)."%'
+                )
+            GROUP BY
+                t_pembayaran.id,
+                t_pembayaran.unit_id,
+                log_kwitansi.id,
+                FORMAT(log_kwitansi.created_at, 'dd-MM-yyyy hh:mm:ss'),
+                CAST(log_kwitansi.description AS VARCHAR(MAX)),
+                log_kwitansi.created_by,
+                t_pembayaran.no_kwitansi
+            ";
+        // print_r($sql);
+        $data_sql['totalFiltered']  = $this->db->query($sql)->num_rows();
+        $data_sql['totalData']      = $this->db->query($sql)->num_rows();
+        $columns_order_by = array(
+            0 => 'nomor',
+            1 => 'name_default',
+            2 => 'bayar',
+            3 => 't_pembayaran.no_kwitansi',
+            4 => 'create_date',
+            5 => 'description',
+            6 => 'log_kwitansi.created_by'
+        );
+
+        $sql  .= " ORDER BY ".$columns_order_by[$column_order]." ".$column_dir." ";
+        $sql  .= " OFFSET ".$limit_start." ROWS FETCH NEXT ".$limit_length." ROWS ONLY ";
+
+        $data_sql['query'] = $this->db->query($sql);
+        $totalData       = $data_sql['totalData'];
+        $totalFiltered   = $data_sql['totalFiltered'];
+        $query           = $data_sql['query'];
+
+        $data   = array();
+        $urut1  = 1;
+        $urut2  = 0;
+        foreach($query->result_array() as $row)
+        {
+            $nestedData  = array();
+            $total_data  = $totalData;
+            $start_dari  = $requestData['start'];
+            $perhalaman  = $requestData['length'];
+            $asc_desc    = $requestData['order'][0]['dir'];
+            if($asc_desc == 'desc'){
+                $nomor = $urut1 + $start_dari;
+            }
+            if($asc_desc == 'asc'){
+                $nomor = ($total_data - $start_dari) - $urut2;
+            }
+
+            $nestedData[] = $nomor;
+            $nestedData[] = $row['name_default'];
+            $nestedData[] = number_format($row['bayar'],0,",",",");
+            $nestedData[] = $row['no_kwitansi'];
+            $nestedData[] = $row['create_date'];
+            $nestedData[] = $row['description'];
+            $nestedData[] = $row['created_by'];
+            $data[] = $nestedData;
+            $urut1++;
+            $urut2++;
+        }
+
+        $json_data = array(
+            "draw"            => intval( $requestData['draw'] ),
+            "recordsTotal"    => intval( $totalData ),
+            "recordsFiltered" => intval( $totalFiltered ),
+            "data"            => $data
+        );
+        echo json_encode($json_data);
     }
 
     function penyebut($nilai) {
