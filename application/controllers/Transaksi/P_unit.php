@@ -17,13 +17,14 @@ class p_unit extends CI_Controller
 		global $menu;
 		$menu = $this->m_core->menu();
 		// echo("<pre>");
-        //     print_r($menu);
-        // echo("</pre>");
+		//     print_r($menu);
+		// echo("</pre>");
 		global $unit_id;
 		$unit_id = $this->m_core->unit_id();
 		//var_dump($this->session->userdata('name'));
 	}
-	public function test(){
+	public function test()
+	{
 		$this->load->view('core/header');
 		$this->load->model('alert');
 		$this->alert->css();
@@ -96,21 +97,22 @@ class p_unit extends CI_Controller
 		$this->db->update("kwitansi_referensi");
 		echo json_encode(true);
 	}
-	public function ajax_save_void(){
+	public function ajax_save_void()
+	{
 		// echo json_encode($this->input->post('pembayaran_id'));
-		echo(json_encode($this->m_unit->void_pembayaran($this->input->get('pembayaran_id'),$this->input->get('description'))));
+		echo (json_encode($this->m_unit->void_pembayaran($this->input->get('pembayaran_id'), $this->input->get('description'))));
 
 		die;
 		$return = (object)[];
 
-        $return->status = true;        
-		$return->message = "Data Void berhasil di request"; 
-		
+		$return->status = true;
+		$return->message = "Data Void berhasil di request";
+
 		$this->db->trans_start();
 
 		$dataTmp = (object)[];
 		// $dataTmp->id					= ;
-		$dokumen_jenis =  $this->db->from('dokumen_jenis')->where('code','void_pembayaran')->get()->row();
+		$dokumen_jenis =  $this->db->from('dokumen_jenis')->where('code', 'void_pembayaran')->get()->row();
 		$dataTmp->status_approval		= 0;
 		$dataTmp->create_user_id		= $this->m_core->user_id();
 		$dataTmp->tgl_tambah			= date("Y-m-d h:i:s.000");
@@ -130,18 +132,18 @@ class p_unit extends CI_Controller
 		// $dataTmp->approve_jabatan_id	= ;
 		$dataTmp->tgl_kirim_email		= date("Y-m-d");
 		$dataTmp->source_table			= 't_pembayaran';
-		$this->db->insert("approval",$dataTmp);
-		if ($this->db->trans_status() === FALSE){
-            $return->message = "Data void gagal di request";
-            $return->status = false;
-        }else{
-            $this->db->trans_commit();
-        }
+		$this->db->insert("approval", $dataTmp);
+		if ($this->db->trans_status() === FALSE) {
+			$return->message = "Data void gagal di request";
+			$return->status = false;
+		} else {
+			$this->db->trans_commit();
+		}
 		echo json_encode($return);
 	}
 	public function get_ajax_unit()
 	{
-		$unit = 
+		$unit =
 			$this->db->select("concat('1.',unit.id) as id, CONCAT(kawasan.name,'-',blok.name,'/',unit.no_unit,'-',customer.name) as text")
 			->from('unit')
 			->join(
@@ -165,7 +167,7 @@ class p_unit extends CI_Controller
 		$data->result[0] = (object)[];
 		$data->result[0]->text = 'Project';
 		$data->result[0]->children = $unit;
-		$unit_virtual = 
+		$unit_virtual =
 			$this->db->select("concat('2.',unit_virtual.id) as id, CONCAT(unit_virtual.unit,'-',customer.name) as text")
 			->from('unit_virtual')
 			->join(
@@ -179,13 +181,13 @@ class p_unit extends CI_Controller
 		$data->result[1] = (object)[];
 		$data->result[1]->text = 'Non Project';
 		$data->result[1]->children = $unit_virtual;
-		
-		
+
+
 		echo json_encode($data->result);
 	}
 	public function get_ajax_unit2()
 	{
-		$unit = 
+		$unit =
 			$this->db->select("unit.id as id, CONCAT(kawasan.name,'-',blok.name,'/',unit.no_unit,'-',customer.name) as text")
 			->from('unit')
 			->join(
@@ -204,10 +206,11 @@ class p_unit extends CI_Controller
 			->where("CONCAT(kawasan.name,'-',blok.name,'/',unit.no_unit,'-',customer.name) like '%" . $this->input->get('data') . "%'")
 			->limit(10)
 			->get()->result();
-		
+
 		echo json_encode($unit);
 	}
-	public function get_ajax_unit_virtual_detail(){
+	public function get_ajax_unit_virtual_detail()
+	{
 		$project = $this->m_core->project();
 		$unit_virtual_id = $this->input->get('unit_id');
 		$unit_virtual = $this->db->select("
@@ -216,8 +219,10 @@ class p_unit extends CI_Controller
 									pemilik.id as pemilik_id
 									")
 			->from('unit_virtual')
-			->join('customer as pemilik', 
-				'pemilik.id = unit_virtual.customer_id')
+			->join(
+				'customer as pemilik',
+				'pemilik.id = unit_virtual.customer_id'
+			)
 			->where('unit_virtual.id', $unit_virtual_id)
 			->get()->row();
 		$pemilik = $this->db->select("	
@@ -227,21 +232,22 @@ class p_unit extends CI_Controller
 								isnull(mobilephone2,' ') as mobilephone2,
 								isnull(address,' ') as address
 							")
-							->from("customer")
-							->where("id",$unit_virtual->pemilik_id)
-							->get()->row();
+			->from("customer")
+			->where("id", $unit_virtual->pemilik_id)
+			->get()->row();
 		$unit_virtual->pemilik = $pemilik;
 		$unit_virtual->penghuni = $pemilik;
 		$this->load->model("core/m_tagihan");
 		$tagihan_layanan_lain = $this->m_tagihan->layanan_lain(
-									$project->id,
-									[
-										'status_tagihan'=>[0,2,3,4],
-										'unit_virtual_id'=>[$unit_virtual_id],
-										'periode'=>date("Y-m-d")
-									]);
+			$project->id,
+			[
+				'status_tagihan' => [0, 2, 3, 4],
+				'unit_virtual_id' => [$unit_virtual_id],
+				'periode' => date("Y-m-d")
+			]
+		);
 
-		echo(json_encode($unit_virtual));		
+		echo (json_encode($unit_virtual));
 	}
 	public function get_ajax_unit_detail()
 	{
@@ -250,6 +256,7 @@ class p_unit extends CI_Controller
 		$periode_now = date("Y-m-01");
 		$periode_pemakaian = date("Y-m-01", strtotime("-1 Months"));
 		$unit_id = $this->input->get('unit_id');
+
 
 
 		$unit = $this->db->select("
@@ -268,13 +275,16 @@ class p_unit extends CI_Controller
 									")
 			->from('unit')
 			->join('customer as pemilik', 'pemilik.id = unit.pemilik_customer_id')
-			->join('customer as penghuni', 'penghuni.id = unit.penghuni_customer_id','LEFT')
-			->join('jenis_golongan', 'jenis_golongan.id = unit.gol_id','LEFT')
-			->join('project','project.id = unit.project_id')
-			->join('blok','blok.id = unit.blok_id')
-			->join('kawasan','kawasan.id = blok.kawasan_id')
+			->join('customer as penghuni', 'penghuni.id = unit.penghuni_customer_id', 'LEFT')
+			->join('jenis_golongan', 'jenis_golongan.id = unit.gol_id', 'LEFT')
+			->join('project', 'project.id = unit.project_id')
+			->join('blok', 'blok.id = unit.blok_id')
+			->join('kawasan', 'kawasan.id = blok.kawasan_id')
 			->where('unit.id', $unit_id)
 			->get()->row();
+
+
+		$unit->note = $this->db->from("unit_note")->where("unit_id", $unit_id)->order_by("id DESC")->get()->row();
 
 		// WHEN v_tagihan_air.periode > '$periode_now' THEN 0 -> kalau periode nya lebih dari periode saat ini, denda = 0
 		$pemilik = $this->db->select("	isnull(name,' ') as name,
@@ -282,21 +292,21 @@ class p_unit extends CI_Controller
 										isnull(mobilephone1,' ') as mobilephone1,
 										isnull(mobilephone2,' ') as mobilephone2,
 										isnull(address,' ') as address")
-							->from("customer")
-							->where("id",$unit->pemilik_id)
-							->get()->row();
+			->from("customer")
+			->where("id", $unit->pemilik_id)
+			->get()->row();
 		$penghuni = $this->db->select("	isnull(name,' ') as name,
 										isnull(email,' ') as email,
 										isnull(mobilephone1,' ') as mobilephone1,
 										isnull(mobilephone2,' ') as mobilephone2,
 										isnull(address,' ') as address")
-							->from("customer")
-							->where("id",$unit->penghuni_id)
-							->get()->row();
+			->from("customer")
+			->where("id", $unit->penghuni_id)
+			->get()->row();
 		$this->load->model("core/m_tagihan");
-		$tagihan_air = $this->m_tagihan->air($project->id,['status_tagihan'=>[0,2,3,4],'unit_id'=>[$unit_id],'periode'=>date("Y-m-d")]);
-		$tagihan_lingkungan = $this->m_tagihan->lingkungan($project->id,['status_tagihan'=>[0,2,3,4],'unit_id'=>[$unit_id],'periode'=>date("Y-m-d")]);
-		
+		$tagihan_air = $this->m_tagihan->air($project->id, ['status_tagihan' => [0, 2, 3, 4], 'unit_id' => [$unit_id], 'periode' => date("Y-m-d")]);
+		$tagihan_lingkungan = $this->m_tagihan->lingkungan($project->id, ['status_tagihan' => [0, 2, 3, 4], 'unit_id' => [$unit_id], 'periode' => date("Y-m-d")]);
+
 		// $view_pemutihan_nilai_denda = $view_pemutihan_nilai_denda<0?0:$view_pemutihan_nilai_denda;
 
 		$kwitansi_per_service = $this->db
@@ -335,7 +345,7 @@ class p_unit extends CI_Controller
 												isnull(kwitansi_referensi.no_kwitansi,0),
 												isnull(kwitansi_referensi.no_referensi,0)
 												")
-			->where("isnull(t_pembayaran.is_void,0)",0)
+			->where("isnull(t_pembayaran.is_void,0)", 0)
 			->get()->result();
 		$kwitansi_deposit = $this->db
 			->select("
@@ -356,7 +366,7 @@ class p_unit extends CI_Controller
 			)
 			->where("t_deposit.customer_id", $unit->pemilik_id)
 			->get()->result();
-		$void_pembayaran =	$this->db	->select("
+		$void_pembayaran =	$this->db->select("
 											t_pembayaran.id,
 											CASE 
 												WHEN bank.id is null THEN cara_pembayaran.name
@@ -366,33 +376,41 @@ class p_unit extends CI_Controller
 											FORMAT(t_pembayaran_detail.bayar,'N0') as bayar,
 											t_pembayaran.no_kwitansi,
 											t_pembayaran.is_void")
-										->from("t_pembayaran")
-										->join("
+			->from("t_pembayaran")
+			->join(
+				"
 												(
 													SELECT 
 														t_pembayaran_id, sum(bayar+bayar_deposit) as bayar
 													FROM t_pembayaran_detail 
 														group by t_pembayaran_id 
 												) t_pembayaran_detail",
-												"t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id")
-										->join("cara_pembayaran",
-												"cara_pembayaran.id = t_pembayaran.cara_pembayaran_id")
-										->join("bank",
-												"bank.id = cara_pembayaran.bank_id",
-												"LEFT")
-										->join("approval",
-												"approval.dokumen_id = t_pembayaran.id
+				"t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id"
+			)
+			->join(
+				"cara_pembayaran",
+				"cara_pembayaran.id = t_pembayaran.cara_pembayaran_id"
+			)
+			->join(
+				"bank",
+				"bank.id = cara_pembayaran.bank_id",
+				"LEFT"
+			)
+			->join(
+				"approval",
+				"approval.dokumen_id = t_pembayaran.id
 												AND approval.dokumen_jenis_id = 2
 												AND approval.dokumen_code = 'void_pembayaran'",
-												"LEFT")
-										->where("t_pembayaran.unit_id",$unit_id)
-										->where("(approval.approval_status_id != 1 or approval.approval_status_id is null)")
-										->distinct()
-										->get()->result();
-		
+				"LEFT"
+			)
+			->where("t_pembayaran.unit_id", $unit_id)
+			->where("(approval.approval_status_id != 1 or approval.approval_status_id is null)")
+			->distinct()
+			->get()->result();
 
-		
-		
+
+
+
 		$jumlah_nilai_pokok 			= 0;
 		$jumlah_nilai_ppn 				= 0;
 		$jumlah_nilai_denda 			= 0;
@@ -419,7 +437,7 @@ class p_unit extends CI_Controller
 			$jumlah_total 					+= $v->total;
 		}
 
-		
+
 		$unit->jumlah_nilai_pokok 			= $jumlah_nilai_pokok;
 		$unit->jumlah_nilai_ppn 			= $jumlah_nilai_ppn;
 		$unit->jumlah_nilai_denda 			= $jumlah_nilai_denda;
@@ -432,7 +450,7 @@ class p_unit extends CI_Controller
 		$unit->tagihan_lingkungan = $tagihan_lingkungan;
 		$unit->kwitansi 				= $kwitansi_per_service;
 		$unit->kwitansi_deposit 		= $kwitansi_deposit;
-		
+
 		$unit->pemilik					= $pemilik;
 		$unit->penghuni					= $penghuni;
 		$unit->void_pembayaran 			= $void_pembayaran;
@@ -442,6 +460,71 @@ class p_unit extends CI_Controller
 		// print_r($unit);
 		// echo("</pre>");
 
+	}
+	public function ajax_get_unit_note($unit_id, $type = 'last')
+	{
+		header('Content-Type: application/json');
+
+		if ($unit_id) {
+			$tmp = $this->db
+				->select("unit_note.description")
+				->select("unit_note.created_at")
+				->select("user.name as created_by")
+				->from("unit_note")
+				->join(
+					"user",
+					"user.id = unit_note.created_by"
+				)
+				->where("unit_note.unit_id", $unit_id)
+				->order_by("unit_note.id desc")
+				->get();
+			if ($type == 'all')
+				echo (json_encode([
+					"status_code" => 1,
+					"status" => "success",
+					"message" => "Data sukses di Load",
+					"data" => $tmp->result()
+				]));
+			elseif ($type == 'last')
+				echo (json_encode([
+					"status_code" => 1,
+					"status" => "success",
+					"message" => "Data sukses di Load",
+					"data" => $tmp->row()
+				]));
+			else
+				echo (json_encode([
+					"status_code" => 0,
+					"status" => "error",
+					"message" => "Data gagal di Load",
+					"data" => []
+				]));
+		}
+	}
+	public function ajax_save_unit_note()
+	{
+		header('Content-Type: application/json');
+
+		if ($this->input->post('unit_id') && $this->input->post('description')) {
+			$this->db->insert('unit_note', [
+				'unit_id' 		=> $this->input->post('unit_id'),
+				'description' 	=> $this->input->post('description'),
+				'created_by' 	=> $this->db->from("user")->where("username", $this->session->username)->get()->row()->id
+			]);
+			echo (json_encode([
+				"status_code" => 1,
+				"status" => "success",
+				"message" => "Data sukses di save",
+			]));
+			return;
+		}
+
+		echo (json_encode([
+			"status_code" => 0,
+			"status" => "error",
+			"message" => "Data gagal di save",
+		]));
+		return;
 	}
 	// public function test()
 	// {

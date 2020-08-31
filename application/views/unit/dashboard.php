@@ -96,6 +96,10 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
         -webkit-transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
         transform: translate(-100px, -100px) scale(1) translate(100px, 100px);
     }
+
+    .modal-footer {
+        background-color: #ddd;
+    }
 </style>
 <!-- body -->
 
@@ -159,7 +163,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                         <div class="clearfix" style="margin-top:15px"></div>
 
                         <div class="col-md-4 col-sm-12 col-xs-12">
-                            <div class="x_panel ">
+                            <div class="x_panel " style="min-height: 600px;">
                                 <div class="x_title">
                                     <h2>Info<small>Unit</small></h2>
                                     <div class="clearfix"></div>
@@ -222,7 +226,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12">
-                            <div class="x_panel ">
+                            <div class="x_panel " style="min-height: 600px;">
                                 <div class="x_title">
                                     <h2>Info<small>Customer</small></h2>
                                     <div class="clearfix"></div>
@@ -296,7 +300,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                             </div>
                         </div>
                         <div class="col-md-4 col-sm-12 col-xs-12">
-                            <div class="x_panel">
+                            <div class="x_panel " style="min-height: 600px;">
                                 <div class="x_title">
                                     <h2>Tagihan<small>Unit</small></h2>
                                     <div style="float:right" id="cetak_tagihan">
@@ -402,8 +406,47 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     </table>
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+
+                            <div class="x_panel">
+                                <div class="x_title">
+                                    <h2>Note<small>Unit (Last)</small></h2>
+                                    <div style="float:right" id="cetak_tagihan">
+                                        <button data-toggle="modal" data-target="#modal_unit_note_add" onclick="" class="btn btn-primary">Add</button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                </div>
+                                <div class="x_content">
+                                    <table id="" class="table table-striped jambo_table">
+
+                                        <thead>
+                                            <tr>
+                                                <th>Data</th>
+                                                <th>Info</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Note</td>
+                                                <td id="unit_note_description"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Created At</td>
+                                                <td id="unit_note_created_at"></td>
+                                            </tr>
+                                            <tr>
+                                                <td>Created By</td>
+                                                <td id="unit_note_created_by"></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <button data-toggle="modal" data-target="#modal_unit_note_read_more" onclick="load_unit_note('all')" class="btn btn-primary col-md-12 col-sm-12 col-lg-12">Read More</button>
+
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-12 col-sm-12 col-xs-12">
                             <div class="x_panel">
                                 <div class="x_title">
@@ -420,7 +463,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <button id="redirect-delete-tagihan" onclick="" class="btn btn-primary col-md-2" style="margin-left:4.1%">Delete Tagihan</button>
                                     <?php if ($project->id == 13) : ?>
                                         <button id="redirect-ubah-tagihan" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Ubah Tagihan</button>
-                                    <?php else: ?>
+                                    <?php else : ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
                                     <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Cetak Kwitansi (Beta)</button>
@@ -503,6 +546,75 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                         </tbody>
                                     </table>
 
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="x_content">
+                            <div class="modal fade" id="modal_unit_note_add" data-backdrop="static" data-keyboard="false" style="width:100vw">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" style="margin-top:100px; min-width:350px;min-height:220px">
+
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" style="text-align:center;">Add - Note Unit</h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form id="form_unit_note" data-parsley-validate="" class="form-horizontal form-label-left" novalidate="" method="post">
+                                                <div class="form-group">
+                                                    <label for="description" class="control-label col-md-3 col-sm-3 col-xs-12">Note</label>
+                                                    <div class="col-md-9 col-sm-9 col-xs-12">
+                                                        <textarea id="description" class="form-control col-md-7 col-xs-12" type="text" name="description"></textarea>
+                                                    </div>
+                                                </div>
+
+
+                                                <div class="form-group">
+                                                    <div class="center-margin">
+                                                        <button type="submit" class="btn btn-success">Submit</button>
+                                                    </div>
+                                                </div>
+
+                                            </form>
+
+                                        </div>
+
+                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="x_content">
+                            <div class="modal fade" id="modal_unit_note_read_more" data-backdrop="static" data-keyboard="false" style="width:100vw">
+                                <div class="modal-dialog">
+                                    <div class="modal-content" style="margin-top:100px; min-width:350px;min-height:220px">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            <h4 class="modal-title" style="text-align:center;">Note Unit<span class="grt"></span></h4>
+                                        </div>
+                                        <div class="modal-body">
+                                            <table id="table-history-pembayaran" class="table table-striped jambo_table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Note</th>
+                                                        <th>Created at</th>
+                                                        <th>Created by</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="tbody_unit_note_read_more">
+
+                                                </tbody>
+                                            </table>
+                                        </div>
+
+                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
+                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -966,6 +1078,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                         </div>
 
                         <script>
+                            var unit_id = 0;
+
                             function modal_iframe($url1, $url2 = null, $title = null) {
                                 $("#iframe-modal-body").html("<iframe id='modal-iframe-id' src='' frameborder='0' style='width: 100%; height:100%'></iframe>");
                                 $("#modal-iframe-id").attr("src", $url1);
@@ -1005,8 +1119,67 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 })
                             }
 
+                            function load_unit_note(type = 'last') {
+                                // type = all, last
+                                $.ajax({
+                                    type: "GET",
+
+                                    url: `<?= site_url() ?>/Transaksi/P_unit/ajax_get_unit_note/${unit_id}/${type}`,
+                                    dataType: "json",
+                                    success: function(result) {
+                                        if (result.status_code == 1) {
+                                            if (type == 'last') {
+                                                $("#unit_note_description").html(result.data.description);
+                                                $("#unit_note_created_at").html(result.data.created_at);
+                                                $("#unit_note_created_by").html(result.data.created_by);
+                                            } else if (type == 'all') {
+                                                $("#tbody_unit_note_read_more").html("");
+
+                                                result.data.forEach(el => {
+                                                    console.log(el);
+                                                    $("#tbody_unit_note_read_more").append(`
+                                                        <tr>
+                                                            <td>${el.description}</td>
+                                                            <td>${el.created_at}</td>
+                                                            <td>${el.created_by}</td>
+                                                        </tr>
+                                                    `);
+
+                                                });
+                                            }
+                                        }
+                                    }
+                                });
+                            }
                             $(document).ready(function() {
 
+                                //new 
+                                $("#form_unit_note").submit((e) => {
+                                    e.preventDefault();
+
+
+                                    if (unit_id != 0) {
+                                        console.log(`serialize = ${$("#description").val()}`);
+                                        console.log(`unit_id = ${unit_id}`);
+                                        $.ajax({
+                                            type: "POST",
+                                            data: {
+                                                unit_id: unit_id,
+                                                description: $("#description").val()
+                                            },
+                                            url: "<?= site_url() ?>/Transaksi/P_unit/ajax_save_unit_note",
+                                            dataType: "json",
+                                            success: function(data) {
+                                                if (data.status_code == 1) {
+                                                    notif('Sukses', data.message, 'success');
+                                                    load_unit_note('last');
+                                                } else {
+                                                    notif('Gagal', data.message, 'danger');
+                                                }
+                                            }
+                                        });
+                                    }
+                                })
                                 $("body").on("click", ".btn-void_pembayaran", function() {
                                     $("#modal-void-description").modal("show");
                                     $("#description").attr('pembayaran_id', $(this).val());
@@ -1077,6 +1250,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                 $("#unit").change(function() {
                                     tipe = $("#unit").val().split('.')[0];
                                     id = $("#unit").val().split('.')[1];
+                                    unit_id = id;
                                     if (tipe == 1) {
                                         $.ajax({
                                             type: "GET",
@@ -1366,6 +1540,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                             }
                                         });
                                     }
+                                    load_unit_note();
                                 });
 
                                 // $("body").on("click", ".btn-void_pembayaran", function() {
