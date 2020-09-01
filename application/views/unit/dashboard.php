@@ -1286,19 +1286,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                     $("#tbody-kwitansi").append(str);
                                                 });
 
-                                                /*$.each(data.kwitansi_new, function(key, value) {
-                                                    var variable  = "<tr>";
-                                                        variable += "   <td>"+value.code_service+"</td>";
-                                                        variable += "   <td>"+value.name_service+"</td>";
-                                                        variable += "   <td>"+value.tgl_bayar+"</td>";
-                                                        variable += "   <td>"+formatC(value.bayar)+"</td>";
-                                                        variable += "   <td>"+value.no_kwitansi+"</td>";
-                                                        variable += "   <td><a class='btn btn-primary' id='show-kwitansi' data-pembayaran_id='"+value.pembayaran_id+"' data-code_service='"+value.service_jenis_id+"'>Cetak</a></td>";
-                                                        variable += "   <td align='center'>"+value.count_print_kwitansi+"</td>";
-                                                        variable += "</tr>"
-                                                    $("#tbody-new-kwitansi").append(variable);
-                                                });*/
-
                                                 $.each(data.kwitansi_deposit, function(key, value) {
                                                     var str = "<tr>";
                                                     str += "<td></td>";
