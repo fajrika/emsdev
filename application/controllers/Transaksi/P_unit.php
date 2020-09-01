@@ -347,6 +347,7 @@ class p_unit extends CI_Controller
 												")
 			->where("isnull(t_pembayaran.is_void,0)", 0)
 			->get()->result();
+
 		$kwitansi_deposit = $this->db
 			->select("
 										t_deposit.id as deposit_id,
@@ -446,14 +447,15 @@ class p_unit extends CI_Controller
 		$unit->jumlah_nilai_pemutihan_denda	= $jumlah_nilai_pemutihan_denda;
 		$unit->jumlah_total 				= $jumlah_total;
 
-		$unit->tagihan_air = $tagihan_air;
-		$unit->tagihan_lingkungan = $tagihan_lingkungan;
-		$unit->kwitansi 				= $kwitansi_per_service;
-		$unit->kwitansi_deposit 		= $kwitansi_deposit;
+		$unit->tagihan_air                  = $tagihan_air;
+		$unit->tagihan_lingkungan           = $tagihan_lingkungan;
+		$unit->kwitansi 				    = $kwitansi_per_service;
+		// $unit->kwitansi_new                 = $kwitansi_all_service;
+		$unit->kwitansi_deposit 		    = $kwitansi_deposit;
 
-		$unit->pemilik					= $pemilik;
-		$unit->penghuni					= $penghuni;
-		$unit->void_pembayaran 			= $void_pembayaran;
+		$unit->pemilik					    = $pemilik;
+		$unit->penghuni					    = $penghuni;
+		$unit->void_pembayaran 			    = $void_pembayaran;
 		echo json_encode($unit);
 		// echo json_encode($tagihan_air);
 		// echo("<pre>");
