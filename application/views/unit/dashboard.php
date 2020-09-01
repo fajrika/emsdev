@@ -577,37 +577,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                             </div>
                         </div>
 
-                        <div class="x_content">
-                            <div class="modal fade" id="modal_cetak_kwitansi_new" data-backdrop="static" data-keyboard="false" style="width:100vw">
-                                <div class="modal-dialog" style="width: 70vw;">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                            <h4 class="modal-title" style="text-align:center;">Cetak Kwitansi<span class="grt"></span></h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <table id="table-new-kwitansi" class="table table-striped jambo_table" style="width: 100%;">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Kode Service</th>
-                                                        <th>Nama Service</th>
-                                                        <th>Tgl Bayar</th>
-                                                        <th>Total Bayar</th>
-                                                        <th>No. Kwitansi</th>
-                                                        <th>Cetak</th>
-                                                        <th>Cetak Ke-</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="tbody-new-kwitansi"></tbody>
-                                            </table>
-                                        </div>
-                                        <div class="modal-footer" style="margin:0px; border-top:0px; text-align:center;">
-                                            <button type="button" class="btn btn-info" data-dismiss="modal" id="delete_cancel_link">Close</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         <div class="x_content">
                             <div class="modal fade" id="modal_void_pembayaran" data-backdrop="static" data-keyboard="false" style="width:100vw">
