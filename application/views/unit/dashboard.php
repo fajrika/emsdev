@@ -998,23 +998,6 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                         </div>
 
 
-                        <div class="x_content">
-                            <div class="modal" id="modal_desc" data-backdrop="static" data-keyboard="false" style="width:100vw">
-                                <div class="modal-dialog" style="width: 20vw;">
-                                    <div class="modal-content">
-                                        <div class="modal-header">
-                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                                            <h4 class="modal-title">Konfirmasi<span class="grt"></span></h4>
-                                        </div>
-                                        <div class="modal-body">
-                                            <label>Alasan Cetak Ulang</label>
-                                            <textarea class="form-control" id="cetak_desc" name="cetak_desc" rows="6" placeholder="...." autofocus style="resize: vertical;"></textarea>
-                                        </div>
-                                        <div class="modal-footer" id="modal-footer-desc" style="margin:0px; border-top:0px;"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         <script>
                             function modal_iframe($url1, $url2 = null, $title = null) {
