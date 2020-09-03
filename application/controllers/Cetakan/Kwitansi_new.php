@@ -1,7 +1,7 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Kwitansi_new extends CI_Controller 
+class Kwitansi_new extends CI_Controller
 {
     public function __construct()
     {
@@ -27,8 +27,8 @@ class Kwitansi_new extends CI_Controller
         $description   = $this->input->post('description');
         $pembayaran_id = $this->input->post('pembayaran_id');
         $code_service  = $this->input->post('code_service');
-        $variables     = '?pembayaran_id='.$pembayaran_id;
-        $variables    .= '&service='.$code_service;
+        $variables     = '?pembayaran_id=' . $pembayaran_id;
+        $variables    .= '&service=' . $code_service;
 
         $update_count = $this->db
             ->set('count_print_kwitansi', 'count_print_kwitansi+1', FALSE)
@@ -45,19 +45,16 @@ class Kwitansi_new extends CI_Controller
         }
 
         echo json_encode(array(
-            'status'=>1,
-            'link_print'=>site_url('cetakan/Kwitansi_new/gabungan/'.$variables)
+            'status' => 1,
+            'link_print' => site_url('cetakan/Kwitansi_new/gabungan/' . $variables)
         ));
     }
 
     public function gabungan()
     {
-        if (empty($_GET['pembayaran_id']) && empty($_GET['service']))
-        {
+        if (empty($_GET['pembayaran_id']) && empty($_GET['service'])) {
             exit('Pembayaran ID Kosong.');
-        }
-        else
-        {
+        } else {
             $project = $this->m_core->project();
             $this->load->library('pdf');
             $pembayaran_id_tmp      = $this->input->get("pembayaran_id");
@@ -122,9 +119,10 @@ class Kwitansi_new extends CI_Controller
                     "v_tagihan_air",
                     "v_tagihan_air.tagihan_id = t_pembayaran_detail.tagihan_service_id
                     AND t_pembayaran_detail.service_id = service.id
-                    AND service.service_jenis_id = 2")
+                    AND service.service_jenis_id = 2"
+                )
                 ->join("t_pencatatan_meter_air", "t_pencatatan_meter_air.periode = v_tagihan_air.periode AND t_pencatatan_meter_air.unit_id = t_pembayaran.unit_id");
-            
+
             if ($pembayaran_id->{2}) {
                 $meter = $meter->where_in("t_pembayaran.id", $pembayaran_id->{2});
             } else {
@@ -140,34 +138,36 @@ class Kwitansi_new extends CI_Controller
                 ->from("t_pembayaran")
                 ->join("t_pembayaran_detail", "t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id")
                 ->join("service", "service.id = t_pembayaran_detail.service_id")
-                ->join("v_tagihan_lingkungan",
-                        "v_tagihan_lingkungan.tagihan_id = t_pembayaran_detail.tagihan_service_id
+                ->join(
+                    "v_tagihan_lingkungan",
+                    "v_tagihan_lingkungan.tagihan_id = t_pembayaran_detail.tagihan_service_id
                         AND t_pembayaran_detail.service_id = service.id
                         AND service.service_jenis_id = 1",
-                        "LEFT")
-                ->join("v_tagihan_air",
-                        "v_tagihan_air.tagihan_id = t_pembayaran_detail.tagihan_service_id
+                    "LEFT"
+                )
+                ->join(
+                    "v_tagihan_air",
+                    "v_tagihan_air.tagihan_id = t_pembayaran_detail.tagihan_service_id
                         AND t_pembayaran_detail.service_id = service.id
                         AND service.service_jenis_id = 2",
-                        "LEFT")
+                    "LEFT"
+                )
                 ->where_in("t_pembayaran.id", $pembayaran_id_gabungan)
                 ->order_by("periode_awal")
                 ->get()
                 ->result();
-            
-            $periode_first_v2   = substr($periode[0]->periode_awal,5,2)."/".substr($periode[0]->periode_awal,0,4);
-            $periode_last_v2    = substr(end($periode)->periode_akhir,5,2)."/".substr(end($periode)->periode_akhir,0,4);
 
-            $periode_awal       = substr($periode[0]->periode_awal,0,4)."/".substr($periode[0]->periode_awal,5,2)."/01";
-            $periode_akhir      = substr(end($periode)->periode_akhir,0,4)."/".substr(end($periode)->periode_akhir,5,2)."/01";
+            $periode_first_v2   = substr($periode[0]->periode_awal, 5, 2) . "/" . substr($periode[0]->periode_awal, 0, 4);
+            $periode_last_v2    = substr(end($periode)->periode_akhir, 5, 2) . "/" . substr(end($periode)->periode_akhir, 0, 4);
+
+            $periode_awal       = substr($periode[0]->periode_awal, 0, 4) . "/" . substr($periode[0]->periode_awal, 5, 2) . "/01";
+            $periode_akhir      = substr(end($periode)->periode_akhir, 0, 4) . "/" . substr(end($periode)->periode_akhir, 5, 2) . "/01";
 
             if ($periode_awal != "//01") {
-
             }
 
             $pembayaran_lingkungan = (object)[];
-            if($periode_awal != "//01")
-            {
+            if ($periode_awal != "//01") {
                 $pembayaran_lingkungan  = $this->db
                     ->select("
                         sum(t_pembayaran_detail.nilai_tagihan) as tagihan,
@@ -179,16 +179,15 @@ class Kwitansi_new extends CI_Controller
                     ->from("t_pembayaran")
                     ->join("t_pembayaran_detail", "t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id")
                     ->join("service", "service.id = t_pembayaran_detail.service_id AND service.service_jenis_id = 1");
-                
-                if($pembayaran_id->{1}){
-                    $pembayaran_lingkungan = $pembayaran_lingkungan->where_in("t_pembayaran.id",$pembayaran_id->{1});
-                }else{
-                    $pembayaran_lingkungan = $pembayaran_lingkungan->where("t_pembayaran.id",null);
-                }
-                    $pembayaran_lingkungan = $pembayaran_lingkungan->get()->row();
 
-                if ($pembayaran_lingkungan->tagihan)
-                {
+                if ($pembayaran_id->{1}) {
+                    $pembayaran_lingkungan = $pembayaran_lingkungan->where_in("t_pembayaran.id", $pembayaran_id->{1});
+                } else {
+                    $pembayaran_lingkungan = $pembayaran_lingkungan->where("t_pembayaran.id", null);
+                }
+                $pembayaran_lingkungan = $pembayaran_lingkungan->get()->row();
+
+                if ($pembayaran_lingkungan->tagihan) {
                     $pembayaran_lingkungan_periode = $this->db
                         ->select("FORMAT (t_tagihan_lingkungan.periode, 'MM/yyyy ') as periode")
                         ->from("t_pembayaran")
@@ -197,20 +196,19 @@ class Kwitansi_new extends CI_Controller
                         ->join("service", "service.id = t_pembayaran_detail.service_id AND service.service_jenis_id = 1");
 
                     if ($pembayaran_id->{1}) {
-                        $pembayaran_lingkungan_periode = $pembayaran_lingkungan_periode->where_in("t_pembayaran.id",$pembayaran_id->{1});
+                        $pembayaran_lingkungan_periode = $pembayaran_lingkungan_periode->where_in("t_pembayaran.id", $pembayaran_id->{1});
                     } else {
-                        $pembayaran_lingkungan_periode = $pembayaran_lingkungan_periode->where("t_pembayaran.id",null);
+                        $pembayaran_lingkungan_periode = $pembayaran_lingkungan_periode->where("t_pembayaran.id", null);
                     }
 
                     $pembayaran_lingkungan_periode       = $pembayaran_lingkungan_periode->order_by('t_tagihan_lingkungan.periode')->get()->result();
                     $pembayaran_lingkungan_periode_awal  = $pembayaran_lingkungan_periode[0]->periode;
                     $pembayaran_lingkungan_periode_akhir = end($pembayaran_lingkungan_periode)->periode;
-
-                }else{
+                } else {
                     $pembayaran_lingkungan_periode_awal = 0;
                     $pembayaran_lingkungan_periode_akhir = 0;
                 }
-            }else{
+            } else {
                 $pembayaran_lingkungan->ppn = 0;
                 $pembayaran_lingkungan->tagihan = 0;
                 $pembayaran_lingkungan->tagihan_tanpa_ppn = 0;
@@ -222,8 +220,7 @@ class Kwitansi_new extends CI_Controller
                 $pembayaran_lingkungan_periode_akhir = 0;
             }
             $pembayaran_air = (object)[];
-            if ($periode_awal != "//01")
-            {
+            if ($periode_awal != "//01") {
                 $pembayaran_air  = $this->db
                     ->select("
                         sum(t_pembayaran_detail.nilai_tagihan) as tagihan,
@@ -237,33 +234,32 @@ class Kwitansi_new extends CI_Controller
                     ->join("service", "service.id = t_pembayaran_detail.service_id AND service.service_jenis_id = 2");
 
                 if ($pembayaran_id->{2}) {
-                    $pembayaran_air = $pembayaran_air->where_in("t_pembayaran.id",$pembayaran_id->{2});
+                    $pembayaran_air = $pembayaran_air->where_in("t_pembayaran.id", $pembayaran_id->{2});
                 } else {
-                    $pembayaran_air = $pembayaran_air->where("t_pembayaran.id",null);
+                    $pembayaran_air = $pembayaran_air->where("t_pembayaran.id", null);
                 }
                 $pembayaran_air = $pembayaran_air->get()->row();
-                if ($pembayaran_air->tagihan)
-                {
+                if ($pembayaran_air->tagihan) {
                     $pembayaran_air_periode  = $this->db
                         ->select("FORMAT (t_tagihan_air.periode, 'MM/yyyy ') as periode")
                         ->from("t_pembayaran")
                         ->join("t_pembayaran_detail", "t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id")
                         ->join("t_tagihan_air", "t_tagihan_air.id = t_pembayaran_detail.tagihan_service_id")
                         ->join("service", "service.id = t_pembayaran_detail.service_id AND service.service_jenis_id = 2");
-                    if($pembayaran_id->{2}){
-                        $pembayaran_air_periode = $pembayaran_air_periode->where_in("t_pembayaran.id",$pembayaran_id->{2});
-                    }else{
-                        $pembayaran_air_periode = $pembayaran_air_periode->where("t_pembayaran.id",null);
+                    if ($pembayaran_id->{2}) {
+                        $pembayaran_air_periode = $pembayaran_air_periode->where_in("t_pembayaran.id", $pembayaran_id->{2});
+                    } else {
+                        $pembayaran_air_periode = $pembayaran_air_periode->where("t_pembayaran.id", null);
                     }
                     $pembayaran_air_periode = $pembayaran_air_periode->order_by('t_tagihan_air.periode')->get()->result();
 
                     $pembayaran_air_periode_awal = $pembayaran_air_periode[0]->periode;
                     $pembayaran_air_periode_akhir = end($pembayaran_air_periode)->periode;
-                }else{
+                } else {
                     $pembayaran_air_periode_awal = 0;
                     $pembayaran_air_periode_akhir = 0;
                 }
-            }else{
+            } else {
                 $pembayaran_air->ppn = 0;
                 $pembayaran_air->tagihan = 0;
                 $pembayaran_air->tagihan_tanpa_ppn = 0;
@@ -274,8 +270,7 @@ class Kwitansi_new extends CI_Controller
                 $pembayaran_air_periode_awal = 0;
                 $pembayaran_air_periode_akhir = 0;
             }
-            if ($pembayaran_id->{6} != null)
-            {
+            if ($pembayaran_id->{6} != null) {
                 $pembayaran_ll  = $this->db
                     ->select("
                         sum(t_pembayaran_detail.nilai_tagihan) AS tagihan,
@@ -294,11 +289,11 @@ class Kwitansi_new extends CI_Controller
                     ->join("t_layanan_lain_registrasi", "t_layanan_lain_registrasi.id = t_tagihan_layanan_lain.t_layanan_lain_registrasi_id")
                     ->join("t_layanan_lain_registrasi_detail", "t_layanan_lain_registrasi_detail.t_layanan_lain_registrasi_id = t_layanan_lain_registrasi.id")
                     ->join("paket_service", "paket_service.id = t_layanan_lain_registrasi_detail.paket_service_id");
-                
+
                 if ($pembayaran_id->{6}) {
-                    $pembayaran_ll = $pembayaran_ll->where_in("t_pembayaran.id",$pembayaran_id->{6});
+                    $pembayaran_ll = $pembayaran_ll->where_in("t_pembayaran.id", $pembayaran_id->{6});
                 } else {
-                    $pembayaran_ll = $pembayaran_ll->where("t_pembayaran.id",null);
+                    $pembayaran_ll = $pembayaran_ll->where("t_pembayaran.id", null);
                 }
                 $pembayaran_ll = $pembayaran_ll->group_by("
                     paket_service.name,
@@ -311,11 +306,11 @@ class Kwitansi_new extends CI_Controller
                 $pembayaran_ll_akhir = end($pembayaran_ll)->periode_akhir;
                 $pembayaran_ll_total = 0;
                 foreach ($pembayaran_ll as $key => $tmp) {
-                    $pembayaran_ll[$key]->tagihan_tanpa_ppn = number_format(($tmp->tagihan)/((100+$tmp->ppn)/100),0,",",".");
-                    $pembayaran_ll[$key]->ppn_rupiah = number_format($tmp->tagihan - ($tmp->tagihan)/((100+$tmp->ppn)/100),0,",",".");
-                    $pembayaran_ll_total += ($tmp->total-$tmp->diskon);
+                    $pembayaran_ll[$key]->tagihan_tanpa_ppn = number_format(($tmp->tagihan) / ((100 + $tmp->ppn) / 100), 0, ",", ".");
+                    $pembayaran_ll[$key]->ppn_rupiah = number_format($tmp->tagihan - ($tmp->tagihan) / ((100 + $tmp->ppn) / 100), 0, ",", ".");
+                    $pembayaran_ll_total += ($tmp->total - $tmp->diskon);
                 }
-            }else{
+            } else {
                 $pembayaran_ll = null;
             }
 
@@ -333,18 +328,18 @@ class Kwitansi_new extends CI_Controller
                 ->select("sum(t_pembayaran_detail.bayar_deposit) as deposit")
                 ->from("t_pembayaran")
                 ->join("t_pembayaran_detail", "t_pembayaran_detail.t_pembayaran_id = t_pembayaran.id")
-                ->where_in("t_pembayaran.id",$pembayaran_id_gabungan)
+                ->where_in("t_pembayaran.id", $pembayaran_id_gabungan)
                 ->get()
                 ->row();
-            
-            $saldo_deposit_tmp = $saldo_deposit_tmp?$saldo_deposit_tmp->tgl_tambah:null;
-            $pemakaian_deposit = $pemakaian_deposit?$pemakaian_deposit->deposit:null;
+
+            $saldo_deposit_tmp = $saldo_deposit_tmp ? $saldo_deposit_tmp->tgl_tambah : null;
+            $pemakaian_deposit = $pemakaian_deposit ? $pemakaian_deposit->deposit : null;
 
             $saldo_deposit = $this->db
                 ->select("sum(t_deposit_detail.nilai) as nilai")
                 ->from("t_deposit")
                 ->join("t_deposit_detail", "t_deposit_detail.t_deposit_id = t_deposit.id AND t_deposit_detail.tgl_tambah < '$saldo_deposit_tmp'")
-                ->where("t_deposit.customer_id",$unit->pemilik_id)
+                ->where("t_deposit.customer_id", $unit->pemilik_id)
                 ->where("t_deposit_detail.nilai > 0")
                 ->get()
                 ->row();
@@ -352,49 +347,50 @@ class Kwitansi_new extends CI_Controller
             $biaya_admin = $this->db
                 ->select("sum(nilai_biaya_admin_cara_pembayaran) as biaya_admin")
                 ->from("t_pembayaran")
-                ->where_in("t_pembayaran.id",$pembayaran_id_gabungan)
+                ->where_in("t_pembayaran.id", $pembayaran_id_gabungan)
                 ->get()
                 ->row()
                 ->biaya_admin;
-            
-            $saldo_deposit = $saldo_deposit?$saldo_deposit->nilai:null;
-            $sisa_deposit = $saldo_deposit-$pemakaian_deposit;
-            
-            $saldo_deposit = number_format($saldo_deposit,0,",",".");
-            $pemakaian_deposit = number_format($pemakaian_deposit,0,",",".");
-            $sisa_deposit = number_format($sisa_deposit,0,",",".");
-            $total_ppn=($pembayaran_lingkungan->ppn/100)*((100+$pembayaran_lingkungan->ppn)/100);
 
-            $grand_total = ($pembayaran_lingkungan->total-$pembayaran_lingkungan->diskon)+($pembayaran_air->total-$pembayaran_air->diskon)+$biaya_admin;
-            if($pembayaran_ll)
+            $saldo_deposit = $saldo_deposit ? $saldo_deposit->nilai : null;
+            $sisa_deposit = $saldo_deposit - $pemakaian_deposit;
+
+            $saldo_deposit = number_format($saldo_deposit, 0, ",", ".");
+            $pemakaian_deposit = number_format($pemakaian_deposit, 0, ",", ".");
+            $sisa_deposit = number_format($sisa_deposit, 0, ",", ".");
+            $total_ppn = ($pembayaran_lingkungan->ppn / 100) * ((100 + $pembayaran_lingkungan->ppn) / 100);
+
+            $grand_total = ($pembayaran_lingkungan->total - $pembayaran_lingkungan->diskon) + ($pembayaran_air->total - $pembayaran_air->diskon) + $biaya_admin;
+            if ($pembayaran_ll)
                 $grand_total += $pembayaran_ll_total;
             $terbilang = strtoupper($this->terbilang($grand_total));
 
-            $grand_total = number_format($grand_total,0,",",".");
-            $biaya_admin = number_format($biaya_admin,0,",",".");
+            $grand_total = number_format($grand_total, 0, ",", ".");
+            $biaya_admin = number_format($biaya_admin, 0, ",", ".");
 
-            $pembayaran_lingkungan->tagihan_tanpa_ppn = ($pembayaran_lingkungan->tagihan)/((100+$pembayaran_lingkungan->ppn)/100);
-            $pembayaran_lingkungan->diskon_tanpa_ppn = ($pembayaran_lingkungan->diskon)/((100+$pembayaran_lingkungan->ppn)/100);
+            $pembayaran_lingkungan->tagihan_tanpa_ppn = ($pembayaran_lingkungan->tagihan) / ((100 + $pembayaran_lingkungan->ppn) / 100);
+            $pembayaran_lingkungan->diskon_tanpa_ppn = ($pembayaran_lingkungan->diskon) / ((100 + $pembayaran_lingkungan->ppn) / 100);
             $pembayaran_lingkungan->dpp = $pembayaran_lingkungan->tagihan_tanpa_ppn - $pembayaran_lingkungan->diskon_tanpa_ppn;
 
-            $pembayaran_lingkungan->ppn_rupiah = $pembayaran_lingkungan->dpp*$pembayaran_lingkungan->ppn/100;
+            $pembayaran_lingkungan->ppn_rupiah = $pembayaran_lingkungan->dpp * $pembayaran_lingkungan->ppn / 100;
 
-            $pembayaran_air->tagihan = number_format($pembayaran_air->tagihan,0,",",".");
-            $pembayaran_lingkungan->tagihan_tanpa_ppn = number_format($pembayaran_lingkungan->tagihan_tanpa_ppn,0,",",".");
-            $pembayaran_lingkungan->dpp = number_format($pembayaran_lingkungan->dpp,0,",",".");
-            $pembayaran_lingkungan->ppn_rupiah = number_format($pembayaran_lingkungan->ppn_rupiah,0,",",".");
-            $pembayaran_lingkungan->denda = number_format($pembayaran_lingkungan->denda,0,",",".");
-            $pembayaran_lingkungan->total = number_format($pembayaran_lingkungan->total-$pembayaran_lingkungan->diskon,0,",",".");
-            $pembayaran_lingkungan->diskon_tanpa_ppn = number_format($pembayaran_lingkungan->diskon_tanpa_ppn,0,",",".");
-            $pembayaran_air->denda  = number_format($pembayaran_air->denda,0,",",".");
-            $pembayaran_air->total  = number_format($pembayaran_air->total-$pembayaran_air->diskon,0,",",".");
-            $pembayaran_air->diskon = number_format($pembayaran_air->diskon,0,",",".");
+            $pembayaran_air->tagihan = number_format($pembayaran_air->tagihan, 0, ",", ".");
+            $pembayaran_lingkungan->tagihan_tanpa_ppn = number_format($pembayaran_lingkungan->tagihan_tanpa_ppn, 0, ",", ".");
+            $pembayaran_lingkungan->dpp = number_format($pembayaran_lingkungan->dpp, 0, ",", ".");
+            $pembayaran_lingkungan->ppn_rupiah = number_format($pembayaran_lingkungan->ppn_rupiah, 0, ",", ".");
+            $pembayaran_lingkungan->denda = number_format($pembayaran_lingkungan->denda, 0, ",", ".");
+            $pembayaran_lingkungan->total = number_format($pembayaran_lingkungan->total - $pembayaran_lingkungan->diskon, 0, ",", ".");
+            $pembayaran_lingkungan->diskon_tanpa_ppn = number_format($pembayaran_lingkungan->diskon_tanpa_ppn, 0, ",", ".");
+            $pembayaran_air->denda  = number_format($pembayaran_air->denda, 0, ",", ".");
+            $pembayaran_air->total  = number_format($pembayaran_air->total - $pembayaran_air->diskon, 0, ",", ".");
+            $pembayaran_air->diskon = number_format($pembayaran_air->diskon, 0, ",", ".");
 
             $no_referensi = "";
-            $unit_id = $unit->project_id.$unit->kawasan_code.$unit->blok_code.'/'.$unit->no_unit;
+            $unit_id = $unit->project_id . $unit->kawasan_code . $unit->blok_code . '/' . $unit->no_unit;
             $city = $this->db->from('project')->where('id', $project->id)->get()->row()->city;
 
-            $this->pdf->load_view("proyek/cetakan/kwitansi_global", 
+            $this->pdf->load_view(
+                "proyek/cetakan/kwitansi_global",
                 [
                     "pembayaran_lingkungan_periode_awal"  => $pembayaran_lingkungan_periode_awal,
                     "pembayaran_lingkungan_periode_akhir" => $pembayaran_lingkungan_periode_akhir,
@@ -420,7 +416,7 @@ class Kwitansi_new extends CI_Controller
                     "no_referensi"          => $no_referensi,
                     "city"                  => $city,
                     "pembayaran_ll"         => $pembayaran_ll,
-                    "biaya_admin"           => $biaya_admin 
+                    "biaya_admin"           => $biaya_admin
                 ]
             );
         }
@@ -453,7 +449,7 @@ class Kwitansi_new extends CI_Controller
                 INNER JOIN service_jenis 
                     ON service_jenis.id = service.service_jenis_id
                 WHERE 1=1
-                    AND t_pembayaran.unit_id = '".$unit_id."'
+                    AND t_pembayaran.unit_id = '" . $unit_id . "'
                     AND ISNULL(t_pembayaran.is_void, 0) = 0
                 GROUP BY
                     t_pembayaran.id,
@@ -477,11 +473,11 @@ class Kwitansi_new extends CI_Controller
                 $tmp = [];
                 foreach ($query as $k => $v) {
                     if ($v->pembayaran_id == $kwitansi_all_service[$j]->pembayaran_id) {
-                        if (! in_array($v->service_jenis_id, $tmp)) {
+                        if (!in_array($v->service_jenis_id, $tmp)) {
                             array_push($tmp, $v->service_jenis_id);
-                            $kwitansi_all_service[$j]->service_jenis_id = $kwitansi_all_service[$j]->service_jenis_id.','.$v->service_jenis_id;
-                            $kwitansi_all_service[$j]->code_service = $kwitansi_all_service[$j]->code_service.', '.$v->code_service;
-                            $kwitansi_all_service[$j]->name_service = $kwitansi_all_service[$j]->name_service.', '.$v->name_service;
+                            $kwitansi_all_service[$j]->service_jenis_id = $kwitansi_all_service[$j]->service_jenis_id . ',' . $v->service_jenis_id;
+                            $kwitansi_all_service[$j]->code_service = $kwitansi_all_service[$j]->code_service . ', ' . $v->code_service;
+                            $kwitansi_all_service[$j]->name_service = $kwitansi_all_service[$j]->name_service . ', ' . $v->name_service;
                         }
                         $kwitansi_all_service[$j]->bayar = $kwitansi_all_service[$j]->bayar + $v->bayar;
                         unset($query[$k]);
@@ -537,12 +533,12 @@ class Kwitansi_new extends CI_Controller
                 INNER JOIN service ON service.id = t_pembayaran_detail.service_id
                 INNER JOIN service_jenis ON service_jenis.id = service.service_jenis_id
             WHERE 1=1
-                AND t_pembayaran.unit_id = '".$unit_id."'
+                AND t_pembayaran.unit_id = '" . $unit_id . "'
                 AND ISNULL(t_pembayaran.is_void, 0) = 0
                 AND (
-                    log_kwitansi.description LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR log_kwitansi.created_by LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR FORMAT(log_kwitansi.created_at, 'dd-MM-yyyy hh:mm:ss') LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    log_kwitansi.description LIKE '%" . $this->db->escape_like_str($like_value) . "%'
+                    OR log_kwitansi.created_by LIKE '%" . $this->db->escape_like_str($like_value) . "%'
+                    OR FORMAT(log_kwitansi.created_at, 'dd-MM-yyyy hh:mm:ss') LIKE '%" . $this->db->escape_like_str($like_value) . "%'
                     OR (
                         SUBSTRING((
                             SELECT DISTINCT 
@@ -558,7 +554,7 @@ class Kwitansi_new extends CI_Controller
                                 AND pembayaran.id = t_pembayaran.id
                             FOR XML PATH ('')
                         ), 2, 1000)
-                    ) LIKE '%".$this->db->escape_like_str($like_value)."%'
+                    ) LIKE '%" . $this->db->escape_like_str($like_value) . "%'
                 )
             GROUP BY
                 t_pembayaran.id,
@@ -582,8 +578,8 @@ class Kwitansi_new extends CI_Controller
             6 => 'log_kwitansi.created_by'
         );
 
-        $sql  .= " ORDER BY ".$columns_order_by[$column_order]." ".$column_dir." ";
-        $sql  .= " OFFSET ".$limit_start." ROWS FETCH NEXT ".$limit_length." ROWS ONLY ";
+        $sql  .= " ORDER BY " . $columns_order_by[$column_order] . " " . $column_dir . " ";
+        $sql  .= " OFFSET " . $limit_start . " ROWS FETCH NEXT " . $limit_length . " ROWS ONLY ";
 
         $data_sql['query'] = $this->db->query($sql);
         $totalData       = $data_sql['totalData'];
@@ -593,23 +589,22 @@ class Kwitansi_new extends CI_Controller
         $data   = array();
         $urut1  = 1;
         $urut2  = 0;
-        foreach($query->result_array() as $row)
-        {
+        foreach ($query->result_array() as $row) {
             $nestedData  = array();
             $total_data  = $totalData;
             $start_dari  = $requestData['start'];
             $perhalaman  = $requestData['length'];
             $asc_desc    = $requestData['order'][0]['dir'];
-            if($asc_desc == 'desc'){
+            if ($asc_desc == 'desc') {
                 $nomor = $urut1 + $start_dari;
             }
-            if($asc_desc == 'asc'){
+            if ($asc_desc == 'asc') {
                 $nomor = ($total_data - $start_dari) - $urut2;
             }
 
             $nestedData[] = $nomor;
             $nestedData[] = $row['name_default'];
-            $nestedData[] = number_format($row['bayar'],0,",",",");
+            $nestedData[] = number_format($row['bayar'], 0, ",", ",");
             $nestedData[] = $row['no_kwitansi'];
             $nestedData[] = $row['create_date'];
             $nestedData[] = $row['description'];
@@ -620,48 +615,51 @@ class Kwitansi_new extends CI_Controller
         }
 
         $json_data = array(
-            "draw"            => intval( $requestData['draw'] ),
-            "recordsTotal"    => intval( $totalData ),
-            "recordsFiltered" => intval( $totalFiltered ),
+            "draw"            => intval($requestData['draw']),
+            "recordsTotal"    => intval($totalData),
+            "recordsFiltered" => intval($totalFiltered),
             "data"            => $data
         );
         echo json_encode($json_data);
     }
 
-    function penyebut($nilai) {
-		$nilai = abs($nilai);
-		$huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
-		$temp = "";
-		if ($nilai < 12) {
-			$temp = " ". $huruf[$nilai];
-		} else if ($nilai <20) {
-			$temp = $this->penyebut($nilai - 10). " belas";
-		} else if ($nilai < 100) {
-			$temp = $this->penyebut($nilai/10)." puluh". $this->penyebut($nilai % 10);
-		} else if ($nilai < 200) {
-			$temp = " seratus" . $this->penyebut($nilai - 100);
-		} else if ($nilai < 1000) {
-			$temp = $this->penyebut($nilai/100) . " ratus" . $this->penyebut($nilai % 100);
-		} else if ($nilai < 2000) {
-			$temp = " seribu" . $this->penyebut($nilai - 1000);
-		} else if ($nilai < 1000000) {
-			$temp = $this->penyebut($nilai/1000) . " ribu" . $this->penyebut($nilai % 1000);
-		} else if ($nilai < 1000000000) {
-			$temp = $this->penyebut($nilai/1000000) . " juta" . $this->penyebut($nilai % 1000000);
-		} else if ($nilai < 1000000000000) {
-			$temp = $this->penyebut($nilai/1000000000) . " milyar" . $this->penyebut(fmod($nilai,1000000000));
-		} else if ($nilai < 1000000000000000) {
-			$temp = $this->penyebut($nilai/1000000000000) . " trilyun" . $this->penyebut(fmod($nilai,1000000000000));
-		}     
-		return $temp;
+    function penyebut($nilai)
+    {
+        $nilai = abs($nilai);
+        $huruf = array("", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas");
+        $temp = "";
+        if ($nilai < 12) {
+            $temp = " " . $huruf[$nilai];
+        } else if ($nilai < 20) {
+            $temp = $this->penyebut($nilai - 10) . " belas";
+        } else if ($nilai < 100) {
+            $temp = $this->penyebut($nilai / 10) . " puluh" . $this->penyebut($nilai % 10);
+        } else if ($nilai < 200) {
+            $temp = " seratus" . $this->penyebut($nilai - 100);
+        } else if ($nilai < 1000) {
+            $temp = $this->penyebut($nilai / 100) . " ratus" . $this->penyebut($nilai % 100);
+        } else if ($nilai < 2000) {
+            $temp = " seribu" . $this->penyebut($nilai - 1000);
+        } else if ($nilai < 1000000) {
+            $temp = $this->penyebut($nilai / 1000) . " ribu" . $this->penyebut($nilai % 1000);
+        } else if ($nilai < 1000000000) {
+            $temp = $this->penyebut($nilai / 1000000) . " juta" . $this->penyebut($nilai % 1000000);
+        } else if ($nilai < 1000000000000) {
+            $temp = $this->penyebut($nilai / 1000000000) . " milyar" . $this->penyebut(fmod($nilai, 1000000000));
+        } else if ($nilai < 1000000000000000) {
+            $temp = $this->penyebut($nilai / 1000000000000) . " trilyun" . $this->penyebut(fmod($nilai, 1000000000000));
+        }
+        return $temp;
     }
-    function terbilang($nilai) {
-		if($nilai<0)    $hasil = "minus ". trim($this->penyebut($nilai));
+    function terbilang($nilai)
+    {
+        if ($nilai < 0)    $hasil = "minus " . trim($this->penyebut($nilai));
         else            $hasil = trim($this->penyebut($nilai));
-		return $hasil." Rupiah";
-	}
-    function bln_indo($tmp){
-        $bulan = array (
+        return $hasil . " Rupiah";
+    }
+    function bln_indo($tmp)
+    {
+        $bulan = array(
             1 =>   'Januari',
             'Februari',
             'Maret',
