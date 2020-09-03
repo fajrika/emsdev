@@ -26,8 +26,8 @@
         <br>
         <form id="demo-form2" data-parsley-validate="" class="form-horizontal form-label-left" novalidate="">
             <div class="item form-group">
-                <label class="col-form-label col-md-3 col-sm-3 label-align" style="text-align: right;margin-top: 8px;">Kawasan<span class="required">*</span></label>
-                <div class="col-md-4">
+                <label class="col-form-label col-md-3 col-sm-3 label-align col-lg-offset-1" style="text-align: right;margin-top: 8px;">Kawasan<span class="required">*</span></label>
+                <div class="col-md-4 col-sm-6">
                     <select name="kawasan" required="" id="kawasan" class="form-control select2" placeholder="....">
                         <option value="" disabled selected>....</option>
                         <option value="all">--Semua Kawasan--</option>
@@ -40,8 +40,8 @@
                 </div>
             </div>
             <div class="item form-group">
-                <label class="col-form-label col-md-3 col-sm-3 label-align" style="text-align: right;margin-top: 8px;">Blok</label>
-                <div class="col-md-4">
+                <label class="col-form-label col-md-3 col-sm-3 label-align col-lg-offset-1" style="text-align: right;margin-top: 8px;">Blok</label>
+                <div class="col-md-4 col-sm-6">
                     <select class="form-control select2" name="blok" id="blok" required="" placeholder="-- Pilih Kawasan Dahulu --" disabled="">
                         <option value="" disabled="" selected="">-- Pilih Kawasan Dahulu --</option>
                         <option value="all">-- Semua Blok --</option>
@@ -50,7 +50,7 @@
             </div>
 
             <div class="item form-group">
-                <label class="col-form-label col-md-3 col-sm-3 label-align">&nbsp;</label>
+                <label class="col-form-label col-md-4 label-align">&nbsp;</label>
                 <div class="col-md-6 col-sm-6" style="margin-top: 6px;">
                     <button type="button" class="btn btn-primary" id="btn-generate"><i class="fa fa-refresh"></i> Generate</button>
                     <button type="button" class="btn btn-success" id="export-excel"><i class="fa fa-print"></i> Expot Excel</button>
