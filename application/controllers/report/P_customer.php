@@ -196,6 +196,12 @@ class P_customer extends CI_Controller
             $where_blok = "AND dbo.blok.id  = '".$blok."'";
         }
 
+        if ($kawasan == 'all') {
+            $where_kawasan = "AND dbo.project.id = '".$GLOBALS['project']->id."'";
+        } else {
+            $where_kawasan = "AND dbo.kawasan.id = '".$kawasan."'";
+        }
+
         $sql = " 
             SELECT 
                 ROW_NUMBER() OVER (ORDER BY dbo.unit.id) AS nomor,
@@ -227,7 +233,7 @@ class P_customer extends CI_Controller
                 INNER JOIN dbo.customer AS pemilik ON pemilik.id = dbo.unit.pemilik_customer_id
                 INNER JOIN dbo.customer AS penghuni ON penghuni.id = dbo.unit.penghuni_customer_id
             WHERE 1=1
-                AND dbo.kawasan.id = '".$kawasan."'
+                $where_kawasan 
                 $where_blok 
             ";
         return $sql;
