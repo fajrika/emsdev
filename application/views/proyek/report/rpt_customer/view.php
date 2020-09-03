@@ -51,8 +51,9 @@
 
             <div class="item form-group">
                 <label class="col-form-label col-md-3 col-sm-3 label-align">&nbsp;</label>
-                <div class="col-md-6 col-sm-6">
-                    <button type="button" class="btn btn-primary" id="btn-generate">Generate</button>
+                <div class="col-md-6 col-sm-6" style="margin-top: 6px;">
+                    <button type="button" class="btn btn-primary" id="btn-generate"><i class="fa fa-refresh"></i> Generate</button>
+                    <button type="button" class="btn btn-success" id="export-excel"><i class="fa fa-print"></i> Expot Excel</button>
                 </div>
             </div>
         </form>
@@ -62,7 +63,7 @@
                 <table class="table table-striped jambo_table bulk_action" id="tb-customer" width="100%">
                     <thead>
                         <tr>
-                            <th>#</th>
+                            <th width="20">#</th>
                             <th>Kawasan</th>
                             <th>Blok</th>
                             <th>Unit</th>
@@ -122,6 +123,21 @@ $(function(){
             table_customer(kawasan, blok);
         }
     });
+
+    $(document).on('click', '#export-excel', function(e){
+        e.preventDefault();
+        kawasan = $('#kawasan').val();
+        blok = $('#blok').val();
+
+        if (kawasan == null || kawasan == '') {
+            alert('Kawasan masih kosong.');
+        } else if (blok == null || blok == '') {
+            alert('Blok masih kosong.');
+        } else {
+            variable = '?id_kawasan='+kawasan+'&id_blok='+blok;
+            window.open("<?=site_url('report/p_customer/report_excel/');?>"+variable);
+        }
+    });
 });
 
 function table_customer(kawasan=null, blok=null)
@@ -157,7 +173,7 @@ function table_customer(kawasan=null, blok=null)
         "iDisplayLength": 10,
         "aLengthMenu": [[10, 20, 50, 100, 150], [10, 20, 50, 100, 150]],
         "ajax": {
-            url : "<?php echo site_url('report/p_customer/request_cust_json'); ?>",
+            url : "<?=site_url('report/p_customer/request_cust_json'); ?>",
             cache: false,
             type: "post",
             data: {

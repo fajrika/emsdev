@@ -46,52 +46,15 @@ class P_customer extends CI_Controller
         $limit_length   = $requestData['length'];
         $id_kawasan     = $this->input->post('id_kawasan');
         $blok           = $this->input->post('id_blok');
-        $where_blok     = '';
-        if ($blok !== 'all') {
-            $where_blok = "AND dbo.blok.id  = '".$blok."'";
-        }
 
-        $sql = " 
-            SELECT 
-                ROW_NUMBER() OVER (ORDER BY dbo.unit.id) AS nomor,
-                dbo.unit.id AS id_unit,
-                dbo.project.id AS project_id,
-                dbo.project.name AS project,
-                dbo.kawasan.id AS id_kawasan,
-                dbo.kawasan.name AS kawasan,
-                dbo.blok.id AS id_blok,
-                dbo.blok.name AS blok,
-                dbo.unit.no_unit,
-                pemilik.name AS pemilik,
-                pemilik.ktp AS NIK_pemilik,
-                pemilik.address,
-                pemilik.mobilephone1,
-                pemilik.mobilephone2,
-                pemilik.homephone,
-                pemilik.officephone,
-                pemilik.email,
-                pemilik.npwp_no AS NPWP,
-                dbo.unit.tgl_st AS [Tanggal Serah Terima],
-                pemilik.description,
-                dbo.unit.virtual_account 
-            FROM
-                dbo.unit
-                INNER JOIN dbo.project ON dbo.project.id = dbo.unit.project_id
-                INNER JOIN dbo.blok ON dbo.blok.id = dbo.unit.blok_id
-                INNER JOIN dbo.kawasan ON dbo.kawasan.id = dbo.blok.kawasan_id
-                INNER JOIN dbo.customer AS pemilik ON pemilik.id = dbo.unit.pemilik_customer_id
-                INNER JOIN dbo.customer AS penghuni ON penghuni.id = dbo.unit.penghuni_customer_id
-            WHERE 1=1
-                AND dbo.kawasan.id = '".$id_kawasan."'
-                $where_blok 
-                AND (
-                    dbo.kawasan.name LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR dbo.blok.name LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR dbo.unit.no_unit LIKE '%".$this->db->escape_like_str($like_value)."%'
-                    OR pemilik.name LIKE '%".$this->db->escape_like_str($like_value)."%'
-                )
-            ";
-        // print_r($sql);
+        $sql  = $this->query_customer($id_kawasan, $blok);
+        $sql .= "
+            AND (
+                dbo.kawasan.name LIKE '%".$this->db->escape_like_str($like_value)."%'
+                OR dbo.blok.name LIKE '%".$this->db->escape_like_str($like_value)."%'
+                OR dbo.unit.no_unit LIKE '%".$this->db->escape_like_str($like_value)."%'
+                OR pemilik.name LIKE '%".$this->db->escape_like_str($like_value)."%'
+            )";
         $data_sql['totalFiltered']  = $this->db->query($sql)->num_rows();
         $data_sql['totalData']      = $this->db->query($sql)->num_rows();
         $columns_order_by = array(
@@ -165,17 +128,140 @@ class P_customer extends CI_Controller
         $result = $result->get()->result();
 		echo json_encode($result);
 	}
-	// public function ajax_get_unit(){
-	// 	echo json_encode($this->m_aging->ajax_get_unit($this->input->get('kawasan'),$this->input->get('blok'),$this->input->get('periode')));
-	// }
-	// public function ajax_get_aging(){
-	// 	$kawasan_id = $this->input->get('kawasan');
-	// 	$blok_id = $this->input->get('blok');
-	// 	$tgl_aging = $this->input->get('tgl_aging');
-	// 	$tgl_aging = substr($tgl_aging,6,4)."-".substr($tgl_aging,3,2)."-".substr($tgl_aging,0,2);
-	// 	// var_dump($tgl_aging);
-	// 	$result = $this->m_aging->ajax_get_aging($kawasan_id,$blok_id,$tgl_aging);
-	// 	echo json_encode($result);
-	// }
+
+    /*
+    * --------------------------------------------------------------------
+    * View Report Dalam Bentuk Excel
+    * --------------------------------------------------------------------
+    */
+    function report_excel()
+    {
+        $id_kawasan = $this->input->get('id_kawasan');
+        $blok = $this->input->get('id_blok');
+
+        $filename = $GLOBALS['project']->code.'_report_customer_'.date('YmdH');
+        header("Pragma: public");
+        header("Expires: 0");
+        header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+        header("Content-Type: application/force-download");
+        header("Content-Type: application/octet-stream");
+        header("Content-Type: application/download");
+        header("Content-Disposition: attachment; filename=".$filename.".xls");
+        header("Content-Transfer-Encoding: binary ");
+
+        $this->xlsBOF();
+        $this->xlsWriteLabel(0,0,"No");
+        $this->xlsWriteLabel(0,1,"Kawasan");
+        $this->xlsWriteLabel(0,2,"Blok");
+        $this->xlsWriteLabel(0,3,"No. Unit");
+        $this->xlsWriteLabel(0,4,"Pemilik");
+        $this->xlsWriteLabel(0,5,"Address");
+        $this->xlsWriteLabel(0,6,"No. HP");
+        $this->xlsWriteLabel(0,7,"No. HP 2");
+        $this->xlsWriteLabel(0,8,"E-Mail");
+        $this->xlsWriteLabel(0,9,"Tgl Serah Terima"); 
+        $this->xlsWriteLabel(0,10,"Keterangan");
+        $this->xlsWriteLabel(0,11,"Virtual Account");
+
+        $no   = 1;
+        $sql  = $this->query_customer($id_kawasan, $blok);
+        $sql .= "ORDER BY pemilik.name ASC ";
+        $reporting = $this->db->query($sql);
+        if ($reporting->num_rows() > 0) 
+        {
+            foreach ($reporting->result() as $e) 
+            {
+                $this->xlsWriteNumber($no,0,$no);
+                $this->xlsWriteLabel($no,1,$e->kawasan);
+                $this->xlsWriteLabel($no,2,$e->blok);
+                $this->xlsWriteLabel($no,3,$e->no_unit);
+                $this->xlsWriteLabel($no,4,$e->pemilik);
+                $this->xlsWriteLabel($no,5,$e->address);
+                $this->xlsWriteLabel($no,6,$e->mobilephone1);
+                $this->xlsWriteLabel($no,7,$e->mobilephone2);
+                $this->xlsWriteLabel($no,8,$e->email);
+                $this->xlsWriteLabel($no,9, date('d-m-Y', strtotime($e->tgl_serah_terima)));
+                $this->xlsWriteLabel($no,10,$e->description);
+                $this->xlsWriteLabel($no,11,$e->virtual_account);
+                $no++;
+            }
+            $this->xlsEOF();
+        }
+    }
+
+    function query_customer($kawasan, $blok)
+    {
+        $where_blok     = '';
+        if ($blok !== 'all') {
+            $where_blok = "AND dbo.blok.id  = '".$blok."'";
+        }
+
+        $sql = " 
+            SELECT 
+                ROW_NUMBER() OVER (ORDER BY dbo.unit.id) AS nomor,
+                dbo.unit.id AS id_unit,
+                dbo.project.id AS project_id,
+                dbo.project.name AS project,
+                dbo.kawasan.id AS id_kawasan,
+                dbo.kawasan.name AS kawasan,
+                dbo.blok.id AS id_blok,
+                dbo.blok.name AS blok,
+                dbo.unit.no_unit,
+                pemilik.name AS pemilik,
+                pemilik.ktp AS NIK_pemilik,
+                pemilik.address,
+                pemilik.mobilephone1,
+                pemilik.mobilephone2,
+                pemilik.homephone,
+                pemilik.officephone,
+                pemilik.email,
+                pemilik.npwp_no AS NPWP,
+                dbo.unit.tgl_st AS tgl_serah_terima,
+                pemilik.description,
+                dbo.unit.virtual_account 
+            FROM
+                dbo.unit
+                INNER JOIN dbo.project ON dbo.project.id = dbo.unit.project_id
+                INNER JOIN dbo.blok ON dbo.blok.id = dbo.unit.blok_id
+                INNER JOIN dbo.kawasan ON dbo.kawasan.id = dbo.blok.kawasan_id
+                INNER JOIN dbo.customer AS pemilik ON pemilik.id = dbo.unit.pemilik_customer_id
+                INNER JOIN dbo.customer AS penghuni ON penghuni.id = dbo.unit.penghuni_customer_id
+            WHERE 1=1
+                AND dbo.kawasan.id = '".$kawasan."'
+                $where_blok 
+            ";
+        return $sql;
+    }
+
+    // Function penanda awal file (Begin Of File) Excel
+    function xlsBOF() 
+    {
+        echo pack("ssssss", 0x809, 0x8, 0x0, 0x10, 0x0, 0x0);
+        return;
+    }
+
+    // Function penanda akhir file (End Of File) Excel
+    function xlsEOF() 
+    {
+        echo pack("ss", 0x0A, 0x00);
+        return;
+    }
+
+    // Function untuk menulis data (angka) ke cell excel
+    function xlsWriteNumber($Row, $Col, $Value) 
+    {
+        echo pack("sssss", 0x203, 14, $Row, $Col, 0x0);
+        echo pack("d", $Value);
+        return;
+    }
+
+    // Function untuk menulis data (text) ke cell excel
+    function xlsWriteLabel($Row, $Col, $Value ) 
+    {
+        $L = strlen($Value);
+        echo pack("ssssss", 0x204, 8 + $L, $Row, $Col, 0x0, $L);
+        echo $Value;
+        return;
+    }
 }
 ?>
