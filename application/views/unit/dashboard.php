@@ -1458,7 +1458,7 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                                 { data: 'count_print_kwitansi' },
                                                 { data: 'count_print_kwitansi' },
                                             ],
-                                            "aaSorting": [[ 0, "asc" ]],
+                                            "aaSorting": [[ 2, "desc" ]],
                                             "columnDefs": [
                                                 {aTargets: [0], "sClass" : "column-hide"},
                                                 {targets: 'no-sort', "orderable": false},

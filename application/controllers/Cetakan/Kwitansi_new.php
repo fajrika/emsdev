@@ -463,7 +463,7 @@ class Kwitansi_new extends CI_Controller
                     service_jenis.name_default,
                     t_pembayaran.no_kwitansi,
                     t_pembayaran.count_print_kwitansi
-                ORDER BY t_pembayaran.id
+                ORDER BY tgl_bayar DESC 
             ");
         $query = $query->result();
 
