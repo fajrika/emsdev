@@ -328,8 +328,10 @@
         placeholder: 'Kawasan - Blok - Unit - Pemilik',
         minimumInputLength: 1,
         ajax: {
-            url: "<?= site_url() ?>/Transaksi/P_unit/get_ajax_unit",
-            data: params => params.term,
+            url: "<?= site_url() ?>/Transaksi/P_unit/api_unit",
+            data: params => ({
+                data: params.term
+            }),
             processResults: data => ({
                 results: data
             })
