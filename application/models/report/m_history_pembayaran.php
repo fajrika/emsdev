@@ -611,6 +611,7 @@ class m_history_pembayaran extends CI_Model
                                     kawasan.name as kawasan,
                                     blok.name as blok,
                                     unit.no_unit,
+                                    pt.name as nama_pt,
                                     customer.name as customer,
                                     t_pembayaran.unit_id,
                                     t_pembayaran.no_kwitansi,
@@ -655,6 +656,7 @@ class m_history_pembayaran extends CI_Model
                                         AND service.service_jenis_id = 1")
                                 ->join("t_tagihan_lingkungan_detail",
                                         "t_tagihan_lingkungan_detail.t_tagihan_lingkungan_id = t_tagihan_lingkungan.id")
+                                ->join("pt", "unit.pt_id = pt.id", "LEFT")
                                 ->where("isnull(t_pembayaran.is_void,0)",0)
                                 ->where("unit.project_id",$project->id)
                                 ->order_by("unit_id, periode_tagihan");

@@ -168,6 +168,9 @@ defined('BASEPATH') or exit('No direct script access allowed');
 							<button id="btn-group-ipl-unit" type="button" class="btn btn-info btn-group-ipl" data-toggle="button" aria-pressed="false" autocomplete="off">
 								Group Unit
 							</button>
+                            <button id="btn-group-ipl-namapt" type="button" class="btn btn-info btn-group-ipl" data-toggle="button" aria-pressed="false" autocomplete="off">
+                                Group PT
+                            </button>
 							<button id="btn-group-ipl-periode" type="button" class="btn btn-info btn-group-ipl" data-toggle="button" aria-pressed="false" autocomplete="off">
 								Group Periode
 							</button>
@@ -205,6 +208,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 									<th>Blok</th>
 									<th>No. Unit</th>
 									<th>Customer</th>
+                                    <th>Nama PT</th>
 									<th>No. Kwitansi</th>
 									<th>Periode Tagihan</th>
 									<th>Tgl Bayar IPL</th>
@@ -372,10 +376,12 @@ defined('BASEPATH') or exit('No direct script access allowed');
 				string.push('2');
 			if ($("#btn-group-ipl-unit").hasClass("active") ^ ($("#btn-group-ipl-unit")[0] == $(this)[0]))
 				string.push('3');
+            if ($("#btn-group-ipl-namapt").hasClass("active") ^ ($("#btn-group-ipl-namapt")[0] == $(this)[0]))
+                string.push('5');
 			if ($("#btn-group-ipl-periode").hasClass("active") ^ ($("#btn-group-ipl-periode")[0] == $(this)[0]))
-				string.push('6');
-			if ($("#btn-group-ipl-tglbayar").hasClass("active") ^ ($("#btn-group-ipl-tglbayar")[0] == $(this)[0]))
 				string.push('7');
+			if ($("#btn-group-ipl-tglbayar").hasClass("active") ^ ($("#btn-group-ipl-tglbayar")[0] == $(this)[0]))
+				string.push('8');
 
 			// string = string.toString();
 			console.log(string);
@@ -495,6 +501,7 @@ defined('BASEPATH') or exit('No direct script access allowed');
 						str = str + "<td>" + v.blok + "</td>";
 						str = str + "<td>" + v.no_unit + "</td>";
 						str = str + "<td>" + v.customer + "</td>";
+                        str = str + "<td style='white-space: nowrap;'>" + v.nama_pt + "</td>";
 						str = str + "<td>" + v.no_kwitansi + "</td>";
 						str = str + "<td>" + v.periode_tagihan + "</td>";
 						str = str + "<td>" + v.tgl_bayar_ipl + "</td>";
