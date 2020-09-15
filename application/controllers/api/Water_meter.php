@@ -28,7 +28,7 @@ class Water_meter extends REST_Controller
     {
         // Construct the parent class
         parent::__construct();
-        $this->load->helper(['jwt', 'authorization']); 
+        $this->load->helper(['jwt', 'authorization']);
 
         // Configure limits on our controller methods
         // Ensure you have created the 'limits' table and enabled 'limits' within application/config/rest.php
@@ -37,55 +37,54 @@ class Water_meter extends REST_Controller
     }
     public function index_get($type = null)
     {
-        ini_set('memory_limit','256M');
-        ini_set('sqlsrv.ClientBufferMaxKBSize','524288');   
-        ini_set('pdo_sqlsrv.client_buffer_max_kb_size','524288');
+        ini_set('memory_limit', '256M');
+        ini_set('sqlsrv.ClientBufferMaxKBSize', '524288');
+        ini_set('pdo_sqlsrv.client_buffer_max_kb_size', '524288');
         $this->load->helper('file');
         write_file("./log/" . date("y-m-d") . '_log_water_meter.txt', "\n" . date("y-m-d h:i:s") . " = GET !", 'a+');
         $parameter = (object)json_decode($this->input->raw_input_stream, true);
         $head = (object)$this->head();
-        $this->load->database();       
-        
-        
-        if($type == "request_key"){
+        $this->load->database();
+
+
+        if ($type == "request_key") {
             $result = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ2ZW5kb3IiOiJuYnMiLCJ1c2VyIjoiSm9obiBEb2UiLCJwcm9qZWN0X2lkIjoxfQ.htZ0poLfOX7gvMysfOL6hrpvfeioPofg5-p5ijNGS8o";
-            if(isset($head->api_token)){
-                if($head->api_token == $result)
+            if (isset($head->api_token)) {
+                if ($head->api_token == $result)
                     $this->response(['api_key' => $result], REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
-                else{
+                else {
                     echo 'Api Token Salah';
                     $this->response(null, 401);
-                }   
-            }else{
+                }
+            } else {
                 echo 'Api Token Tidak Ada';
                 $this->response(null, 401);
             }
         }
 
 
-        if(isset($head->api_key)){
+        if (isset($head->api_key)) {
             try {
                 $validateToken = AUTHORIZATION::validateToken($head->api_key);
-                $generateToken = AUTHORIZATION::generateToken(['a'=>'b']);
+                $generateToken = AUTHORIZATION::generateToken(['a' => 'b']);
                 // var_dump($validateToken);
                 // var_dump($generateToken);
             } catch (Exception $e) {
                 echo 'Api Key Salah';
                 $this->response(null, 401);
-
             }
-        }else{
+        } else {
             echo 'Api Key Tidak Ada';
             $this->response(null, 401);
         }
 
         $result = (object) [];
-        
-        
+
+
         // var_dump($head);
         // var_dump($jwt_key);
 
-        
+
         if ($type == "Pegawai") {
             $result = $this->db->select("   user.id,
                                             user.name,
@@ -108,8 +107,10 @@ class Water_meter extends REST_Controller
                     "level",
                     "level.id = group_user_level.level_id"
                 )
-                ->join('project',
-                        'project.id = group_user.project_id');
+                ->join(
+                    'project',
+                    'project.id = group_user.project_id'
+                );
         } else if ($type == "Project") {
             $result = $this->db->select("   project.id,
                                             project.address,
@@ -123,8 +124,10 @@ class Water_meter extends REST_Controller
                                             project.id as project_id
                                         ")
                 ->from("kawasan")
-                ->join('project',
-                        'project.id = kawasan.project_id');
+                ->join(
+                    'project',
+                    'project.id = kawasan.project_id'
+                );
         } else if ($type == "Blok") {
             $result = $this->db->select("   blok.id,
                                             blok.code,
@@ -132,10 +135,14 @@ class Water_meter extends REST_Controller
                                             blok.kawasan_id
                                         ")
                 ->from("blok")
-                ->join("kawasan",
-                        "kawasan.id = blok.kawasan_id")
-                ->join("project",
-                        "project.id = kawasan.project_id");
+                ->join(
+                    "kawasan",
+                    "kawasan.id = blok.kawasan_id"
+                )
+                ->join(
+                    "project",
+                    "project.id = kawasan.project_id"
+                );
         } else if ($type == "Unit") {
             $result = $this->db->select("   unit.id,
                                             unit.project_id,
@@ -145,13 +152,18 @@ class Water_meter extends REST_Controller
                                             unit.pemilik_customer_id
                                         ")
                 ->from("unit")
-                ->join("blok",
-                        "blok.id = unit.blok_id")
-                ->join("kawasan",
-                        "kawasan.id = blok.kawasan_id")
-                ->join('project',
-                        'project.id = unit.project_id');
-            
+                ->join(
+                    "blok",
+                    "blok.id = unit.blok_id"
+                )
+                ->join(
+                    "kawasan",
+                    "kawasan.id = blok.kawasan_id"
+                )
+                ->join(
+                    'project',
+                    'project.id = unit.project_id'
+                );
         } else if ($type == "Customer") {
             $result = $this->db->select("   customer.id,
                                             customer.name as fullname,
@@ -160,8 +172,10 @@ class Water_meter extends REST_Controller
                                             project.id as project_id
                                         ")
                 ->from("customer")
-                ->join('project',
-                        'project.id = customer.project_id');
+                ->join(
+                    'project',
+                    'project.id = customer.project_id'
+                );
         } else if ($type == "Pencatatan_meter_air") {
             $result = $this->db->select("   t_pencatatan_meter_air.id,
                                             t_pencatatan_meter_air.meter_awal,
@@ -173,95 +187,102 @@ class Water_meter extends REST_Controller
                                             t_pencatatan_meter_air.periode as periode
                                         ")
                 ->from("t_pencatatan_meter_air")
-                ->join("unit",
-                        "unit.id = t_pencatatan_meter_air.unit_id")
-                ->join("blok",
-                        "blok.id = unit.blok_id")
-                ->join("kawasan",
-                        "kawasan.id = blok.kawasan_id")
-                ->join('project',
-                        'project.id = unit.project_id');
-            
+                ->join(
+                    "unit",
+                    "unit.id = t_pencatatan_meter_air.unit_id"
+                )
+                ->join(
+                    "blok",
+                    "blok.id = unit.blok_id"
+                )
+                ->join(
+                    "kawasan",
+                    "kawasan.id = blok.kawasan_id"
+                )
+                ->join(
+                    'project',
+                    'project.id = unit.project_id'
+                );
         } else $this->response(null, 400);
 
-        if(isset($parameter->project_id))
+        if (isset($parameter->project_id))
             $result = $result->where("project.id", $parameter->project_id);
-        if(isset($parameter->pegawai_id))
+        if (isset($parameter->pegawai_id))
             $result = $result->where("user.id", $parameter->pegawai_id);
-        if(isset($parameter->role_id))
+        if (isset($parameter->role_id))
             $result = $result->where("level.id", $parameter->role_id);
-        if(isset($parameter->role))
+        if (isset($parameter->role))
             $result = $result->where("level.name", $parameter->role);
-        if(isset($parameter->blok_id))
-            $result = $result->where("blok.id", $parameter->blok_id);   
-        if(isset($parameter->kawasan_id))
+        if (isset($parameter->blok_id))
+            $result = $result->where("blok.id", $parameter->blok_id);
+        if (isset($parameter->kawasan_id))
             $result = $result->where("kawasan.id", $parameter->kawasan_id);
-        if(isset($parameter->unit_id))
+        if (isset($parameter->unit_id))
             $result = $result->where("unit.id", $parameter->unit_id);
-        if(isset($parameter->customer_id))
+        if (isset($parameter->customer_id))
             $result = $result->where("customer.id", $parameter->customer_id);
-        if(isset($parameter->pencatatan_id))
+        if (isset($parameter->pencatatan_id))
             $result = $result->where("t_pencatatan_meter_air.id", $parameter->pencatatan_id);
-        if(isset($parameter->periode))
-            $result = $result->where("t_pencatatan_meter_air.periode",$parameter->periode);
+        if (isset($parameter->periode))
+            $result = $result->where("t_pencatatan_meter_air.periode", $parameter->periode);
 
-        
+
         $result = $result->get()->result();
         // var_dump($parameter);
         // var_dump($this->db->last_query());
         $this->response($result, REST_Controller::HTTP_OK); // OK (200) being the HTTP response code
     }
-    public function index_post($tipe=null)
+    public function index_post($tipe = null)
     {
-        ini_set('memory_limit','256M');
-        ini_set('sqlsrv.ClientBufferMaxKBSize','524288');   
-        ini_set('pdo_sqlsrv.client_buffer_max_kb_size','524288');
+        ini_set('memory_limit', '256M');
+        ini_set('sqlsrv.ClientBufferMaxKBSize', '524288');
+        ini_set('pdo_sqlsrv.client_buffer_max_kb_size', '524288');
         $this->load->helper('file');
-        
+
         write_file("./log/" . date("y-m-d") . '_log_water_meter.txt', "\n" . date("y-m-d h:i:s") . " = POST !", 'a+');
 
-        write_file("./log/" . date("y-m-d") . '_log_water_meter.txt', "\n" . $this->input->raw_input_stream , 'a+');
+        write_file("./log/" . date("y-m-d") . '_log_water_meter.txt', "\n" . $this->input->raw_input_stream, 'a+');
 
         $parameter = (object)json_decode($this->input->raw_input_stream, true);
         $head = (object)$this->head();
-        $this->load->database();       
-        
-        if(isset($head->api_key)){
+        $this->load->database();
+
+        if (isset($head->api_key)) {
             try {
                 $validateToken = AUTHORIZATION::validateToken($head->api_key);
-                $generateToken = AUTHORIZATION::generateToken(['a'=>'b']);
+                $generateToken = AUTHORIZATION::generateToken(['a' => 'b']);
                 // var_dump($validateToken);
                 // var_dump($generateToken);
             } catch (Exception $e) {
                 echo 'Api Key Salah';
                 $this->response(null, 401);
-
             }
-        }else{
+        } else {
             echo 'Api Key Tidak Ada';
             $this->response(null, 401);
         }
-        if($tipe == "pencatatan_meter_air"){
-            if(isset($parameter->unit_id) && isset($parameter->periode) && isset($parameter->meter_akhir)){
+        if ($tipe == "pencatatan_meter_air") {
+            if (isset($parameter->unit_id) && isset($parameter->periode) && isset($parameter->meter_akhir)) {
                 $this->load->model('transaksi/m_meter_air');
                 $this->load->model('m_core');
-                $parameter->periode = substr($parameter->periode,5,2)."/".substr($parameter->periode,0,4);
-                if(isset($parameter->meter_awal_baru)){
+                $parameter->periode = substr($parameter->periode, 5, 2) . "/" . substr($parameter->periode, 0, 4);
+                if (!isset($parameter->url)) {
+                    $parameter->url = "";
+                } else {
+                    $parameter->url = implode(';', $parameter->url);
+                }
+
+                if (isset($parameter->meter_awal_baru)) {
                     // $this->m_meter_air->ajax_save_meter(
                     //     $parameter->meter_akhir,$parameter->periode,$parameter->unit_id
                     // );
-                    echo("test");
-                    $this->m_meter_air->ajax_save_meter_api_2($parameter->meter_akhir,$parameter->periode,$parameter->unit_id,$parameter->url,$parameter->meter_awal_baru,$parameter->meter_akhir_baru);
-
-                }
-                else{
+                    echo ("test");
+                    $this->m_meter_air->ajax_save_meter_api_2($parameter->meter_akhir, $parameter->periode, $parameter->unit_id, $parameter->url, $parameter->meter_awal_baru, $parameter->meter_akhir_baru);
+                } else {
                     // echo json_encode($this->m_meter_air->ajax_save_meter($parameter->meter_akhir,$parameter->periode,$parameter->unit_id));
-                    if(!isset($parameter->url)){
-                        $parameter->url = "";
-                    }
-                    $this->m_meter_air->ajax_save_meter_api_1($parameter->meter_akhir,$parameter->periode,$parameter->unit_id,$parameter->url);
+                    $this->m_meter_air->ajax_save_meter_api_1($parameter->meter_akhir, $parameter->periode, $parameter->unit_id, $parameter->url);
                 }
-            }else{
+            } else {
                 $this->response('Parameter Tidak Lengkap', 400);
             }
         }
