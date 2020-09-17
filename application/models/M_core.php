@@ -151,9 +151,6 @@ class m_core extends CI_Model
             ->get();
         $row = $query->result_array();
         $menu['level4'] = $row;
-        // echo("<pre>");
-        //     print_r($menu);
-        // echo("</pre>");
 
         return $menu;
     }
@@ -168,20 +165,30 @@ class m_core extends CI_Model
     function jabatan()
     {
         $group_user_id = isset($this->session->userdata['group']) ? $this->session->userdata['group'] : '0';
-        $query = $this->db->query(" SELECT jabatan.name,jabatan.id FROM group_user
-                                    JOIN jabatan ON jabatan.id = group_user.jabatan_id
-                                    where group_user.id = $group_user_id");
-        $row = $query->row();
+        $row = $this->db
+            ->select("jabatan.name,jabatan.id")
+            ->from("group_user")
+            ->join(
+                "jabatan",
+                "jabatan.id = group_user.jabatan_id"
+            )
+            ->where("group_user.id", $group_user_id)
+            ->get()->row();
         return isset($row) ? $row : '';
     }
     function project()
     {
         $group_user_id = isset($this->session->userdata['group']) ? $this->session->userdata['group'] : '0';
-        $query = $this->db->query(" SELECT project.name,project.id,project.code FROM group_user
-                                    JOIN project ON project.id = group_user.project_id
-                                    where group_user.id = $group_user_id");
-        $row = $query->row();
-        return isset($row) ? $row : '';
+        $row = $this->db->select("project.name,project.id,project.code")
+            ->from("group_user")
+            ->join(
+                "project",
+                "project.id = group_user.project_id"
+            )
+            ->where("group_user.id", $group_user_id)
+            ->get()
+            ->row();
+        return $row ?? '';
     }
     function unit_id()
     {
@@ -190,10 +197,12 @@ class m_core extends CI_Model
     function user_id()
     {
         $group_user_id = isset($this->session->userdata['group']) ? $this->session->userdata['group'] : '0';
-        $query = $this->db->query("SELECT user_id FROM group_user
-                                    where id = $group_user_id");
-        $row = $query->row();
-        return isset($row) ? $row->user_id : 0;
+
+        $row = $this->db->select("user_id")
+            ->from('group_user')
+            ->where('id', $group_user_id)
+            ->get()->row();
+        return $row ?? 0;
     }
     function jabatan_all()
     {

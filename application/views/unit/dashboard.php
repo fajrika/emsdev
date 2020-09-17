@@ -466,8 +466,8 @@ $fullUrl = site_url() . "/" . implode("/", (array_slice($this->uri->segment_arra
                                     <?php else : ?>
                                         <span class="btn-primary col-md-2 col-md-offset-1" style="background: none; border: none; margin-bottom: 5px; margin-right: 5px;">&nbsp;</span>
                                     <?php endif; ?>
-                                    <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Cetak Kwitansi (Beta)</button>
-                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Cetak Kwitansi</button>
+                                    <!-- <button data-toggle="modal" data-target="#modal_cetak_kwitansi_new" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">Cetak Kwitansi (Beta)</button>
+                                    <button data-toggle="modal" data-target="#modal_history_cetak_kwitansi" onclick="" class="btn btn-primary col-md-2 col-md-offset-1">History Cetak Kwitansi</button> -->
                                 </div>
                             </div>
                         </div>

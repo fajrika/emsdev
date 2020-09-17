@@ -340,6 +340,7 @@ class Sales_force extends REST_Controller
             $result->va = $this->m_tagihan->get_va($resultUnit->unit_id);
             $result->tagihan = [];
             $iterasi = 0;
+            $tagihans = array_reverse($tagihans);
             foreach ($tagihans as $key => $tagihan) {
                 if (isset($tagihan->air->final_nilai_tagihan))
                     $total->tagihan_air += $tagihan->air->final_nilai_tagihan;
@@ -390,7 +391,7 @@ class Sales_force extends REST_Controller
                 if ($iterasi == 12)
                     break;
             }
-            $result->tagihan = array_reverse($result->tagihan);
+            // $result->tagihan = array_reverse($result->tagihan);
             $total->total = $total->tagihan_air + $total->tagihan_lingkungan + $total->tagihan_lain + $total->total_denda;
             // $result = $this->db->select("*")->from("v_xendit_history")->where("uid = $uid")->get()->result();
         } else
