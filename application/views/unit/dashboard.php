@@ -117,7 +117,7 @@
         margin-bottom: 5px;
     }
 </style>
-<div class="right_col" role="main">
+<div class="right_col" role="main" hidden>
     <div id="loading" class="lds-css ng-scope" hidden>
         <div style="width:100%;height:100%" class="col-md-offset-4 lds-double-ring">
             <div></div>
@@ -323,8 +323,11 @@
 </div>
 
 <script>
+    $(function() {
+        $(".right_col").show();
+    })
     $('#unit').select2({
-        width: 'resolve',
+        width: '100%',
         placeholder: 'Kawasan - Blok - Unit - Pemilik',
         minimumInputLength: 1,
         ajax: {

@@ -117,18 +117,18 @@ class Erems extends REST_Controller
                 "project_id"    => $project->id,
                 "pt_id"         => null,
                 "unit"          => 1,
-                "name"          => $data["customer_name"],
-                "address"       => $data["customer_address"],
-                "email"         => $data["customer_email"],
-                "ktp"           => $data["customer_ktp"],
-                "ktp_address"   => $data["customer_ktp_address"],
-                "mobilephone1"  => $data["customer_mobilephone1"],
+                "name"          => trim($data["customer_name"], " "),
+                "address"       => trim($data["customer_address"], " "),
+                "email"         => trim($data["customer_email"], " "),
+                "ktp"           => trim($data["customer_ktp"], " "),
+                "ktp_address"   => trim($data["customer_ktp_address"], " "),
+                "mobilephone1"  => trim($data["customer_mobilephone1"], " "),
                 "mobilephone2"  => null,
-                "homephone"     => $data["customer_homephone"],
-                "officephone"   => $data["customer_officephone"],
-                "npwp_no"       => $data["customer_npwp_no"],
-                "npwp_name"     => $data["customer_npwp_name"],
-                "npwp_address"  => $data["customer_npwp_address"],
+                "homephone"     => trim($data["customer_homephone"], " "),
+                "officephone"   => trim($data["customer_officephone"], " "),
+                "npwp_no"       => trim($data["customer_npwp_no"], " "),
+                "npwp_name"     => trim($data["customer_npwp_name"], " "),
+                "npwp_address"  => trim($data["customer_npwp_address"], " "),
                 "description"   => "",
                 "active"        => 1,
                 "delete"        => 0,
@@ -152,11 +152,11 @@ class Erems extends REST_Controller
                 $validasi_customer = $this->db->select("id")
                     ->from("customer")
                     ->where("project_id", $project->id)
-                    ->where("((isnull(email,0)!= 0 and email!='') and email='$customer->email')")
-                    ->where("((isnull(ktp,0)!= 0 and ktp!='') and ktp='$customer->ktp')")
-                    ->where("((isnull(mobilephone1,0)!= 0 and mobilephone1!='') and mobilephone1='$customer->mobilephone1')")
-                    ->where("((isnull(homephone,0)!= 0 and homephone!='') and homephone='$customer->homephone')")
-                    ->where("((isnull(npwp_no,0)!= 0 and npwp_no!='') and npwp_no='$customer->npwp_no')")
+                    ->where("((isnull(LTRIM(RTRIM(email)),0)!= 0 and LTRIM(RTRIM(email))!='') and LTRIM(RTRIM(email))='$customer->email')")
+                    ->where("((isnull(LTRIM(RTRIM(ktp)),0)!= 0 and LTRIM(RTRIM(ktp))!='') and LTRIM(RTRIM(ktp))='$customer->ktp')")
+                    ->where("((isnull(LTRIM(RTRIM(mobilephone1)),0)!= 0 and LTRIM(RTRIM(mobilephone1))!='') and LTRIM(RTRIM(mobilephone1))='$customer->mobilephone1')")
+                    ->where("((isnull(LTRIM(RTRIM(homephone)),0)!= 0 and LTRIM(RTRIM(homephone))!='') and LTRIM(RTRIM(homephone))='$customer->homephone')")
+                    ->where("((isnull(LTRIM(RTRIM(npwp_no)),0)!= 0 and LTRIM(RTRIM(npwp_no))!='') and LTRIM(RTRIM(npwp_no))='$customer->npwp_no')")
                     // ->where("email",$customer->email)
                     // ->where("ktp",$customer->ktp)
                     // ->or_where("mobilephone1",$customer->mobilephone1)
@@ -186,9 +186,9 @@ class Erems extends REST_Controller
                 "project_id" => $project->id,
                 "source_table" => "EREMS",
                 "source_id" => $data["kawasan_source_id"],
-                "code" => $data["kawasan_code"],
-                "name" => $data["kawasan_name"],
-                "description" => $data["kawasan_description"],
+                "code" => trim($data["kawasan_code"], " "),
+                "name" => trim($data["kawasan_name"], " "),
+                "description" => trim($data["kawasan_description"], " "),
                 "active" => 1,
                 "delete" => 0
             ];
@@ -209,8 +209,8 @@ class Erems extends REST_Controller
                 // validasi kawasan 2
                 $validasi_kawasan = $this->db->select("id")
                     ->from("kawasan")
-                    ->where("code", $kawasan->code)
-                    ->where("name", $kawasan->name)
+                    ->where("LTRIM(RTRIM(code))", $kawasan->code)
+                    ->where("LTRIM(RTRIM(name))", $kawasan->name)
                     ->where("project_id", $project->id)
                     ->get()->row();
                 if ($validasi_kawasan) {
@@ -241,14 +241,14 @@ class Erems extends REST_Controller
                 "source_table"  => "EREMS",
                 "source_id"     => $data["blok_source_id"],
                 "kawasan_id"    => $kawasan_id,
-                "code"          => $blok_data[0],
-                "name"          => $blok_data[0],
+                "code"          => trim($blok_data[0], " "),
+                "name"          => trim($blok_data[0], " "),
                 "active"        => 1,
                 "delete"        => 0
             ];
             write_file('./blok.txt', json_encode($blok), 'w+');
 
-            // validasi kawasan 1 
+            // validasi blok 1 
             $validasi_blok = $this->db->select("id")
                 ->from("blok")
                 ->where("source_table", "$blok->source_table")
@@ -264,8 +264,8 @@ class Erems extends REST_Controller
                 // validasi blok 2
                 $validasi_blok = $this->db->select("id")
                     ->from("blok")
-                    ->where("name", $blok->code)
-                    ->where("code", $blok->name)
+                    ->where("LTRIM(RTRIM(name))", $blok->code)
+                    ->where("LTRIM(RTRIM(code))", $blok->name)
                     ->where("kawasan_id", $blok->kawasan_id)
                     ->get()->row();
                 if ($validasi_blok) {
@@ -316,8 +316,8 @@ class Erems extends REST_Controller
             // write_file('./kondisi1d.txt', '1','w+');
 
             $purpose_use = (object)[
-                "name" => $data["purpose_use_name"],
-                "description" => $data["purpose_use_description"],
+                "name" => trim($data["purpose_use_name"], " "),
+                "description" => trim($data["purpose_use_description"], " "),
                 "active" => 1,
                 "delete" => 0,
                 "source_table" => "EREMS",
@@ -339,7 +339,7 @@ class Erems extends REST_Controller
                 // validasi purpose_use 2
                 $validasi_purpose_use = $this->db->select("id")
                     ->from("purpose_use")
-                    ->where("name", $purpose_use->name)
+                    ->where("LTRIM(RTRIM(name))", $purpose_use->name)
                     ->get()->row();
                 if ($validasi_purpose_use) {
                     $purpose_use_id = $validasi_purpose_use->id;
@@ -363,7 +363,7 @@ class Erems extends REST_Controller
             $unit = (object)[
                 "project_id"            => $project->id,
                 "blok_id"               => $blok_id,
-                "no_unit"               => $blok_data[1],
+                "no_unit"               => trim($blok_data[1], " "),
                 "pemilik_customer_id"   => $customer_id,
                 "penghuni_customer_id"  => $customer_id,
                 "luas_tanah"            => $data["unit_luas_tanah"],
@@ -383,7 +383,7 @@ class Erems extends REST_Controller
                 "purpose_use_id"        => $purpose_use_id,
                 "bangunan_type"         => isset($data["unit_bangunan_type"]) ? $data["unit_bangunan_type"] : null,
                 "status_jual"           => 1,
-                "tgl_pinjam_pakai"      => $data["unit_tgl_pinjampakai"]
+                "tgl_pinjam_pakai"      => isset($data["unit_tgl_pinjampakai"]) ? $data["unit_tgl_pinjampakai"] : null
             ];
             write_file('./unit.txt', json_encode($unit), 'w+');
 
@@ -405,7 +405,7 @@ class Erems extends REST_Controller
                     ->from("unit")
                     ->where("project_id", $project->id)
                     ->where("blok_id", $unit->blok_id)
-                    ->where("no_unit", $unit->no_unit)
+                    ->where("LTRIM(RTRIM(no_unit))", $unit->no_unit)
                     ->get()->row();
                 if ($validasi_unit) {
                     $unit_id = $validasi_unit->id;
