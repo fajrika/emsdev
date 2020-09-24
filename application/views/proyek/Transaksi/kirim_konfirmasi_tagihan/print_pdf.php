@@ -3,7 +3,7 @@
     <table style="padding-top: -30px;">
         <tr>
             <th style="width: fit-content;text-align: center; margin-top:20px">
-                <img src="images/logoCiputra.png" width="15%" style="align-content:center">
+                <img src="images/ciputra-logo.png" width="15%" style="align-content:center">
             </th>
         </tr>
         <tr>
